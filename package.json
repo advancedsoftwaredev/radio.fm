@@ -1,0 +1,23 @@
+{
+  "workspaces": [
+    "src/web",
+    "src/server"
+  ],
+  "private": true,
+  "name": "radio.fm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:advancedsoftwaredev/radio.fm.git",
+  "author": "Leo Shchurov <leonid.shchurov@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "web": "cd src/web && yarn",
+    "server": "cd src/server && yarn"
+  },
+  "dependencies": {
+    "prettier": "^2.7.1",
+    "ts-node": "^10.9.1",
+    "tsc": "^2.0.4",
+    "typescript": "^4.7.4"
+  }
+}
