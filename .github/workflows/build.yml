@@ -22,6 +22,3 @@ jobs:
 
     - name: Build Frontend
       run: yarn web build && yarn web export
-
-    - name: Run Server
-      run: yarn server start
