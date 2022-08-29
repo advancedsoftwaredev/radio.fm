@@ -17,7 +17,7 @@ jobs:
     - name: Install Yarn
       run: npm i yarn -g
 
-    -name: Install Node Modules
+    - name: Install Node Modules
       run: yarn install
 
     - name: Build Frontend
