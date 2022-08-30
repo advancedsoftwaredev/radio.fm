@@ -7,6 +7,7 @@ const port = 8080;
 // app.get('/', (req, res) => {
 //   res.send('Hello World!');
 // });
+
 app.use(express.static(__dirname + '/../../web/out'));
 
 app.listen(port, () => {
