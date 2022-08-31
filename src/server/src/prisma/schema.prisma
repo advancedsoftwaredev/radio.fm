@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String              @id @default(cuid())
+  firstName         String
+  lastName          String
+  email             String              @unique
+  passwordHash      String
+  passwordSalt      String
+  role              Role                @default(USER)
+  sessionId         String              @unique
+  session           Session             @relation(fields: [sessionId], references: [id])
+  likedSongs        LikedSong[]
+  songManagementLog SongManagementLog[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  invalidatedAt DateTime
+  ip            String
+  user          User?
+}
+
+model Song {
+  id                 String              @id @default(cuid())
+  title              String
+  description        String
+  artist             String
+  albumImageUrl      String
+  songMediaUrl       String
+  length             Int
+  removed            Boolean             @default(false)
+  songManagementLogs SongManagementLog[]
+  likedSongs         LikedSong[]
+  songLogs           SongLog[]
+}
+
+model LikedSong {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  song   Song   @relation(fields: [songId], references: [id])
+  songId String
+}
+
+model SongLog {
+  id       String   @id @default(cuid())
+  starTime DateTime
+  endTime  DateTime
+
+  song   Song   @relation(fields: [songId], references: [id])
+  songId String
+}
+
+model SongManagementLog {
+  id               String            @id @default(cuid())
+  event            Event
+  time             DateTime
+  updateSongFields UpdateSongField[]
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  song   Song   @relation(fields: [songId], references: [id])
+  songId String
+}
+
+enum Event {
+  CREATE
+  DELETE
+  UPDATE
+}
+
+model UpdateSongField {
+  id               String            @id @default(cuid())
+  oldValue         String
+  newValue         String
+  songField        SongField
+  songmangementLog SongManagementLog @relation(fields: [songMangementId], references: [id])
+  songMangementId  String
+}
+
+enum SongField {
+  TITLE
+  ARTIST
+  DESCRIPTION
+  LENGTH
+  ALBUMIMAGEURL
+  SONGMEDIAURL
+  REMOVED
+}
