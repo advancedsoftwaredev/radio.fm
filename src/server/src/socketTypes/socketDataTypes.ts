@@ -1,8 +1,3 @@
-// export interface ExampleEmitData {
-//   name: string;
-//   age: number;
-// }
-
 export interface LiveListenerData {
   liveListenerCount: number;
 }

@@ -18,11 +18,9 @@ export interface ClientToServerEvents {
 }
 
 // Types the inter-server communication using io.serverSideEmit('ping')
-export interface InterServerEvents {
-  // ping: () => void;
-}
+export interface InterServerEvents {}
 
-// Types the socket.data attribute
+// Types the socket.data object
 export interface SocketData {
   // userId: string
 }
