@@ -14,7 +14,7 @@ export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
 
   useEffect(() => {
-    const newSocket = io(':8080', { withCredentials: true });
+    const newSocket = io(':8080');
     setSocket(newSocket);
     return () => {
       newSocket.close();
