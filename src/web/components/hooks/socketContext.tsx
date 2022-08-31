@@ -23,7 +23,6 @@ export function SocketContextProvider(props: { children: any }) {
 
   useEffect(() => {
     if (socket) {
-      // Place all socket events here
       socket.on('connect', async () => {
         console.log('successfully connected to server socket.io.');
       });
@@ -31,7 +30,6 @@ export function SocketContextProvider(props: { children: any }) {
 
     return () => {
       if (socket) {
-        // Place all socket.off() events here
         socket.off('connect');
       }
     };

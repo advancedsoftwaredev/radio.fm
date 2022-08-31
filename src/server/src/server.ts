@@ -16,6 +16,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 });
 
 app.use(express.static(__dirname + '/../../web/out'));
+app.use(express.static(__dirname + '/audio/'));
 
 io.on('connection', (socket) => {
   console.log('a user connected.');

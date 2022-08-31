@@ -1,11 +1,20 @@
-// Types the messages from the server to the client, e.g. socket.emit('exampleEmit', { name: 'Rain', age: 21 })
+import { LiveListenerData, MessageData, SongData, SongInterruptData } from './socketDataTypes';
+
+// Types the messages from the server to the client
 export interface ServerToClientEvents {
-  // exampleEmit: (data: ExampleEmitData) => void;
+  liveListener: (data: LiveListenerData) => void;
+  message: (data: MessageData) => void;
+  pauseSong: (data: SongInterruptData) => void;
+  resumeSong: (data: SongInterruptData) => void;
+  newSong: (data: SongData) => void;
 }
 
-// Types the messages from the client to the server, e.g., socket.on('hello', () => {})
+// Types the messages from the client to the server
 export interface ClientToServerEvents {
-  //hello: () => void;
+  message: (data: MessageData) => void;
+  pauseSong: (data: SongInterruptData) => void;
+  resumeSong: (data: SongInterruptData) => void;
+  newSong: (data: SongData) => void;
 }
 
 // Types the inter-server communication using io.serverSideEmit('ping')
