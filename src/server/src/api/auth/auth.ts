@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Response } from 'express';
 import { TypedRequestBody, TypedResponse } from '../apiTypes';
 import { ApiUser, UserCredentials } from '../../../../web/apiTypes/user';
 import { AuthorizationError, BadInputError, NotFoundError } from '../errors';
