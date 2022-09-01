@@ -12,8 +12,8 @@ export interface ServerToClientEvents {
 // Types the messages from the client to the server
 export interface ClientToServerEvents {
   message: (data: MessageData) => void;
-  pauseSong: (data: SongInterruptData) => void;
-  resumeSong: (data: SongInterruptData) => void;
+  pauseSong: () => void;
+  resumeSong: () => void;
   newSong: (data: SongData) => void;
 }
 

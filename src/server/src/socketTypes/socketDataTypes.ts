@@ -14,4 +14,5 @@ export interface SongInterruptData {
 
 export interface SongData {
   songId: string;
+  time?: number;
 }

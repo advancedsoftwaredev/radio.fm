@@ -3,6 +3,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import ApiRouter from './api/api';
 import { ApiError } from './api/errors';
+import { MessageData } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
 
 const app = express();
@@ -35,11 +36,21 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+const getListenerCount = (namespace: string = '/') => io.of(namespace).sockets.size;
+
 io.on('connection', (socket) => {
   console.log('a user connected.');
 
+  io.emit('liveListener', { liveListenerCount: getListenerCount() });
+
+  socket.on('message', (data: MessageData) => {
+    io.emit('message', data);
+  });
+
   socket.on('disconnect', () => {
     console.log('a user disconnected.');
+
+    io.emit('liveListener', { liveListenerCount: getListenerCount() });
   });
 });
 
