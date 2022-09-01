@@ -1,4 +1,4 @@
-import express, { NextFunction } from 'express';
+import express, { NextFunction, Express } from 'express';
 import type { Song } from '@prisma/client';
 import prisma from '../../utils/prisma';
 import { ApiSongInfo, SongByIdInput } from '../../../../web/apiTypes/song';

@@ -1,5 +1,5 @@
 import { Session, UnwrapPromise, User } from '@prisma/client';
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import prisma from './prisma';
 
@@ -11,7 +11,7 @@ const jwt_secret = process.env.JWT_SECRET;
 const sessionAge = 1000 * 60 * 60 * 24 * 90; // 90 days
 
 export type RequestWithUser = Request & {
-  user: User;
+  user?: User;
 };
 
 /*
@@ -97,12 +97,12 @@ async function createGuestSessionWithUser(): Promise<SessionWithUser> {
   Functions for authentication
 */
 
-async function loginUser(res: Response, userId: string) {
+export async function loginUser(res: Response, userId: string) {
   let session = await createSessionForUser(userId);
   await setResSessionId(res, session.id);
 }
 
-async function logoutUser(res: Response) {
+export async function logoutUser(res: Response) {
   await clearResSessionId(res);
 }
 
@@ -131,6 +131,16 @@ export async function authMiddleware(req: Request, res: Response, next: Function
   let user = await getOrCreateGuestSession(req, res);
   (req as RequestWithUser).user = user;
   next();
+}
+
+export async function authUserMiddleware(req: Request, res: Response, next: Function) {
+  let user = await getSessionUser(req);
+  if (user && user?.role !== 'GUEST') {
+    (req as RequestWithUser).user = user;
+    next();
+  } else {
+    res.status(401).send('Unauthorized');
+  }
 }
 
 export async function authAdminMiddleware(req: Request, res: Response, next: Function) {
