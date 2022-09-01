@@ -1,11 +1,14 @@
-import express, { NextFunction, Express } from 'express';
+import express, { NextFunction } from 'express';
 import type { Song } from '@prisma/client';
 import prisma from '../../utils/prisma';
 import { ApiSongInfo, SongByIdInput } from '../../../../web/apiTypes/song';
 import { NotFoundError } from '../errors';
 import { TypedRequestBody, TypedResponse } from '../apiTypes';
+import { authMiddleware } from '../../utils/authentication';
 
 const SongRouter = express.Router();
+
+SongRouter.use(authMiddleware);
 
 SongRouter.post(
   '/song-info',

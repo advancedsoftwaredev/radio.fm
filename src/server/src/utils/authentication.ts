@@ -1,5 +1,5 @@
 import { Session, UnwrapPromise, User } from '@prisma/client';
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import prisma from './prisma';
 

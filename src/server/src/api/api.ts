@@ -5,7 +5,6 @@ import SongRouter from './song/song';
 import UserRouter from './user/user';
 
 const ApiRouter = express.Router();
-ApiRouter.use(authMiddleware);
 
 ApiRouter.use('/song', SongRouter);
 ApiRouter.use('/auth', AuthRouter);
