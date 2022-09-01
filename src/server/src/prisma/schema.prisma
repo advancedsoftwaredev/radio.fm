@@ -13,19 +13,17 @@ datasource db {
 
 model User {
   id                String              @id @default(cuid())
-  firstName         String
-  lastName          String
-  email             String              @unique
-  passwordHash      String
-  passwordSalt      String
+  username          String?             @unique
+  passwordHash      String?
+  passwordSalt      String?
   role              Role                @default(USER)
-  sessionId         String              @unique
-  session           Session             @relation(fields: [sessionId], references: [id])
   likedSongs        LikedSong[]
   songManagementLog SongManagementLog[]
+  sessions          Session[]
 }
 
 enum Role {
+  GUEST
   USER
   ADMIN
 }
@@ -34,8 +32,8 @@ model Session {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
   invalidatedAt DateTime
-  ip            String
-  user          User?
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
 }
 
 model Song {
