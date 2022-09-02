@@ -1,8 +1,5 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
-import { useEffect } from 'react';
-import { useSocketData } from '../components/hooks/socketContext';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
@@ -14,32 +11,30 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <header>
-      <button className={styles.button}>
-          <a href = "">Login</a>
-      </button>
+        <button className={styles.button}>
+          <a href="">Login</a>
+        </button>
 
-      <button className={styles.button}>
-          <a href = "">Register</a>
-      </button>
+        <button className={styles.button}>
+          <a href="">Register</a>
+        </button>
       </header>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Now listening to Radio.FM!
-        </h1>
+        <h1 className={styles.title}>Now listening to Radio.FM!</h1>
 
-        <p className={styles.description}>  
-         Now playing... <a>"Wake Me Up" - Avicii</a>
+        <p className={styles.description}>
+          Now playing... <a>"Wake Me Up" - Avicii</a>
         </p>
-        
-      <div className={styles.card}>
-      <a href="">SOS (Avicii song) " SOS " is the first posthumous single by Swedish DJ 
-      Avicii featuring co-production from Albin Nedler and Kristoffer Fogelmark, and vocals from American singer Aloe Blacc.
-      It was released on 10 April 2019 and is included on his posthumous third studio album Tim, released on 6 June 2019.
-      </a>
-      </div>
-      </main>
 
+        <div className={styles.card}>
+          <a href="">
+            SOS (Avicii song) " SOS " is the first posthumous single by Swedish DJ Avicii featuring co-production from
+            Albin Nedler and Kristoffer Fogelmark, and vocals from American singer Aloe Blacc. It was released on 10
+            April 2019 and is included on his posthumous third studio album Tim, released on 6 June 2019.
+          </a>
+        </div>
+      </main>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { api } from '../../apiInterface';
 import { ApiUser } from '../../apiTypes/user';
 
@@ -64,4 +64,20 @@ export function UserContextProvider(props: { children: any }) {
       </UserInterfaceContext.Provider>
     </UserContext.Provider>
   );
+}
+
+export function useUserData() {
+  const user = useContext(UserContext);
+  if (!user) {
+    throw new Error('User context being accessed outside the provider');
+  }
+  return user;
+}
+
+export function useUserInterface() {
+  const user = useContext(UserInterfaceContext);
+  if (!user) {
+    throw new Error('User context being accessed outside the provider');
+  }
+  return user;
 }

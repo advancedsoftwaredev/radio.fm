@@ -116,15 +116,15 @@ export function SocketContextProvider(props: { children: any }) {
 }
 
 export function useSocketData() {
-  return handleSocketHook(SocketContext);
+  const socket = useContext(SocketContext);
+  if (!socket) {
+    throw new Error('Socket context being accessed outside the provider');
+  }
+  return socket;
 }
 
 export function useSocketInterface() {
-  return handleSocketHook(SocketInterfaceContext);
-}
-
-function handleSocketHook(context: React.Context<any>) {
-  const socket = useContext(context);
+  const socket = useContext(SocketInterfaceContext);
   if (!socket) {
     throw new Error('Socket context being accessed outside the provider');
   }
