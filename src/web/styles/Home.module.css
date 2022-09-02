@@ -1,7 +1,7 @@
 .container {
   padding: 0 2rem;
-  background-image:url("../img/WebsiteBackground.gif");
-  background-size:cover;
+  background-image: url('../img/WebsiteBackground.gif');
+  background-size: cover;
 }
 
 .main {
@@ -22,7 +22,7 @@
   border-radius: 4px;
   margin: 10px 10px;
   cursor: pointer;
-  display: inline-end;  
+  display: inline-end;
 }
 
 .button:hover,
@@ -39,7 +39,7 @@
   border-top: 1px solid #eaeaea;
   justify-content: center;
   align-items: center;
-  color:white;
+  color: white;
 }
 
 .footer a {
@@ -71,7 +71,7 @@
 .title,
 .description {
   text-align: center;
-  color:white;
+  color: white;
 }
 
 .description {
@@ -85,8 +85,8 @@
   border-radius: 5px;
   padding: 0.75rem;
   font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New,
+    monospace;
 }
 
 .grid {
@@ -107,7 +107,7 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   max-width: 700px;
-  color:white;
+  color: white;
 }
 
 .card:hover,
