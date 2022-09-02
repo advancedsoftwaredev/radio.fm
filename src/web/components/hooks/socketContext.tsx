@@ -121,5 +121,5 @@ export function SocketContextProvider(props: { children: any }) {
   );
 }
 
-export const useSocketInterface = useContext(SocketInterfaceContext);
-export const useSocketData = useContext(SocketContext);
+export const useSocketInterface = () => useContext(SocketInterfaceContext);
+export const useSocketData = () => useContext(SocketContext);
