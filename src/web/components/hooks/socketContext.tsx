@@ -115,18 +115,5 @@ export function SocketContextProvider(props: { children: any }) {
   );
 }
 
-export function useSocketData() {
-  const socket = useContext(SocketContext);
-  if (!socket) {
-    throw new Error('Socket context being accessed outside the provider');
-  }
-  return socket;
-}
-
-export function useSocketInterface() {
-  const socket = useContext(SocketInterfaceContext);
-  if (!socket) {
-    throw new Error('Socket context being accessed outside the provider');
-  }
-  return socket;
-}
+export const useSocketInterface = () => useContext(SocketInterfaceContext);
+export const useSocketData = () => useContext(SocketContext);
