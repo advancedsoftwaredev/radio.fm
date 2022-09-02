@@ -97,6 +97,8 @@ ioAdmin.use((socket: SocketWithUser, next) => {
   next();
 });
 
+ioAdmin.on('connection', (socket: SocketWithUser) => {});
+
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
