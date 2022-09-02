@@ -4,8 +4,11 @@ import prisma from '../../utils/prisma';
 import { ApiSongInfo, SongByIdInput } from '../../../../web/apiTypes/song';
 import { NotFoundError } from '../errors';
 import { TypedRequestBody, TypedResponse } from '../apiTypes';
+import { authMiddleware } from '../../utils/authentication';
 
 const SongRouter = express.Router();
+
+SongRouter.use(authMiddleware);
 
 SongRouter.post(
   '/song-info',
