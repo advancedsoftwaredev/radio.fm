@@ -66,18 +66,5 @@ export function UserContextProvider(props: { children: any }) {
   );
 }
 
-export function useUserData() {
-  const user = useContext(UserContext);
-  if (!user) {
-    throw new Error('User context being accessed outside the provider');
-  }
-  return user;
-}
-
-export function useUserInterface() {
-  const user = useContext(UserInterfaceContext);
-  if (!user) {
-    throw new Error('User context being accessed outside the provider');
-  }
-  return user;
-}
+export const useUserInterface = () => useContext(UserInterfaceContext);
+export const useUserData = () => useContext(UserContext);
