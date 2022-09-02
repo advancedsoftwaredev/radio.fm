@@ -39,6 +39,7 @@ const connectToSocket = (namespace: string = '/') =>
 
 export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
+  const [adminSocket, setAdminSocket] = useState<SocketType>(null);
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [playing, setPlaying] = useState<Boolean>(false);
   const [time, setTime] = useState<Number>(0);
@@ -48,9 +49,19 @@ export function SocketContextProvider(props: { children: any }) {
   const user = useContext(UserContext);
 
   useEffect(() => {
-    const newSocket = user?.role === 'ADMIN' ? connectToSocket('/admin') : connectToSocket();
+    const newSocket = connectToSocket();
+    let newAdminSocket: SocketType = null;
+    if (user?.role === 'ADMIN') {
+      newAdminSocket = connectToSocket('/admin');
+    } else {
+      if (adminSocket) {
+        adminSocket.close();
+      }
+    }
+    setAdminSocket(newAdminSocket);
     setSocket(newSocket);
     return () => {
+      newAdminSocket?.close();
       newSocket.close();
     };
   }, [setSocket, user]);
@@ -100,7 +111,7 @@ export function SocketContextProvider(props: { children: any }) {
         socket.off('liveListener');
       }
     };
-  }, [socket]);
+  }, [socket, adminSocket]);
 
   const socketInterface: SocketInterfaceContext = {
     socket,
@@ -109,9 +120,9 @@ export function SocketContextProvider(props: { children: any }) {
     sendMessage: (data: MessageData) => socket?.emit('message', data),
 
     // Admin functions
-    pauseSong: () => socket?.emit('pauseSong'),
-    resumeSong: () => socket?.emit('resumeSong'),
-    newSong: (data: SongData) => socket?.emit('newSong', data),
+    pauseSong: () => adminSocket?.emit('pauseSong'),
+    resumeSong: () => adminSocket?.emit('resumeSong'),
+    newSong: (data: SongData) => adminSocket?.emit('newSong', data),
   };
 
   return (

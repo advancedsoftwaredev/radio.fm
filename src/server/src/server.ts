@@ -2,7 +2,7 @@ import express, { Response, Request, NextFunction } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import ApiRouter from './api/api';
-import { ApiError } from './api/errors';
+import { ApiError, AuthorizationError } from './api/errors';
 import { MessageData } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
 import bodyParser from 'body-parser';
@@ -11,6 +11,7 @@ import { ApiUser } from '../../web/apiTypes/user';
 import cookie from 'cookie';
 import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
 import { mapUserToApiUser } from './api/user/user';
+import { ExtendedError } from 'socket.io/dist/namespace';
 
 const app = express();
 const port = 8080;
@@ -45,7 +46,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-const getListenerCount = (namespace: string = '/') => io.of(namespace).sockets.size;
+const getListenerCountInNamespace = (namespace: string = '/') => io.of(namespace).sockets.size;
+const getListenerCount = () => getListenerCountInNamespace() + getListenerCountInNamespace('/admin');
 
 interface SocketWithUser extends Socket {
   data: {
@@ -53,7 +55,7 @@ interface SocketWithUser extends Socket {
   };
 }
 
-io.use(async (socket: SocketWithUser, next) => {
+const socketMiddleware = async (socket: SocketWithUser, next: (err?: ExtendedError | undefined) => void) => {
   const socketCookies = cookie.parse(socket.request.headers.cookie ?? '');
   const token: string | undefined = socketCookies?.token;
   if (!token) {
@@ -65,7 +67,9 @@ io.use(async (socket: SocketWithUser, next) => {
   }
   socket.data.user = mapUserToApiUser(user);
   next();
-});
+};
+
+io.use(socketMiddleware);
 
 io.on('connection', (socket: SocketWithUser) => {
   console.log('a user connected.');
@@ -81,6 +85,16 @@ io.on('connection', (socket: SocketWithUser) => {
 
     io.emit('liveListener', { liveListenerCount: getListenerCount() });
   });
+});
+
+const ioAdmin = io.of('/admin');
+
+ioAdmin.use(socketMiddleware);
+ioAdmin.use((socket: SocketWithUser, next) => {
+  if (socket.data.user?.role !== 'ADMIN') {
+    return next(new AuthorizationError('Unauthorized to admin socket namespace'));
+  }
+  next();
 });
 
 server.listen(port, () => {
