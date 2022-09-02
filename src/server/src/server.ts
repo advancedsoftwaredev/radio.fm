@@ -5,6 +5,8 @@ import ApiRouter from './api/api';
 import { ApiError } from './api/errors';
 import { MessageData } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = 8080;
@@ -19,6 +21,8 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 
 app.use(express.static(__dirname + '/../../web/out'));
 app.use(express.static(__dirname + '/audio/'));
+app.use(bodyParser.json());
+app.use(cookieParser());
 app.use('/api', ApiRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

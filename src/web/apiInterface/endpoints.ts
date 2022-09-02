@@ -13,12 +13,11 @@ export function createEndpoints(makeRequest: MakeRequest, makeBodyRequest: MakeB
       login: makeBodyRequest<UserCredentials, ApiUser>('POST', '/auth/login'),
       register: makeBodyRequest<UserCredentials, ApiUser>('POST', '/auth/login'),
       logout: makeRequest<{}>('GET', '/auth/logout'),
+      getSelf: makeRequest<ApiUser>('GET', '/auth/get-self'),
     },
     song: {
       getById: makeBodyRequest<SongByIdInput, ApiSongInfo>('POST', '/song/song-info'),
     },
-    user: {
-      getSelf: makeRequest<ApiUser>('GET', '/user/get-self'),
-    },
+    user: {},
   };
 }

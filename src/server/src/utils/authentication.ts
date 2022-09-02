@@ -48,6 +48,7 @@ async function setResSessionId(res: Response, sessionId: string): Promise<void> 
   let token = await encodeToken(sessionId);
   res.cookie('token', token, {
     expires: new Date(Date.now() + sessionAge),
+    httpOnly: true,
   });
 }
 
@@ -62,7 +63,7 @@ async function clearResSessionId(res: Response): Promise<void> {
 type SessionWithUser = NonNullable<UnwrapPromise<ReturnType<typeof getSessionWithUserBySessionId>>>;
 async function getSessionWithUserBySessionId(sessionId: string) {
   let session = await prisma.session.findFirst({ where: { id: sessionId }, include: { user: true } });
-  if (session && session.user && session.invalidatedAt < new Date()) {
+  if (session && session.user && session.invalidatedAt > new Date()) {
     return session;
   }
 }

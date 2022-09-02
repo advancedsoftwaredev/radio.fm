@@ -42,7 +42,7 @@ export function UserContextProvider(props: { children: any }) {
 
   const getSelf = async () => {
     try {
-      const newUser = await api.user.getSelf();
+      const newUser = await api.auth.getSelf();
       setUser(newUser);
       return newUser;
     } catch (e) {
