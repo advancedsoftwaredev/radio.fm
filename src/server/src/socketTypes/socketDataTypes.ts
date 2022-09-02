@@ -1,3 +1,5 @@
+import { ApiSongInfo } from '../../../web/apiTypes/song';
+
 export interface LiveListenerData {
   liveListenerCount: number;
 }
@@ -14,5 +16,10 @@ export interface SongInterruptData {
 
 export interface SongData {
   songId: string;
+  time?: number;
+}
+
+export interface SongDataToClient {
+  song: ApiSongInfo;
   time?: number;
 }

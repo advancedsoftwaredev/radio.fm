@@ -3,7 +3,7 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import ApiRouter from './api/api';
 import { ApiError, AuthorizationError } from './api/errors';
-import { MessageData } from './socketTypes/socketDataTypes';
+import { MessageData, SongData, SongDataToClient } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -11,7 +11,8 @@ import { ApiUser } from '../../web/apiTypes/user';
 import cookie from 'cookie';
 import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
 import { mapUserToApiUser } from './api/user/user';
-import { ExtendedError } from 'socket.io/dist/namespace';
+import { ExtendedError, Namespace } from 'socket.io/dist/namespace';
+import { getSongById } from './api/song/song';
 
 const app = express();
 const port = 8080;
@@ -46,8 +47,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-const getListenerCountInNamespace = (namespace: string = '/') => io.of(namespace).sockets.size;
-const getListenerCount = () => getListenerCountInNamespace() + getListenerCountInNamespace('/admin');
+const getListenerCount = (namespace: string = '/') => io.of(namespace).sockets.size;
 
 interface SocketWithUser extends Socket {
   data: {
@@ -76,6 +76,9 @@ io.on('connection', (socket: SocketWithUser) => {
 
   io.emit('liveListener', { liveListenerCount: getListenerCount() });
 
+  //TODO
+  socket.emit('newSong', (data: SongDataToClient) => {});
+
   socket.on('message', (data: MessageData) => {
     io.emit('message', data);
   });
@@ -97,7 +100,12 @@ ioAdmin.use((socket: SocketWithUser, next) => {
   next();
 });
 
-ioAdmin.on('connection', (socket: SocketWithUser) => {});
+ioAdmin.on('connection', (socket: SocketWithUser) => {
+  //TODO
+  socket.on('pauseSong', () => {});
+  socket.on('resumeSong', () => {});
+  socket.on('newSong', (data: SongData) => {});
+});
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

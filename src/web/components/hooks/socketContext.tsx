@@ -4,6 +4,7 @@ import {
   LiveListenerData,
   MessageData,
   SongData,
+  SongDataToClient,
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
 import { ServerToClientEvents, ClientToServerEvents } from '../../../server/src/socketTypes/socketTypes';
@@ -94,8 +95,8 @@ export function SocketContextProvider(props: { children: any }) {
         setTime(data.time);
       });
 
-      socket.on('newSong', async (data: SongData) => {
-        setSong(await api.song.getById({ id: data.songId }));
+      socket.on('newSong', async (data: SongDataToClient) => {
+        setSong(data.song);
         setTime(data.time ?? 0);
         setPlaying(true);
       });

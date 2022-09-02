@@ -1,4 +1,4 @@
-import { LiveListenerData, MessageData, SongData, SongInterruptData } from './socketDataTypes';
+import { LiveListenerData, MessageData, SongData, SongDataToClient, SongInterruptData } from './socketDataTypes';
 
 // Types the messages from the server to the client
 export interface ServerToClientEvents {
@@ -6,7 +6,7 @@ export interface ServerToClientEvents {
   message: (data: MessageData) => void;
   pauseSong: (data: SongInterruptData) => void;
   resumeSong: (data: SongInterruptData) => void;
-  newSong: (data: SongData) => void;
+  newSong: (data: SongDataToClient) => void;
 }
 
 // Types the messages from the client to the server
