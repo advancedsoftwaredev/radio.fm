@@ -1,12 +1,16 @@
 import express, { Response, Request, NextFunction } from 'express';
 import http from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import ApiRouter from './api/api';
 import { ApiError } from './api/errors';
 import { MessageData } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import { ApiUser } from '../../web/apiTypes/user';
+import cookie from 'cookie';
+import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
+import { mapUserToApiUser } from './api/user/user';
 
 const app = express();
 const port = 8080;
@@ -16,6 +20,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 
@@ -42,7 +47,27 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 const getListenerCount = (namespace: string = '/') => io.of(namespace).sockets.size;
 
-io.on('connection', (socket) => {
+interface SocketWithUser extends Socket {
+  data: {
+    user?: ApiUser;
+  };
+}
+
+io.use(async (socket: SocketWithUser, next) => {
+  const socketCookies = cookie.parse(socket.request.headers.cookie ?? '');
+  const token: string | undefined = socketCookies?.token;
+  if (!token) {
+    return next();
+  }
+  const user = (await getSessionWithUserBySessionId(await decodeToken(token)))?.user;
+  if (!user) {
+    return next();
+  }
+  socket.data.user = mapUserToApiUser(user);
+  next();
+});
+
+io.on('connection', (socket: SocketWithUser) => {
   console.log('a user connected.');
 
   io.emit('liveListener', { liveListenerCount: getListenerCount() });

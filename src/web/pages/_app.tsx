@@ -5,11 +5,11 @@ import { UserContextProvider } from '../components/hooks/userContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <SocketContextProvider>
-      <UserContextProvider>
+    <UserContextProvider>
+      <SocketContextProvider>
         <Component {...pageProps} />
-      </UserContextProvider>
-    </SocketContextProvider>
+      </SocketContextProvider>
+    </UserContextProvider>
   );
 }
 

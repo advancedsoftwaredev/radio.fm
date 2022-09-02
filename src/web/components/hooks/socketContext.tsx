@@ -9,6 +9,7 @@ import {
 import { ServerToClientEvents, ClientToServerEvents } from '../../../server/src/socketTypes/socketTypes';
 import { api } from '../../apiInterface';
 import { ApiSongInfo } from '../../apiTypes/song';
+import { UserContext, useUserData } from './userContext';
 
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents> | null;
 
@@ -33,6 +34,9 @@ interface SocketInterfaceContext {
 const SocketContext = React.createContext<SocketContextData | null>(null);
 const SocketInterfaceContext = React.createContext<SocketInterfaceContext | null>(null);
 
+const connectToSocket = (namespace: string = '/') =>
+  io(namespace, { withCredentials: true, path: '/socket.io/socket.io' });
+
 export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
   const [messages, setMessages] = useState<MessageData[]>([]);
@@ -41,13 +45,15 @@ export function SocketContextProvider(props: { children: any }) {
   const [song, setSong] = useState<SongInfo>(null);
   const [listenerCount, setListenerCount] = useState<number>(0);
 
+  const user = useContext(UserContext);
+
   useEffect(() => {
-    const newSocket = io(':8080');
+    const newSocket = user?.role === 'ADMIN' ? connectToSocket('/admin') : connectToSocket();
     setSocket(newSocket);
     return () => {
       newSocket.close();
     };
-  }, [setSocket]);
+  }, [setSocket, user]);
 
   useEffect(() => {
     if (socket) {
@@ -115,18 +121,5 @@ export function SocketContextProvider(props: { children: any }) {
   );
 }
 
-export function useSocketData() {
-  const socket = useContext(SocketContext);
-  if (!socket) {
-    throw new Error('Socket context being accessed outside the provider');
-  }
-  return socket;
-}
-
-export function useSocketInterface() {
-  const socket = useContext(SocketInterfaceContext);
-  if (!socket) {
-    throw new Error('Socket context being accessed outside the provider');
-  }
-  return socket;
-}
+export const useSocketInterface = useContext(SocketInterfaceContext);
+export const useSocketData = useContext(SocketContext);

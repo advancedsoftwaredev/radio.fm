@@ -9,7 +9,7 @@ interface UserContextInterface {
   getSelf: () => Promise<ApiUser>;
 }
 
-const UserContext = React.createContext<ApiUser | null>(null);
+export const UserContext = React.createContext<ApiUser | null>(null);
 const UserInterfaceContext = React.createContext<UserContextInterface | null>(null);
 
 export function UserContextProvider(props: { children: any }) {
@@ -66,18 +66,5 @@ export function UserContextProvider(props: { children: any }) {
   );
 }
 
-export function useUserData() {
-  const user = useContext(UserContext);
-  if (!user) {
-    throw new Error('User context being accessed outside the provider');
-  }
-  return user;
-}
-
-export function useUserInterface() {
-  const user = useContext(UserInterfaceContext);
-  if (!user) {
-    throw new Error('User context being accessed outside the provider');
-  }
-  return user;
-}
+export const useUserInterface = () => useContext(UserInterfaceContext);
+export const useUserData = () => useContext(UserContext);
