@@ -16,7 +16,7 @@ const songs: Omit<Song, 'id'>[] = [
     description:
       '"Something So Strong" is a rock song written by Neil Finn and Mitchell Froom and performed by the band Crowded House for their eponymous debut album (August 1986).',
     albumImageUrl: '/images/crowded-house-something-so-strong',
-    songMediaUrl: '/audio/something-so-strong',
+    songMediaUrl: '/audio/something-so-strong.mp3',
     artist: 'Crowded House',
     length: 174,
     removed: false,

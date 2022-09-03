@@ -12,7 +12,19 @@ import cookie from 'cookie';
 import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
 import { mapUserToApiUser } from './api/user/user';
 import { ExtendedError } from 'socket.io/dist/namespace';
-import { getCurrentSong, getInQueue, getNextSong, getQueueLength } from './utils/queue';
+import {
+  addToQueue,
+  getCurrentSong,
+  getInQueue,
+  getNextSong,
+  getQueueLength,
+  removeFromQueue,
+  startQueue,
+} from './utils/queue';
+import prisma from './utils/prisma';
+import { addSongLog } from './utils/songLog';
+import { getSongCount } from './utils/song';
+import { Console } from 'console';
 
 const app = express();
 const port = 8080;
@@ -73,6 +85,7 @@ io.on('connection', async (socket: SocketWithUser) => {
   socket.emit('newSong', await getCurrentSong());
 
   socket.on('requestNextSong', async () => {
+    console.log((await getNextSong())?.song.title);
     socket.emit('nextSong', (await getNextSong())?.song);
   });
 
@@ -104,26 +117,49 @@ ioAdmin.on('connection', (socket: SocketWithUser) => {
 
 const songQueueHandler = async (): Promise<any> => {
   const queueLength = await getQueueLength();
+  const songCount = await getSongCount();
   const minimumInQueue = 3;
 
   if (queueLength < minimumInQueue) {
     for (let i = queueLength; i < minimumInQueue; i++) {
-      // Add random song which isn't in the queue
+      const skip = Math.floor(Math.random() * songCount);
+      const songId = (await prisma.song.findFirst({ skip, take: 1 }))?.id;
+      if (!songId) {
+        return songQueueHandler();
+      }
+      await addToQueue(songId);
+      console.log('============ Songs in queue ============');
+      (await prisma.queue.findMany({ include: { song: true } })).forEach((song) => console.log(song.song.title));
     }
   }
 
   const currentSong = await getInQueue();
   const nextSong = await getNextSong();
 
-  if (!currentSong || !nextSong) {
+  console.log('============ Current Song ============');
+  console.log(currentSong?.song.title);
+  console.log('============ Next Song ============');
+  console.log(nextSong?.song.title);
+
+  await startQueue();
+
+  if (!currentSong || !nextSong || !currentSong?.timeStarted) {
     return songQueueHandler();
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
+    await addSongLog(
+      currentSong?.timeStarted || new Date(new Date().getTime() - currentSong.song.length * 1000),
+      currentSong?.songId
+    );
+
+    await removeFromQueue(currentSong?.id);
+
     io.emit('newSong', {
       song: nextSong?.song,
       time: 0,
     });
+
     songQueueHandler();
   }, 1000 + currentSong.song.length * 1000 - (new Date().getTime() - currentSong?.timeStarted.getTime()));
 };

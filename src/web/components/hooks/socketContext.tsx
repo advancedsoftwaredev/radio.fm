@@ -39,13 +39,36 @@ const connectToSocket = (namespace: string = '/') =>
 export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
   const [adminSocket, setAdminSocket] = useState<SocketType>(null);
+
+  // Text Chat
   const [messages, setMessages] = useState<MessageData[]>([]);
-  const [time, setTime] = useState<Number>(0);
+
+  // Audio
+  const [time, setTime] = useState<number>(0);
   const [song, setSong] = useState<SongInfo>(null);
   const [nextSong, setNextSong] = useState<SongInfo>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [nextAudio, setNextAudio] = useState<HTMLAudioElement | null>(null);
+
+  // Listener Count
   const [listenerCount, setListenerCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (audio) {
+      console.log(time);
+      audio.volume = 0.5;
+      audio.currentTime = time;
+      audio.play();
+    }
+  }, [audio, time]);
+
+  useEffect(() => {
+    console.log('song', song);
+  }, [song]);
+
+  useEffect(() => {
+    console.log('nextSong', nextSong);
+  }, [nextSong]);
 
   const user = useContext(UserContext);
 
@@ -89,6 +112,10 @@ export function SocketContextProvider(props: { children: any }) {
         if (!data) {
           return;
         }
+
+        audio?.pause();
+        nextAudio?.pause();
+
         if (!song) {
           setSong(data.song);
           setAudio(new Audio(data.song.songMediaUrl));
@@ -114,6 +141,8 @@ export function SocketContextProvider(props: { children: any }) {
         socket.off('liveListener');
         socket.off('nextSong');
       }
+      audio?.pause();
+      nextAudio?.pause();
     };
   }, [socket, adminSocket]);
 

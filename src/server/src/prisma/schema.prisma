@@ -61,9 +61,9 @@ model LikedSong {
 }
 
 model SongLog {
-  id       String   @id @default(cuid())
-  starTime DateTime
-  endTime  DateTime
+  id        String   @id @default(cuid())
+  startTime DateTime
+  endTime   DateTime
 
   song   Song   @relation(fields: [songId], references: [id])
   songId String
@@ -107,9 +107,9 @@ enum SongField {
 }
 
 model Queue {
-  id          String   @id @default(cuid())
-  timeAdded   DateTime @default(now())
-  timeStarted DateTime
-  song        Song     @relation(fields: [songId], references: [id])
+  id          String    @id @default(cuid())
+  timeAdded   DateTime  @default(now())
+  timeStarted DateTime?
+  song        Song      @relation(fields: [songId], references: [id])
   songId      String
 }
