@@ -28,7 +28,7 @@ async function encodeToken(sessionId: string): Promise<string> {
   return jwt.sign(data, jwt_secret);
 }
 
-async function decodeToken(token: string): Promise<string> {
+export async function decodeToken(token: string): Promise<string> {
   return (jwt.verify(token, jwt_secret) as TokenData).sid;
 }
 
@@ -61,7 +61,7 @@ async function clearResSessionId(res: Response): Promise<void> {
 */
 
 type SessionWithUser = NonNullable<UnwrapPromise<ReturnType<typeof getSessionWithUserBySessionId>>>;
-async function getSessionWithUserBySessionId(sessionId: string) {
+export async function getSessionWithUserBySessionId(sessionId: string) {
   let session = await prisma.session.findFirst({ where: { id: sessionId }, include: { user: true } });
   if (session && session.user && session.invalidatedAt > new Date()) {
     return session;

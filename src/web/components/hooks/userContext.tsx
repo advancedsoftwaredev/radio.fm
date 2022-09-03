@@ -9,7 +9,7 @@ interface UserContextInterface {
   getSelf: () => Promise<ApiUser>;
 }
 
-const UserContext = React.createContext<ApiUser | null>(null);
+export const UserContext = React.createContext<ApiUser | null>(null);
 const UserInterfaceContext = React.createContext<UserContextInterface | null>(null);
 
 export function UserContextProvider(props: { children: any }) {
