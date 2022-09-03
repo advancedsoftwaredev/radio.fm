@@ -19,7 +19,7 @@ export interface SongData {
   time?: number;
 }
 
-export interface SongDataToClient {
+export interface CurrentSongData {
   song: ApiSongInfo;
   time?: number;
 }

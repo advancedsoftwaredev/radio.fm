@@ -107,10 +107,9 @@ enum SongField {
 }
 
 model Queue {
-  id               String            @id @default(cuid())
-  timeAdded         DateTime 
-  timeStarted       DateTime
-  timePlayStarted   DateTime
-  song          Song     @relation(fields: [songId], references: [id])
-  songId        String
+  id          String   @id @default(cuid())
+  timeAdded   DateTime @default(now())
+  timeStarted DateTime
+  song        Song     @relation(fields: [songId], references: [id])
+  songId      String
 }

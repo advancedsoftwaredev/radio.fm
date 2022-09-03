@@ -3,7 +3,7 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import ApiRouter from './api/api';
 import { ApiError, AuthorizationError } from './api/errors';
-import { MessageData, SongData, SongDataToClient } from './socketTypes/socketDataTypes';
+import { MessageData, SongData, CurrentSongData } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -11,8 +11,8 @@ import { ApiUser } from '../../web/apiTypes/user';
 import cookie from 'cookie';
 import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
 import { mapUserToApiUser } from './api/user/user';
-import { ExtendedError, Namespace } from 'socket.io/dist/namespace';
-import { getSongById } from './api/song/song';
+import { ExtendedError } from 'socket.io/dist/namespace';
+import { getCurrentSong, getInQueue, getNextSong, getQueueLength } from './utils/queue';
 
 const app = express();
 const port = 8080;
@@ -33,17 +33,10 @@ app.use(cookieParser());
 app.use('/api', ApiRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  if (res.headersSent) {
-    return next(err);
-  }
-  if (req.xhr) {
-    if (err instanceof ApiError) {
-      res.status(err.code).json(err.message);
-    } else {
-      res.status(500).send('Internal server error');
-    }
+  if (err instanceof ApiError) {
+    res.status(err.code).json(err.message);
   } else {
-    return next(err);
+    res.status(500).send('Internal server error');
   }
 });
 
@@ -71,13 +64,16 @@ const socketMiddleware = async (socket: SocketWithUser, next: (err?: ExtendedErr
 
 io.use(socketMiddleware);
 
-io.on('connection', (socket: SocketWithUser) => {
+io.on('connection', async (socket: SocketWithUser) => {
   console.log('a user connected.');
 
   io.emit('liveListener', { liveListenerCount: getListenerCount() });
 
-  //TODO
-  socket.emit('newSong', (data: SongDataToClient) => {});
+  socket.emit('newSong', await getCurrentSong());
+
+  socket.on('requestNextSong', async () => {
+    socket.emit('nextSong', (await getNextSong())?.song);
+  });
 
   socket.on('message', (data: MessageData) => {
     io.emit('message', data);
@@ -102,10 +98,36 @@ ioAdmin.use((socket: SocketWithUser, next) => {
 
 ioAdmin.on('connection', (socket: SocketWithUser) => {
   //TODO
-  socket.on('pauseSong', () => {});
-  socket.on('resumeSong', () => {});
   socket.on('newSong', (data: SongData) => {});
 });
+
+const songQueueHandler = async (): Promise<any> => {
+  const queueLength = await getQueueLength();
+  const minimumInQueue = 3;
+
+  if (queueLength < minimumInQueue) {
+    for (let i = queueLength; i < minimumInQueue; i++) {
+      // Add random song which isn't in the queue
+    }
+  }
+
+  const currentSong = await getInQueue();
+  const nextSong = await getNextSong();
+
+  if (!currentSong || !nextSong) {
+    return songQueueHandler();
+  }
+
+  setTimeout(() => {
+    io.emit('newSong', {
+      song: nextSong?.song,
+      time: 0,
+    });
+    songQueueHandler();
+  }, 1000 + currentSong.song.length * 1000 - (new Date().getTime() - currentSong?.timeStarted.getTime()));
+};
+
+songQueueHandler();
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
