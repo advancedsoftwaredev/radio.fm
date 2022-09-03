@@ -48,6 +48,7 @@ model Song {
   songManagementLogs SongManagementLog[]
   likedSongs         LikedSong[]
   songLogs           SongLog[]
+  queues             Queue[]
 }
 
 model LikedSong {
@@ -103,4 +104,12 @@ enum SongField {
   ALBUMIMAGEURL
   SONGMEDIAURL
   REMOVED
+}
+
+model Queue {
+  id          String   @id @default(cuid())
+  timeAdded   DateTime @default(now())
+  timeStarted DateTime
+  song        Song     @relation(fields: [songId], references: [id])
+  songId      String
 }

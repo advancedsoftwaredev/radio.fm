@@ -11,7 +11,7 @@ const jwt_secret = process.env.JWT_SECRET;
 const sessionAge = 1000 * 60 * 60 * 24 * 90; // 90 days
 
 export type RequestWithUser = Request & {
-  user: User;
+  user?: User;
 };
 
 /*
@@ -28,7 +28,7 @@ async function encodeToken(sessionId: string): Promise<string> {
   return jwt.sign(data, jwt_secret);
 }
 
-async function decodeToken(token: string): Promise<string> {
+export async function decodeToken(token: string): Promise<string> {
   return (jwt.verify(token, jwt_secret) as TokenData).sid;
 }
 
@@ -48,6 +48,7 @@ async function setResSessionId(res: Response, sessionId: string): Promise<void> 
   let token = await encodeToken(sessionId);
   res.cookie('token', token, {
     expires: new Date(Date.now() + sessionAge),
+    httpOnly: true,
   });
 }
 
@@ -60,9 +61,9 @@ async function clearResSessionId(res: Response): Promise<void> {
 */
 
 type SessionWithUser = NonNullable<UnwrapPromise<ReturnType<typeof getSessionWithUserBySessionId>>>;
-async function getSessionWithUserBySessionId(sessionId: string) {
+export async function getSessionWithUserBySessionId(sessionId: string) {
   let session = await prisma.session.findFirst({ where: { id: sessionId }, include: { user: true } });
-  if (session && session.user && session.invalidatedAt < new Date()) {
+  if (session && session.user && session.invalidatedAt > new Date()) {
     return session;
   }
 }
@@ -97,12 +98,12 @@ async function createGuestSessionWithUser(): Promise<SessionWithUser> {
   Functions for authentication
 */
 
-async function loginUser(res: Response, userId: string) {
+export async function loginUser(res: Response, userId: string) {
   let session = await createSessionForUser(userId);
   await setResSessionId(res, session.id);
 }
 
-async function logoutUser(res: Response) {
+export async function logoutUser(res: Response) {
   await clearResSessionId(res);
 }
 
@@ -131,6 +132,16 @@ export async function authMiddleware(req: Request, res: Response, next: Function
   let user = await getOrCreateGuestSession(req, res);
   (req as RequestWithUser).user = user;
   next();
+}
+
+export async function authUserMiddleware(req: Request, res: Response, next: Function) {
+  let user = await getSessionUser(req);
+  if (user && user?.role !== 'GUEST') {
+    (req as RequestWithUser).user = user;
+    next();
+  } else {
+    res.status(401).send('Unauthorized');
+  }
 }
 
 export async function authAdminMiddleware(req: Request, res: Response, next: Function) {
