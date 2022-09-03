@@ -1,6 +1,8 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import React from 'react';
+import Header from '../pages/Header';
 
 const Home: NextPage = () => {
   return (
@@ -11,20 +13,17 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <header>
-        <button className={styles.button}>
-          <a href="">Login</a>
-        </button>
-
-        <button className={styles.button}>
-          <a href="">Register</a>
-        </button>
+      <Header/>
       </header>
+      
+      <video src ="background.mp4" muted loop autoPlay>
 
+      </video>
       <main className={styles.main}>
-        <h1 className={styles.title}>Now listening to Radio.FM!</h1>
-
-        <p className={styles.description}>
-          Now playing... <a>"Wake Me Up" - Avicii</a>
+        <h1 className={styles.title}>You are listening to Radio.FM!</h1>
+       
+        <p className={styles.card1}>
+          Now playing... <a>"SOS" - Avicii</a>
         </p>
 
         <div className={styles.card}>
@@ -40,3 +39,4 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
