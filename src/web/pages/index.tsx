@@ -8,9 +8,14 @@ import { Box, Button, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useSocketData, useSocketInterface } from '../components/hooks/socketContext';
 import VolumeSlider from '../components/VolumeSlider';
+import { useSong } from '../components/hooks/songContext';
+import { ApiSongInfo } from '../apiTypes/song';
 
 const Home: NextPage = () => {
   const socketHandler = useSocketInterface();
+  const song = useSong();
+
+  const getSongCaption = (songData: ApiSongInfo) => `"${songData?.title}" - ${songData?.artist}`;
 
   return (
     <div className={styles.container}>
@@ -27,23 +32,37 @@ const Home: NextPage = () => {
         <main className={styles.main}>
           <h1 className={styles.title}>You are listening to Radio.FM!</h1>
 
-          <Typography variant="subtitle1">
-            Now playing... <a>"SOS" - Avicii</a>
-          </Typography>
+          {song?.song && (
+            <>
+              <img
+                src={song?.song?.albumImageUrl}
+                alt="Song album cover"
+                style={{ width: '15rem', marginBottom: '1rem' }}
+              />
 
-          <div className={styles.card}>
-            <Typography variant="subtitle2">
-              SOS (Avicii song) " SOS " is the first posthumous single by Swedish DJ Avicii featuring co-production from
-              Albin Nedler and Kristoffer Fogelmark, and vocals from American singer Aloe Blacc. It was released on 10
-              April 2019 and is included on his posthumous third studio album Tim, released on 6 June 2019.
-            </Typography>
-          </div>
-          <Button onClick={() => socketHandler?.getTime()}>
-            <Box display="flex" alignItems="center">
-              <Typography sx={{ fontSize: '2rem' }}>Play</Typography>
-              <PlayArrowIcon sx={{ fontSize: '4rem' }} />
-            </Box>
-          </Button>
+              <Typography variant="h5" fontWeight="bold">
+                {getSongCaption(song.song)}
+              </Typography>
+
+              <Box sx={{ border: '0px solid white', maxWidth: '30rem', marginTop: '1rem', textAlign: 'center' }}>
+                <Typography variant="subtitle1">{song?.song?.description}</Typography>
+              </Box>
+
+              <Button onClick={() => socketHandler?.getTime()}>
+                <Box display="flex" alignItems="center">
+                  <Typography sx={{ fontSize: '2rem' }}>Play</Typography>
+                  <PlayArrowIcon sx={{ fontSize: '4rem' }} />
+                </Box>
+              </Button>
+            </>
+          )}
+
+          {song?.nextSong && (
+            <>
+              <Typography sx={{ fontWeight: 'bold', marginTop: '1rem' }}>Up Next...</Typography>
+              <Typography variant="subtitle2">{getSongCaption(song?.nextSong)}</Typography>
+            </>
+          )}
         </main>
       </Box>
 

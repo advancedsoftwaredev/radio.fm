@@ -69,7 +69,7 @@ export const SongContextProvider = (props: { children: any }) => {
     audio?.pause();
     nextAudio?.pause();
 
-    if (!song) {
+    if (!song || !nextSong) {
       setSong(data.song);
       setAudio(new Audio(data.song.songMediaUrl));
     } else {
