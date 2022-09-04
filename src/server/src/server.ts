@@ -3,7 +3,7 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import ApiRouter from './api/api';
 import { ApiError, AuthorizationError } from './api/errors';
-import { MessageData, SongData, CurrentSongData } from './socketTypes/socketDataTypes';
+import { MessageData, SongData } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -19,12 +19,12 @@ import {
   getNextSong,
   getQueueLength,
   removeFromQueue,
+  resetFirstSong,
   startQueue,
 } from './utils/queue';
 import prisma from './utils/prisma';
 import { addSongLog } from './utils/songLog';
 import { getSongCount } from './utils/song';
-import { Console } from 'console';
 
 const app = express();
 const port = 8080;
@@ -85,8 +85,11 @@ io.on('connection', async (socket: SocketWithUser) => {
   socket.emit('newSong', await getCurrentSong());
 
   socket.on('requestNextSong', async () => {
-    console.log((await getNextSong())?.song.title);
     socket.emit('nextSong', (await getNextSong())?.song);
+  });
+
+  socket.on('getTime', async () => {
+    socket.emit('getTime', { time: (await getCurrentSong())?.time });
   });
 
   socket.on('message', (data: MessageData) => {
@@ -120,6 +123,11 @@ const songQueueHandler = async (): Promise<any> => {
   const songCount = await getSongCount();
   const minimumInQueue = 3;
 
+  if (queueLength !== 0) {
+    // Update the first song in the queue to make sure it hasn't "started yet", set timeStarted to null or something
+    await resetFirstSong();
+  }
+
   if (queueLength < minimumInQueue) {
     for (let i = queueLength; i < minimumInQueue; i++) {
       const skip = Math.floor(Math.random() * songCount);
@@ -128,20 +136,18 @@ const songQueueHandler = async (): Promise<any> => {
         return songQueueHandler();
       }
       await addToQueue(songId);
-      console.log('============ Songs in queue ============');
-      (await prisma.queue.findMany({ include: { song: true } })).forEach((song) => console.log(song.song.title));
     }
   }
 
-  const currentSong = await getInQueue();
-  const nextSong = await getNextSong();
-
-  console.log('============ Current Song ============');
-  console.log(currentSong?.song.title);
-  console.log('============ Next Song ============');
-  console.log(nextSong?.song.title);
+  console.log('============ Songs in queue ============');
+  (await prisma.queue.findMany({ include: { song: true } })).forEach((song, i) =>
+    console.log(`(${i + 1}) ${song.song.title}`)
+  );
 
   await startQueue();
+
+  const currentSong = await getInQueue();
+  const nextSong = await getNextSong();
 
   if (!currentSong || !nextSong || !currentSong?.timeStarted) {
     return songQueueHandler();

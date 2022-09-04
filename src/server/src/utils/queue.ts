@@ -55,6 +55,11 @@ export const removeFromQueue = async (id: string) => await prisma.queue.delete({
 export const addToQueue = async (songId: string) =>
   await prisma.queue.create({ data: { songId, timeAdded: new Date() } });
 
+export const resetFirstSong = async () => {
+  const firstInQueue = await getInQueue();
+  await prisma.queue.update({ where: { id: firstInQueue?.id }, data: { timeStarted: null } });
+};
+
 export const startQueue = async () => {
   const currentSong = await getInQueue();
 

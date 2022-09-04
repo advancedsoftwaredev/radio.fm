@@ -1,5 +1,5 @@
 import { ApiSongInfo } from '../../../web/apiTypes/song';
-import { LiveListenerData, MessageData, SongData, CurrentSongData } from './socketDataTypes';
+import { LiveListenerData, MessageData, SongData, CurrentSongData, SongInterruptData } from './socketDataTypes';
 
 // Types the messages from the server to the client
 export interface ServerToClientEvents {
@@ -7,12 +7,14 @@ export interface ServerToClientEvents {
   message: (data: MessageData) => void;
   newSong: (data: CurrentSongData) => void;
   nextSong: (data: ApiSongInfo) => void;
+  getTime: (data: SongInterruptData) => void;
 }
 
 // Types the messages from the client to the server
 export interface ClientToServerEvents {
   message: (data: MessageData) => void;
   requestNextSong: () => void;
+  getTime: () => void;
   newSong: (data: SongData) => void;
 }
 
