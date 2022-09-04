@@ -2,7 +2,9 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import React from 'react';
-import Header from '../pages/Header';
+import Header from '../components/Header';
+import Particles from '../components/Particles';
+
 
 const Home: NextPage = () => {
   return (
@@ -13,12 +15,11 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <header>
+        <Particles/>
       <Header/>
       </header>
-      
-      <video src ="background.mp4" muted loop autoPlay>
+    
 
-      </video>
       <main className={styles.main}>
         <h1 className={styles.title}>You are listening to Radio.FM!</h1>
        
@@ -33,6 +34,7 @@ const Home: NextPage = () => {
             April 2019 and is included on his posthumous third studio album Tim, released on 6 June 2019.
           </a>
         </div>
+        
       </main>
     </div>
   );
