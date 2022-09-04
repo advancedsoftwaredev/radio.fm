@@ -1,4 +1,5 @@
 import { User } from '.prisma/client';
+import { UserCredentials } from '../../../web/apiTypes/user';
 import prisma from './prisma';
 
 export async function getUserById(id: string) {

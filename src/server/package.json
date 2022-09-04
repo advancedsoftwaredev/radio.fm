@@ -5,7 +5,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/server.ts"
+    "start": "ts-node src/server.ts",
+    "seed": "yarn prisma migrate reset -f && ts-node -P ./tsconfig.json ./src/prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.3.0",

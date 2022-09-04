@@ -3,7 +3,7 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import ApiRouter from './api/api';
 import { ApiError, AuthorizationError } from './api/errors';
-import { MessageData, SongData, CurrentSongData } from './socketTypes/socketDataTypes';
+import { MessageData, SongData } from './socketTypes/socketDataTypes';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -12,7 +12,19 @@ import cookie from 'cookie';
 import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
 import { mapUserToApiUser } from './api/user/user';
 import { ExtendedError } from 'socket.io/dist/namespace';
-import { getCurrentSong, getInQueue, getNextSong, getQueueLength } from './utils/queue';
+import {
+  addToQueue,
+  getCurrentSong,
+  getInQueue,
+  getNextSong,
+  getQueueLength,
+  removeFromQueue,
+  resetFirstSong,
+  startQueue,
+} from './utils/queue';
+import prisma from './utils/prisma';
+import { addSongLog } from './utils/songLog';
+import { getSongCount } from './utils/song';
 
 const app = express();
 const port = 8080;
@@ -27,7 +39,8 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 });
 
 app.use(express.static(__dirname + '/../../web/out'));
-app.use(express.static(__dirname + '/audio/'));
+app.use('/audio', express.static(__dirname + '/audio/'));
+app.use('/images', express.static(__dirname + '/images/'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use('/api', ApiRouter);
@@ -75,6 +88,10 @@ io.on('connection', async (socket: SocketWithUser) => {
     socket.emit('nextSong', (await getNextSong())?.song);
   });
 
+  socket.on('getTime', async () => {
+    socket.emit('getTime', { time: (await getCurrentSong())?.time });
+  });
+
   socket.on('message', (data: MessageData) => {
     io.emit('message', data);
   });
@@ -103,26 +120,52 @@ ioAdmin.on('connection', (socket: SocketWithUser) => {
 
 const songQueueHandler = async (): Promise<any> => {
   const queueLength = await getQueueLength();
+  const songCount = await getSongCount();
   const minimumInQueue = 3;
+
+  if (queueLength !== 0) {
+    // Update the first song in the queue to make sure it hasn't "started yet", set timeStarted to null or something
+    await resetFirstSong();
+  }
 
   if (queueLength < minimumInQueue) {
     for (let i = queueLength; i < minimumInQueue; i++) {
-      // Add random song which isn't in the queue
+      const skip = Math.floor(Math.random() * songCount);
+      const songId = (await prisma.song.findFirst({ skip, take: 1 }))?.id;
+      if (!songId) {
+        return songQueueHandler();
+      }
+      await addToQueue(songId);
     }
   }
+
+  console.log('============ Songs in queue ============');
+  (await prisma.queue.findMany({ include: { song: true } })).forEach((song, i) =>
+    console.log(`(${i + 1}) ${song.song.title}`)
+  );
+
+  await startQueue();
 
   const currentSong = await getInQueue();
   const nextSong = await getNextSong();
 
-  if (!currentSong || !nextSong) {
+  if (!currentSong || !nextSong || !currentSong?.timeStarted) {
     return songQueueHandler();
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
+    await addSongLog(
+      currentSong?.timeStarted || new Date(new Date().getTime() - currentSong.song.length * 1000),
+      currentSong?.songId
+    );
+
+    await removeFromQueue(currentSong?.id);
+
     io.emit('newSong', {
       song: nextSong?.song,
       time: 0,
     });
+
     songQueueHandler();
   }, 1000 + currentSong.song.length * 1000 - (new Date().getTime() - currentSong?.timeStarted.getTime()));
 };

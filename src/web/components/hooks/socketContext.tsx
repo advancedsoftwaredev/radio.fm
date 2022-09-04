@@ -5,22 +5,17 @@ import {
   MessageData,
   SongData,
   CurrentSongData,
+  SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
 import { ServerToClientEvents, ClientToServerEvents } from '../../../server/src/socketTypes/socketTypes';
-import { api } from '../../apiInterface';
 import { ApiSongInfo } from '../../apiTypes/song';
-import { UserContext, useUserData } from './userContext';
+import { useSongHandler } from './songContext';
+import { useUserData } from './userContext';
 
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents> | null;
 
-type SongInfo = ApiSongInfo | null;
-
 interface SocketContextData {
   messages: MessageData[];
-  time: Number;
-  song: SongInfo;
-  audio: HTMLAudioElement | null;
-  listenerCount: number;
 }
 
 interface SocketInterfaceContext {
@@ -28,6 +23,7 @@ interface SocketInterfaceContext {
   sendMessage: (data: MessageData) => void;
   requestNextSong: () => void;
   newSong: (data: SongData) => void;
+  getTime: (data: SongInterruptData) => void;
 }
 
 const SocketContext = React.createContext<SocketContextData | null>(null);
@@ -39,15 +35,11 @@ const connectToSocket = (namespace: string = '/') =>
 export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
   const [adminSocket, setAdminSocket] = useState<SocketType>(null);
-  const [messages, setMessages] = useState<MessageData[]>([]);
-  const [time, setTime] = useState<Number>(0);
-  const [song, setSong] = useState<SongInfo>(null);
-  const [nextSong, setNextSong] = useState<SongInfo>(null);
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const [nextAudio, setNextAudio] = useState<HTMLAudioElement | null>(null);
-  const [listenerCount, setListenerCount] = useState<number>(0);
 
-  const user = useContext(UserContext);
+  const [messages, setMessages] = useState<MessageData[]>([]);
+
+  const user = useUserData();
+  const songHandler = useSongHandler();
 
   useEffect(() => {
     const newSocket = connectToSocket();
@@ -82,27 +74,20 @@ export function SocketContextProvider(props: { children: any }) {
       });
 
       socket.on('liveListener', async (data: LiveListenerData) => {
-        setListenerCount(data.liveListenerCount);
+        songHandler?.setListenerData(data);
       });
 
       socket.on('newSong', async (data: CurrentSongData) => {
-        if (!data) {
-          return;
-        }
-        if (!song) {
-          setSong(data.song);
-          setAudio(new Audio(data.song.songMediaUrl));
-        } else {
-          setSong(nextSong);
-          setAudio(nextAudio);
-        }
-        setTime(data.time ?? 0);
+        songHandler?.setSongData(data);
         requestNextSong();
       });
 
       socket.on('nextSong', async (data: ApiSongInfo) => {
-        setNextSong(data);
-        setNextAudio(new Audio(data.songMediaUrl));
+        songHandler?.setNextSongData(data);
+      });
+
+      socket.on('getTime', async (data: SongInterruptData) => {
+        songHandler?.setTimeData(data);
       });
     }
 
@@ -118,6 +103,7 @@ export function SocketContextProvider(props: { children: any }) {
   }, [socket, adminSocket]);
 
   const requestNextSong = () => socket?.emit('requestNextSong');
+  const getTime = () => socket?.emit('getTime');
 
   const socketInterface: SocketInterfaceContext = {
     socket,
@@ -125,13 +111,14 @@ export function SocketContextProvider(props: { children: any }) {
     // Guest functions
     sendMessage: (data: MessageData) => socket?.emit('message', data),
     requestNextSong,
+    getTime,
 
     // Admin functions
     newSong: (data: SongData) => adminSocket?.emit('newSong', data),
   };
 
   return (
-    <SocketContext.Provider value={{ messages, time, song, audio, listenerCount }}>
+    <SocketContext.Provider value={{ messages }}>
       <SocketInterfaceContext.Provider value={socketInterface}>{props.children}</SocketInterfaceContext.Provider>
     </SocketContext.Provider>
   );
