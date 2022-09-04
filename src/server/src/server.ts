@@ -140,7 +140,7 @@ const songQueueHandler = async (): Promise<any> => {
   }
 
   console.log('============ Songs in queue ============');
-  (await prisma.queue.findMany({ include: { song: true } })).forEach((song, i) =>
+  (await prisma.queue.findMany({ include: { song: true }, orderBy: [{ timeAdded: 'asc' }] })).forEach((song, i) =>
     console.log(`(${i + 1}) ${song.song.title}`)
   );
 

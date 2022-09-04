@@ -16,6 +16,7 @@ interface SongHandlerContextInterface {
   setSongData: (data: CurrentSongData) => void;
   setNextSongData: (data: ApiSongInfo) => void;
   setTimeData: (data: SongInterruptData) => void;
+  setVolumeValue: (volumeValue: number) => void;
 }
 
 const SongContext = React.createContext<SongContextInterface | null>(null);
@@ -31,10 +32,14 @@ export const SongContextProvider = (props: { children: any }) => {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [nextAudio, setNextAudio] = useState<HTMLAudioElement | null>(null);
   const [listenerCount, setListenerCount] = useState<number>(0);
+  const [volume, setVolume] = useState<number>(0.5);
+
+  useEffect(() => {
+    if (audio) audio.volume = volume;
+  }, [volume]);
 
   useEffect(() => {
     if (audio) {
-      audio.volume = 0.5;
       audio.currentTime = time;
       audio.play();
     }
@@ -82,9 +87,15 @@ export const SongContextProvider = (props: { children: any }) => {
     setTime(data.time);
   };
 
+  const setVolumeValue = (volumeValue: number) => {
+    setVolume(volumeValue);
+  };
+
   return (
     <SongContext.Provider value={{ time, song, audio, listenerCount }}>
-      <SongHandlerContext.Provider value={{ setListenerData, setSongData, setNextSongData, setTimeData }}>
+      <SongHandlerContext.Provider
+        value={{ setListenerData, setSongData, setNextSongData, setTimeData, setVolumeValue }}
+      >
         {props.children}
       </SongHandlerContext.Provider>
     </SongContext.Provider>
