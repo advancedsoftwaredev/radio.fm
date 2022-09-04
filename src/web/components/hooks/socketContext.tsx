@@ -23,7 +23,7 @@ interface SocketInterfaceContext {
   sendMessage: (data: MessageData) => void;
   requestNextSong: () => void;
   newSong: (data: SongData) => void;
-  getTime: (data: SongInterruptData) => void;
+  getTime: () => void;
 }
 
 const SocketContext = React.createContext<SocketContextData | null>(null);
