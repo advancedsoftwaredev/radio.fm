@@ -7,6 +7,7 @@ export type SongInfo = ApiSongInfo | null;
 interface SongContextInterface {
   time: Number;
   song: SongInfo;
+  nextSong: SongInfo;
   audio: HTMLAudioElement | null;
   listenerCount: number;
 }
@@ -83,7 +84,7 @@ export const SongContextProvider = (props: { children: any }) => {
   };
 
   return (
-    <SongContext.Provider value={{ time, song, audio, listenerCount }}>
+    <SongContext.Provider value={{ time, song, nextSong, audio, listenerCount }}>
       <SongHandlerContext.Provider value={{ setListenerData, setSongData, setNextSongData, setTimeData }}>
         {props.children}
       </SongHandlerContext.Provider>
