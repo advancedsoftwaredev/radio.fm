@@ -34,11 +34,13 @@ const Home: NextPage = () => {
 
           {song?.song && (
             <>
-              <img
-                src={song?.song?.albumImageUrl}
-                alt="Song album cover"
-                style={{ width: '15rem', marginBottom: '1rem' }}
-              />
+              {song.song.albumImageUrl && (
+                <img
+                  src={song?.song?.albumImageUrl}
+                  alt="Song album cover"
+                  style={{ width: '15rem', marginBottom: '1rem' }}
+                />
+              )}
 
               <Typography variant="h5" fontWeight="bold">
                 {getSongCaption(song.song)}
