@@ -3,10 +3,10 @@ import { api } from '../../apiInterface';
 import { ApiUser } from '../../apiTypes/user';
 
 interface UserContextInterface {
-  register: (username: string, password: string) => Promise<ApiUser>;
-  login: (username: string, password: string) => Promise<ApiUser>;
+  register: (username: string, password: string) => Promise<ApiUser | undefined>;
+  login: (username: string, password: string) => Promise<ApiUser | undefined>;
   logout: () => void;
-  getSelf: () => Promise<ApiUser>;
+  getSelf: () => Promise<ApiUser | undefined>;
 }
 
 export const UserContext = React.createContext<ApiUser | null>(null);
@@ -21,7 +21,7 @@ export function UserContextProvider(props: { children: any }) {
       setUser(newUser);
       return newUser;
     } catch (e) {
-      throw e;
+      // throw e;
     }
   };
 
@@ -31,7 +31,7 @@ export function UserContextProvider(props: { children: any }) {
       setUser(newUser);
       return newUser;
     } catch (e) {
-      throw e;
+      // throw e;
     }
   };
 
@@ -46,7 +46,7 @@ export function UserContextProvider(props: { children: any }) {
       setUser(newUser);
       return newUser;
     } catch (e) {
-      throw e;
+      // throw e;
     }
   };
 
