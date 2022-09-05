@@ -33,6 +33,7 @@ export const getCurrentSong = async (): Promise<CurrentSongData | null> => {
   return {
     song: currentSong.song,
     time: currentTime,
+    finished: false,
   };
 };
 
