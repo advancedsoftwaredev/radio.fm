@@ -44,11 +44,11 @@ const Register = () => {
   return (
     <Box height="100vh" display="flex" alignItems="center" justifyContent="center">
       <ParticlesComponent />
-      <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
-        <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
-          Register
-        </Typography>
-        <form>
+      <form>
+        <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
+          <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
+            Register
+          </Typography>
           <TextField
             variant="filled"
             placeholder="Username"
@@ -82,21 +82,21 @@ const Register = () => {
               },
             }}
           />
-        </form>
-        {error && (
-          <Typography sx={{ marginTop: '1rem' }} color="#FF0000">
-            A user with that username already exists...
-          </Typography>
-        )}
-        <Box display="flex" sx={{ marginTop: '1rem' }}>
-          <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleLogin}>
-            {!loading ? 'Register' : 'Loading...'}
-          </Button>
+          {error && (
+            <Typography sx={{ marginTop: '1rem' }} color="#FF0000">
+              A user with that username already exists...
+            </Typography>
+          )}
+          <Box display="flex" sx={{ marginTop: '1rem' }}>
+            <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handleLogin}>
+              {!loading ? 'Register' : 'Loading...'}
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </form>
     </Box>
   );
 };
