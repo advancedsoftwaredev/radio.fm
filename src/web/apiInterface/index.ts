@@ -11,6 +11,9 @@ function makeRequest<Resp>(method: NoBodyMethod, path: string) {
   return async () => {
     const response = await fetch(fullPath(path), {
       method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     if (response.status !== 200) {
@@ -27,6 +30,9 @@ function makeBodyRequest<Req, Resp>(method: BodyMethod, path: string) {
   return async (body: Req) => {
     const response = await fetch(fullPath(path), {
       method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     });
 

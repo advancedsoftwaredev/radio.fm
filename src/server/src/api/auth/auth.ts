@@ -66,7 +66,7 @@ AuthRouter.get('/logout', async (req: TypedRequestBody<{}>, res: Response, next:
     await deleteUserSessions(req.user.id);
   }
   await logoutUser(res);
-  res.status(200).send();
+  res.status(200).json({ msg: 'successful registration' });
 });
 
 AuthRouter.get('/get-self', async (req: RequestWithUser, res: TypedResponse<ApiUser>, next: NextFunction) => {

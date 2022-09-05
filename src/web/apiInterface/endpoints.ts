@@ -11,7 +11,7 @@ export function createEndpoints(makeRequest: MakeRequest, makeBodyRequest: MakeB
   return {
     auth: {
       login: makeBodyRequest<UserCredentials, ApiUser>('POST', '/auth/login'),
-      register: makeBodyRequest<UserCredentials, ApiUser>('POST', '/auth/login'),
+      register: makeBodyRequest<UserCredentials, ApiUser>('POST', '/auth/register'),
       logout: makeRequest<{}>('GET', '/auth/logout'),
       getSelf: makeRequest<ApiUser>('GET', '/auth/get-self'),
     },
