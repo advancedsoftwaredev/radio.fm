@@ -48,27 +48,41 @@ const Register = () => {
         <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
           Register
         </Typography>
-        <TextField
-          variant="filled"
-          placeholder="Username"
-          type="text"
-          value={username}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}
-          sx={{
-            '& .MuiInputBase-input': { backgroundColor: '#111', color: '#fff', padding: '1rem', borderRadius: '.3rem' },
-            marginBottom: '1rem',
-          }}
-        />
-        <TextField
-          variant="filled"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
-          sx={{
-            '& .MuiInputBase-input': { backgroundColor: '#111', color: '#fff', padding: '1rem', borderRadius: '.3rem' },
-          }}
-        />
+        <form>
+          <TextField
+            variant="filled"
+            placeholder="Username"
+            autoComplete="username"
+            type="text"
+            value={username}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}
+            sx={{
+              '& .MuiInputBase-input': {
+                backgroundColor: '#111',
+                color: '#fff',
+                padding: '1rem',
+                borderRadius: '.3rem',
+              },
+              marginBottom: '1rem',
+            }}
+          />
+          <TextField
+            variant="filled"
+            placeholder="Password"
+            autoComplete="current-password"
+            type="password"
+            value={password}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
+            sx={{
+              '& .MuiInputBase-input': {
+                backgroundColor: '#111',
+                color: '#fff',
+                padding: '1rem',
+                borderRadius: '.3rem',
+              },
+            }}
+          />
+        </form>
         {error && (
           <Typography sx={{ marginTop: '1rem' }} color="#FF0000">
             A user with that username already exists...

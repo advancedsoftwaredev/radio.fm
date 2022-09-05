@@ -43,45 +43,59 @@ const Register = () => {
   return (
     <Box height="100vh" display="flex" alignItems="center" justifyContent="center">
       <ParticlesComponent />
-      <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
-        <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
-          Login
-        </Typography>
-        <TextField
-          variant="filled"
-          placeholder="Username"
-          type="text"
-          value={username}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}
-          sx={{
-            '& .MuiInputBase-input': { backgroundColor: '#111', color: '#fff', padding: '1rem', borderRadius: '.3rem' },
-            marginBottom: '1rem',
-          }}
-        />
-        <TextField
-          variant="filled"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
-          sx={{
-            '& .MuiInputBase-input': { backgroundColor: '#111', color: '#fff', padding: '1rem', borderRadius: '.3rem' },
-          }}
-        />
-        {error && (
-          <Typography sx={{ marginTop: '1rem' }} color="#FF0000">
-            Invalid login credentials...
+      <form>
+        <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
+          <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
+            Login
           </Typography>
-        )}
-        <Box display="flex" sx={{ marginTop: '1rem' }}>
-          <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleLogin}>
-            {!loading ? 'Login' : 'Loading...'}
-          </Button>
+          <TextField
+            variant="filled"
+            placeholder="Username"
+            autoComplete="username"
+            type="text"
+            value={username}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}
+            sx={{
+              '& .MuiInputBase-input': {
+                backgroundColor: '#111',
+                color: '#fff',
+                padding: '1rem',
+                borderRadius: '.3rem',
+              },
+              marginBottom: '1rem',
+            }}
+          />
+          <TextField
+            variant="filled"
+            placeholder="Password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
+            sx={{
+              '& .MuiInputBase-input': {
+                backgroundColor: '#111',
+                color: '#fff',
+                padding: '1rem',
+                borderRadius: '.3rem',
+              },
+            }}
+          />
+          {error && (
+            <Typography sx={{ marginTop: '1rem' }} color="#FF0000">
+              Invalid login credentials...
+            </Typography>
+          )}
+          <Box display="flex" sx={{ marginTop: '1rem' }}>
+            <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handleLogin}>
+              {!loading ? 'Login' : 'Loading...'}
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </form>
     </Box>
   );
 };
