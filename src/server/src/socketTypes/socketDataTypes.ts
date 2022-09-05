@@ -22,4 +22,5 @@ export interface SongData {
 export interface CurrentSongData {
   song: ApiSongInfo;
   time?: number;
+  finished: boolean;
 }

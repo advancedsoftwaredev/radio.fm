@@ -164,6 +164,7 @@ const songQueueHandler = async (): Promise<any> => {
     io.emit('newSong', {
       song: nextSong?.song,
       time: 0,
+      finished: true,
     });
 
     songQueueHandler();
