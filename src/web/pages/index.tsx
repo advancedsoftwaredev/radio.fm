@@ -49,6 +49,18 @@ const Home: NextPage = () => {
               <Typography variant="subtitle1">{song?.song?.description}</Typography>
             </Box>
 
+            <Typography sx={{ marginTop: '1rem' }}>
+              {song.listenerCount > 1 ? (
+                <>
+                  There are <strong>{song.listenerCount}</strong> people listening!
+                </>
+              ) : (
+                <>
+                  There is <strong>{song.listenerCount}</strong> person listening!
+                </>
+              )}
+            </Typography>
+
             <Button onClick={() => socketHandler?.getTime()}>
               <Box display="flex" alignItems="center">
                 <Typography sx={{ fontSize: '2rem' }}>Play</Typography>
