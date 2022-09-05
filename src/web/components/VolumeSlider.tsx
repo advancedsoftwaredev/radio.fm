@@ -17,7 +17,7 @@ export default function VolumeSlider() {
     <Box
       sx={{
         display: 'flex',
-        position: 'sticky',
+        position: 'absolute',
         bottom: '1rem',
         left: '50%',
         transform: 'translateX(-50%)',

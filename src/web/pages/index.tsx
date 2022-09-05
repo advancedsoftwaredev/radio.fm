@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   const getSongCaption = (songData: ApiSongInfo) => `"${songData?.title}" - ${songData?.artist}`;
 
   return (
-    <Box display="flex" flexDirection="column" sx={{ height: '100vh', overflow: 'hidden' }}>
+    <Box display="flex" flexDirection="column" sx={{ height: '100vh' }}>
       <ParticlesComponent />
       <Head>
         <title>Now Listening to Radio.FM!</title>
