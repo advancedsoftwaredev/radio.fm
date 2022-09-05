@@ -17,10 +17,9 @@ export default function VolumeSlider() {
     <Box
       sx={{
         display: 'flex',
-        position: 'absolute',
+        position: 'fixed',
         bottom: '1rem',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: '1rem',
         alignItems: 'center',
         width: '15rem',
         justifyContent: 'space-between',
