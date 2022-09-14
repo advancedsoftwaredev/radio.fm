@@ -1,21 +1,23 @@
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { Box, Button, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
 import React from 'react';
+
+import type { ApiSongInfo } from '../apiTypes/song';
 import Header from '../components/Header';
-import { Box, Button, Typography } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useSocketData, useSocketInterface } from '../components/hooks/socketContext';
-import VolumeSlider from '../components/VolumeSlider';
+import { useSocketInterface } from '../components/hooks/socketContext';
 import { useSong } from '../components/hooks/songContext';
-import { ApiSongInfo } from '../apiTypes/song';
 import ParticlesComponent from '../components/Particles';
+import VolumeSlider from '../components/VolumeSlider';
+
+import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   const socketHandler = useSocketInterface();
   const song = useSong();
 
-  const getSongCaption = (songData: ApiSongInfo) => `"${songData?.title}" - ${songData?.artist}`;
+  const getSongCaption = (songData: ApiSongInfo) => `"${songData.title}" - ${songData.artist}`;
 
   return (
     <Box display="flex" flexDirection="column" sx={{ height: '100vh' }}>
@@ -35,7 +37,7 @@ const Home: NextPage = () => {
           <>
             {song.song.albumImageUrl && (
               <img
-                src={song?.song?.albumImageUrl}
+                src={song.song.albumImageUrl}
                 alt="Song album cover"
                 style={{ width: '15rem', marginBottom: '1rem' }}
               />
@@ -46,7 +48,7 @@ const Home: NextPage = () => {
             </Typography>
 
             <Box sx={{ border: '0px solid white', maxWidth: '30rem', marginTop: '1rem', textAlign: 'center' }}>
-              <Typography variant="subtitle1">{song?.song?.description}</Typography>
+              <Typography variant="subtitle1">{song.song.description}</Typography>
             </Box>
 
             <Typography sx={{ marginTop: '1rem' }}>
@@ -73,7 +75,7 @@ const Home: NextPage = () => {
         {song?.nextSong && (
           <>
             <Typography sx={{ fontWeight: 'bold', marginTop: '1rem' }}>Up Next...</Typography>
-            <Typography variant="subtitle2">{getSongCaption(song?.nextSong)}</Typography>
+            <Typography variant="subtitle2">{getSongCaption(song.nextSong)}</Typography>
           </>
         )}
       </Box>

@@ -1,12 +1,13 @@
-import { Queue, Song } from '@prisma/client';
-import { CurrentSongData } from 'src/socketTypes/socketDataTypes';
+import type { Queue, Song } from '@prisma/client';
+import type { CurrentSongData } from 'src/socketTypes/socketDataTypes';
+
 import prisma from './prisma';
 
 export interface QueueWithSong extends Queue {
   song: Song;
 }
 
-export const getInQueue = async (position: number = 0): Promise<QueueWithSong | null> => {
+export const getInQueue = async (position = 0): Promise<QueueWithSong | null> => {
   return await prisma.queue.findFirst({
     skip: position,
     take: 1,
@@ -24,11 +25,11 @@ export const getInQueue = async (position: number = 0): Promise<QueueWithSong | 
 export const getCurrentSong = async (): Promise<CurrentSongData | null> => {
   const currentSong = await getInQueue();
 
-  if (!currentSong || !currentSong?.timeStarted) {
+  if (!currentSong || !currentSong.timeStarted) {
     return null;
   }
 
-  const currentTime = (new Date().getTime() - currentSong?.timeStarted?.getTime()) / 1000;
+  const currentTime = (new Date().getTime() - currentSong.timeStarted.getTime()) / 1000;
 
   return {
     song: currentSong.song,
@@ -44,7 +45,7 @@ export const goToNextSong = async (): Promise<CurrentSongData | null> => {
   if (!currentSong) {
     return null;
   }
-  await removeFromQueue(currentSong?.id);
+  await removeFromQueue(currentSong.id);
   return await getCurrentSong();
 };
 

@@ -1,7 +1,8 @@
-import { User } from '.prisma/client';
+import type { User } from '.prisma/client';
 import express from 'express';
+
+import type { ApiUser } from '../../../../web/apiTypes/user';
 import { authUserMiddleware } from '../../utils/authentication';
-import { ApiUser } from '../../../../web/apiTypes/user';
 
 const UserRouter = express.Router();
 

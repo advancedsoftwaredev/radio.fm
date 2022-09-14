@@ -1,12 +1,15 @@
-import express, { NextFunction, Response } from 'express';
-import { TypedRequestBody, TypedResponse } from '../apiTypes';
-import { ApiUser, UserCredentials } from '../../../../web/apiTypes/user';
-import { AuthorizationError, BadInputError, NotFoundError } from '../errors';
-import { deleteGuestUser, deleteUser, deleteUserSessions, getUserByUsername } from '../../utils/user';
+import type { User } from '@prisma/client';
+import type { NextFunction, Response } from 'express';
+import express from 'express';
+
+import type { ApiUser, UserCredentials } from '../../../../web/apiTypes/user';
+import type { RequestWithUser } from '../../utils/authentication';
+import { authMiddleware, loginUser, logoutUser } from '../../utils/authentication';
 import { getLoginUser, registerUser } from '../../utils/loginRegister';
-import { authMiddleware, loginUser, logoutUser, RequestWithUser } from '../../utils/authentication';
+import { deleteGuestUser, deleteUser, deleteUserSessions, getUserByUsername } from '../../utils/user';
+import type { TypedRequestBody, TypedResponse } from '../apiTypes';
+import { AuthorizationError, BadInputError, NotFoundError } from '../errors';
 import { mapUserToApiUser } from '../user/user';
-import { User } from '@prisma/client';
 
 const AuthRouter = express.Router();
 
@@ -15,7 +18,7 @@ AuthRouter.use(authMiddleware);
 AuthRouter.post(
   '/register',
   async (req: TypedRequestBody<UserCredentials>, res: TypedResponse<ApiUser>, next: NextFunction) => {
-    if (await getUserByUsername(req.body?.username)) {
+    if (await getUserByUsername(req.body.username)) {
       return next(new BadInputError('User already exists with that username'));
     }
     if (!(req.body.username && req.body.password)) {
@@ -25,9 +28,6 @@ AuthRouter.post(
     await deleteGuestUser(req.user);
 
     const user = await registerUser(req.body.username, req.body.password);
-    if (!user) {
-      return next(new BadInputError('Unable to generate user with provided credentials'));
-    }
 
     await loginUser(res, user.id);
     res.status(200).json(mapUserToApiUser(user));
@@ -58,8 +58,9 @@ AuthRouter.get('/logout', async (req: TypedRequestBody<{}>, res: Response, next:
     return next(new AuthorizationError('No active sessions'));
   }
   if (req.user.role === 'GUEST') {
-    const deletedGuest = await deleteUser(req.user.id);
-    if (!deletedGuest) {
+    try {
+      const deletedGuest = await deleteUser(req.user.id);
+    } catch (e) {
       return next(new NotFoundError('Could not delete guest user'));
     }
   } else {

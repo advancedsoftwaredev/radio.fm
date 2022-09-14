@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { CurrentSongData, LiveListenerData, SongInterruptData } from '../../../server/src/socketTypes/socketDataTypes';
-import { ApiSongInfo } from '../../apiTypes/song';
+
+import type {
+  CurrentSongData,
+  LiveListenerData,
+  SongInterruptData,
+} from '../../../server/src/socketTypes/socketDataTypes';
+import type { ApiSongInfo } from '../../apiTypes/song';
 
 export type SongInfo = ApiSongInfo | null;
 
@@ -36,20 +41,22 @@ export const SongContextProvider = (props: { children: any }) => {
   const [volume, setVolume] = useState<number>(0.5);
 
   useEffect(() => {
-    if (audio) audio.volume = volume;
-  }, [volume]);
+    if (audio) {
+      audio.volume = volume;
+    }
+  }, [audio, volume]);
 
   useEffect(() => {
     if (audio) {
       audio.currentTime = time;
-      audio.play();
+      void audio.play();
     }
 
     return () => {
       audio?.pause();
       nextAudio?.pause();
     };
-  }, [audio, time]);
+  }, [nextAudio, audio, time]);
 
   useEffect(() => {
     console.log('song', song);
@@ -62,10 +69,6 @@ export const SongContextProvider = (props: { children: any }) => {
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
   const setSongData = (data: CurrentSongData) => {
-    if (!data) {
-      return;
-    }
-
     audio?.pause();
     nextAudio?.pause();
 

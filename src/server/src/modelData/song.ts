@@ -1,4 +1,4 @@
-import { Song } from '@prisma/client';
+import type { Song } from '@prisma/client';
 
 const songs: Omit<Song, 'id'>[] = [
   {

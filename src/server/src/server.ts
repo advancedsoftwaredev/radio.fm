@@ -1,17 +1,26 @@
-import express, { Response, Request, NextFunction } from 'express';
+import bodyParser from 'body-parser';
+import cookie from 'cookie';
+import cookieParser from 'cookie-parser';
+import type { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import http from 'http';
-import { Server, Socket } from 'socket.io';
+import type { Socket } from 'socket.io';
+import { Server } from 'socket.io';
+import type { ExtendedError } from 'socket.io/dist/namespace';
+
+import type { ApiUser } from '../../web/apiTypes/user';
 import ApiRouter from './api/api';
 import { ApiError, AuthorizationError } from './api/errors';
-import { MessageData, SongData } from './socketTypes/socketDataTypes';
-import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './socketTypes/socketTypes';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import { ApiUser } from '../../web/apiTypes/user';
-import cookie from 'cookie';
-import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
 import { mapUserToApiUser } from './api/user/user';
-import { ExtendedError } from 'socket.io/dist/namespace';
+import type { MessageData, SongData } from './socketTypes/socketDataTypes';
+import type {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from './socketTypes/socketTypes';
+import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
+import prisma from './utils/prisma';
 import {
   addToQueue,
   getCurrentSong,
@@ -22,9 +31,8 @@ import {
   resetFirstSong,
   startQueue,
 } from './utils/queue';
-import prisma from './utils/prisma';
-import { addSongLog } from './utils/songLog';
 import { getSongCount } from './utils/song';
+import { addSongLog } from './utils/songLog';
 
 const app = express();
 const port = 8080;
@@ -53,7 +61,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-const getListenerCount = (namespace: string = '/') => io.of(namespace).sockets.size;
+const getListenerCount = (namespace = '/') => io.of(namespace).sockets.size;
 
 interface SocketWithUser extends Socket {
   data: {
@@ -63,7 +71,7 @@ interface SocketWithUser extends Socket {
 
 const socketMiddleware = async (socket: SocketWithUser, next: (err?: ExtendedError | undefined) => void) => {
   const socketCookies = cookie.parse(socket.request.headers.cookie ?? '');
-  const token: string | undefined = socketCookies?.token;
+  const token: string | undefined = socketCookies.token;
   if (!token) {
     return next();
   }
@@ -149,29 +157,29 @@ const songQueueHandler = async (): Promise<any> => {
   const currentSong = await getInQueue();
   const nextSong = await getNextSong();
 
-  if (!currentSong || !nextSong || !currentSong?.timeStarted) {
+  if (!currentSong || !nextSong || !currentSong.timeStarted) {
     return songQueueHandler();
   }
 
   setTimeout(async () => {
     await addSongLog(
-      currentSong?.timeStarted || new Date(new Date().getTime() - currentSong.song.length * 1000),
-      currentSong?.songId
+      currentSong.timeStarted || new Date(new Date().getTime() - currentSong.song.length * 1000),
+      currentSong.songId
     );
 
-    await removeFromQueue(currentSong?.id);
+    await removeFromQueue(currentSong.id);
 
     io.emit('newSong', {
-      song: nextSong?.song,
+      song: nextSong.song,
       time: 0,
       finished: true,
     });
 
-    songQueueHandler();
-  }, 1000 + currentSong.song.length * 1000 - (new Date().getTime() - currentSong?.timeStarted.getTime()));
+    await songQueueHandler();
+  }, 1000 + currentSong.song.length * 1000 - (new Date().getTime() - currentSong.timeStarted.getTime()));
 };
 
-songQueueHandler();
+void songQueueHandler();
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
