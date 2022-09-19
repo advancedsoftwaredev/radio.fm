@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { api } from '../../apiInterface';
-import { ApiUser } from '../../apiTypes/user';
+import { ApiUser } from '../../../server/src/apiTypes/user';
+import { api } from '../../../server/src/apiInterface/index';
 
 interface UserContextInterface {
   register: (username: string, password: string) => Promise<ApiUser | undefined>;

@@ -1,6 +1,6 @@
 import express, { NextFunction, Response } from 'express';
 import { TypedRequestBody, TypedResponse } from '../apiTypes';
-import { ApiUser, UserCredentials } from '../../../../web/apiTypes/user';
+import { ApiUser, UserCredentials } from '../../apiTypes/user';
 import { AuthorizationError, BadInputError, NotFoundError } from '../errors';
 import { deleteGuestUser, deleteUser, deleteUserSessions, getUserByUsername } from '../../utils/user';
 import { getLoginUser, registerUser } from '../../utils/loginRegister';

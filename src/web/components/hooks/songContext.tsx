@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { CurrentSongData, LiveListenerData, SongInterruptData } from '../../../server/src/socketTypes/socketDataTypes';
-import { ApiSongInfo } from '../../apiTypes/song';
+import { ApiSongInfo } from '../../../server/src/apiTypes/song';
 
 export type SongInfo = ApiSongInfo | null;
 

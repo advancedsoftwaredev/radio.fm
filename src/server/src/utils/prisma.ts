@@ -2,7 +2,8 @@ import { PrismaClient } from '@prisma/client';
 
 let prisma = new PrismaClient();
 
-const getDatabaseName = () => `RadioFMTest`;
+const originalDatabaseUrl = process.env.DATABASE_URL;
+const getDatabaseName = () => "radiofmtest" + process.env.JEST_WORKER_ID;
 
 export async function resetClient() {
   prisma = new PrismaClient();
@@ -11,15 +12,14 @@ export async function resetClient() {
 
 export async function createTestClient() {
   if (process.env.NODE_ENV === 'test') {
-    await resetClient();
+    await prisma.$disconnect();
     await dropTestDatabase();
-    await prisma.$executeRaw`CREATE DATABASE RadioFMTest`;
+    await prisma.$executeRawUnsafe(`CREATE DATABASE ${getDatabaseName()}`);
 
     const databaseArr = process.env.DATABASE_URL?.split('/');
     databaseArr?.pop();
     databaseArr?.push(getDatabaseName());
     process.env.DATABASE_URL = databaseArr?.join('/');
-    console.log(process.env.DATABASE_URL);
 
     await prisma.$disconnect();
     await resetClient();
@@ -28,14 +28,23 @@ export async function createTestClient() {
 
 export async function deleteTestClient() {
   if (process.env.NODE_ENV === 'test') {
-    await dropTestDatabase();
     await prisma.$disconnect();
+    process.env.DATABASE_URL = originalDatabaseUrl;
+    await resetClient();
+    await dropTestDatabase();
   }
 }
 
 async function dropTestDatabase() {
   if (process.env.NODE_ENV === 'test') {
-    await prisma.$executeRaw`DROP DATABASE IF EXISTS RadioFMTest`;
+    await prisma.$executeRawUnsafe(`DROP DATABASE IF EXISTS ${getDatabaseName()}`);
+  }
+}
+
+export async function resetDatabase(){
+  if(process.env.NODE_ENV === 'test'){
+    await deleteTestClient();
+    await createTestClient();
   }
 }
 

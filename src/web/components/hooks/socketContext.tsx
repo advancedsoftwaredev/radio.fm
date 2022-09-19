@@ -8,7 +8,7 @@ import {
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
 import { ServerToClientEvents, ClientToServerEvents } from '../../../server/src/socketTypes/socketTypes';
-import { ApiSongInfo } from '../../apiTypes/song';
+import { ApiSongInfo } from '../../../server/src/apiTypes/song';
 import { useSongHandler } from './songContext';
 import { useUserData } from './userContext';
 
@@ -116,6 +116,7 @@ export function SocketContextProvider(props: { children: any }) {
     // Admin functions
     newSong: (data: SongData) => adminSocket?.emit('newSong', data),
   };
+
 
   return (
     <SocketContext.Provider value={{ messages }}>

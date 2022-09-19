@@ -5,10 +5,10 @@ import React from 'react';
 import Header from '../components/Header';
 import { Box, Button, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useSocketData, useSocketInterface } from '../components/hooks/socketContext';
+import { useSocketInterface } from '../components/hooks/socketContext';
 import VolumeSlider from '../components/VolumeSlider';
 import { useSong } from '../components/hooks/songContext';
-import { ApiSongInfo } from '../apiTypes/song';
+import { ApiSongInfo } from '../../server/src/apiTypes/song';
 import ParticlesComponent from '../components/Particles';
 
 const Home: NextPage = () => {

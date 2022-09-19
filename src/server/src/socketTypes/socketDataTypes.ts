@@ -1,4 +1,4 @@
-import { ApiSongInfo } from '../../../web/apiTypes/song';
+import { ApiSongInfo } from '../apiTypes/song';
 
 export interface LiveListenerData {
   liveListenerCount: number;

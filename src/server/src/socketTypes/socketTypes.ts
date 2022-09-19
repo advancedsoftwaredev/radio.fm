@@ -1,4 +1,4 @@
-import { ApiSongInfo } from '../../../web/apiTypes/song';
+import { ApiSongInfo } from '../apiTypes/song';
 import { LiveListenerData, MessageData, SongData, CurrentSongData, SongInterruptData } from './socketDataTypes';
 
 // Types the messages from the server to the client
