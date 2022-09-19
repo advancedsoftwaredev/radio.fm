@@ -1,10 +1,10 @@
 import type { Response } from 'express';
 import type { Send } from 'express-serve-static-core';
-import type { RequestWithUser } from 'src/utils/authentication';
+import { RequestWithUser } from '../utils/authentication';
 
-export interface TypedRequestBody<T> extends RequestWithUser {
+export type TypedRequestBody<T> = RequestWithUser & {
   body: T;
-}
+};
 
 export interface TypedResponse<ResBody> extends Response {
   json: Send<ResBody, this>;

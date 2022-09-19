@@ -1,5 +1,5 @@
 import type { Queue, Song } from '@prisma/client';
-import type { CurrentSongData } from 'src/socketTypes/socketDataTypes';
+import { CurrentSongData } from '../socketTypes/socketDataTypes';
 
 import prisma from './prisma';
 

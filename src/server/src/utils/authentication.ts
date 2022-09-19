@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 
 import prisma from './prisma';
 
-if (!process.env.JWT_SECRET) {
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
   throw new Error('JWT_SECRET is not defined');
 }
-const jwt_secret = process.env.JWT_SECRET;
+const jwt_secret = process.env.JWT_SECRET ?? '_dev_secret';
 
 const sessionAge = 1000 * 60 * 60 * 24 * 90; // 90 days
 
