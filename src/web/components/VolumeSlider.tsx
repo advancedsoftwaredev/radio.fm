@@ -1,7 +1,7 @@
-import { Box, Slider } from '@mui/material';
-import { useEffect, useState } from 'react';
 import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeUp from '@mui/icons-material/VolumeUp';
+import { Box, Slider } from '@mui/material';
+
 import { useSong, useSongHandler } from './hooks/songContext';
 
 export default function VolumeSlider() {

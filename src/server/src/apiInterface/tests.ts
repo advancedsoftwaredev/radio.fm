@@ -1,8 +1,9 @@
 import { CookieAccessInfo, CookieJar } from 'cookiejar';
 import type { NextApiHandler } from 'next';
 import request from 'supertest';
-import { createEndpoints } from './endpoints';
+
 import { httpServer } from '../app';
+import { createEndpoints } from './endpoints';
 
 type BodyMethod = 'POST';
 type NoBodyMethod = 'GET';

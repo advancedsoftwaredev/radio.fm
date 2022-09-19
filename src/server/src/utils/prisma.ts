@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 let prisma = new PrismaClient();
 
 const originalDatabaseUrl = process.env.DATABASE_URL;
-const getDatabaseName = () => "radiofmtest" + process.env.JEST_WORKER_ID;
+const getDatabaseName = () => 'radiofmtest' + process.env.JEST_WORKER_ID;
 
 export async function resetClient() {
   prisma = new PrismaClient();
@@ -41,8 +41,8 @@ async function dropTestDatabase() {
   }
 }
 
-export async function resetDatabase(){
-  if(process.env.NODE_ENV === 'test'){
+export async function resetDatabase() {
+  if (process.env.NODE_ENV === 'test') {
     await deleteTestClient();
     await createTestClient();
   }

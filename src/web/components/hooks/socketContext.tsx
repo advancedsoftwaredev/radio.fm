@@ -1,14 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import {
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+
+import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
+import type {
+  CurrentSongData,
   LiveListenerData,
   MessageData,
   SongData,
-  CurrentSongData,
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
-import { ServerToClientEvents, ClientToServerEvents } from '../../../server/src/socketTypes/socketTypes';
-import { ApiSongInfo } from '../../../server/src/apiTypes/song';
+import type { ClientToServerEvents, ServerToClientEvents } from '../../../server/src/socketTypes/socketTypes';
 import { useSongHandler } from './songContext';
 import { useUserData } from './userContext';
 
@@ -29,8 +31,7 @@ interface SocketInterfaceContext {
 const SocketContext = React.createContext<SocketContextData | null>(null);
 const SocketInterfaceContext = React.createContext<SocketInterfaceContext | null>(null);
 
-const connectToSocket = (namespace: string = '/') =>
-  io(namespace, { withCredentials: true, path: '/socket.io/socket.io' });
+const connectToSocket = (namespace = '/') => io(namespace, { withCredentials: true, path: '/socket.io/socket.io' });
 
 export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
@@ -40,6 +41,9 @@ export function SocketContextProvider(props: { children: any }) {
 
   const user = useUserData();
   const songHandler = useSongHandler();
+
+  const requestNextSong = useCallback(() => socket?.emit('requestNextSong'), [socket]);
+  const getTime = () => socket?.emit('getTime');
 
   useEffect(() => {
     const newSocket = connectToSocket();
@@ -57,7 +61,7 @@ export function SocketContextProvider(props: { children: any }) {
       newAdminSocket?.close();
       newSocket.close();
     };
-  }, [setSocket, user]);
+  }, [adminSocket, setSocket, user]);
 
   useEffect(() => {
     if (socket) {
@@ -100,10 +104,7 @@ export function SocketContextProvider(props: { children: any }) {
         socket.off('nextSong');
       }
     };
-  }, [socket, adminSocket]);
-
-  const requestNextSong = () => socket?.emit('requestNextSong');
-  const getTime = () => socket?.emit('getTime');
+  }, [songHandler, requestNextSong, socket, adminSocket]);
 
   const socketInterface: SocketInterfaceContext = {
     socket,
@@ -116,7 +117,6 @@ export function SocketContextProvider(props: { children: any }) {
     // Admin functions
     newSong: (data: SongData) => adminSocket?.emit('newSong', data),
   };
-
 
   return (
     <SocketContext.Provider value={{ messages }}>

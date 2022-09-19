@@ -1,6 +1,7 @@
-import { Session, UnwrapPromise, User } from '@prisma/client';
-import { Request, Response } from 'express';
+import type { Session, UnwrapPromise, User } from '@prisma/client';
+import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+
 import prisma from './prisma';
 
 if (!process.env.JWT_SECRET) {
@@ -24,7 +25,7 @@ interface TokenData {
 }
 
 async function encodeToken(sessionId: string): Promise<string> {
-  let data: TokenData = { sid: sessionId };
+  const data: TokenData = { sid: sessionId };
   return jwt.sign(data, jwt_secret);
 }
 
@@ -37,7 +38,7 @@ export async function decodeToken(token: string): Promise<string> {
 */
 
 async function getReqSessionId(req: Request): Promise<string | null> {
-  let token = req.cookies.token;
+  const token = req.cookies.token;
   if (token) {
     return decodeToken(token);
   }
@@ -45,7 +46,7 @@ async function getReqSessionId(req: Request): Promise<string | null> {
 }
 
 async function setResSessionId(res: Response, sessionId: string): Promise<void> {
-  let token = await encodeToken(sessionId);
+  const token = await encodeToken(sessionId);
   res.cookie('token', token, {
     expires: new Date(Date.now() + sessionAge),
     httpOnly: true,
@@ -62,8 +63,8 @@ async function clearResSessionId(res: Response): Promise<void> {
 
 type SessionWithUser = NonNullable<UnwrapPromise<ReturnType<typeof getSessionWithUserBySessionId>>>;
 export async function getSessionWithUserBySessionId(sessionId: string) {
-  let session = await prisma.session.findFirst({ where: { id: sessionId }, include: { user: true } });
-  if (session && session.user && session.invalidatedAt > new Date()) {
+  const session = await prisma.session.findFirst({ where: { id: sessionId }, include: { user: true } });
+  if (session && session.invalidatedAt > new Date()) {
     return session;
   }
 }
@@ -72,7 +73,7 @@ async function createSessionForUser(userId: string): Promise<Session> {
   return await prisma.session.create({
     data: {
       invalidatedAt: new Date(Date.now() + sessionAge),
-      userId: userId,
+      userId,
     },
   });
 }
@@ -99,7 +100,7 @@ async function createGuestSessionWithUser(): Promise<SessionWithUser> {
 */
 
 export async function loginUser(res: Response, userId: string) {
-  let session = await createSessionForUser(userId);
+  const session = await createSessionForUser(userId);
   await setResSessionId(res, session.id);
 }
 
@@ -108,9 +109,9 @@ export async function logoutUser(res: Response) {
 }
 
 async function getSessionUser(req: Request): Promise<User | null> {
-  let sessionId = await getReqSessionId(req);
+  const sessionId = await getReqSessionId(req);
   if (sessionId) {
-    let session = await getSessionWithUserBySessionId(sessionId);
+    const session = await getSessionWithUserBySessionId(sessionId);
     if (session) {
       return session.user;
     }
@@ -119,24 +120,24 @@ async function getSessionUser(req: Request): Promise<User | null> {
 }
 
 async function getOrCreateGuestSession(req: Request, res: Response): Promise<User> {
-  let user = await getSessionUser(req);
+  const user = await getSessionUser(req);
   if (user) {
     return user;
   }
-  let session = await createGuestSessionWithUser();
+  const session = await createGuestSessionWithUser();
   await setResSessionId(res, session.id);
   return session.user;
 }
 
 export async function authMiddleware(req: Request, res: Response, next: Function) {
-  let user = await getOrCreateGuestSession(req, res);
+  const user = await getOrCreateGuestSession(req, res);
   (req as RequestWithUser).user = user;
   next();
 }
 
 export async function authUserMiddleware(req: Request, res: Response, next: Function) {
-  let user = await getSessionUser(req);
-  if (user && user?.role !== 'GUEST') {
+  const user = await getSessionUser(req);
+  if (user && user.role !== 'GUEST') {
     (req as RequestWithUser).user = user;
     next();
   } else {
@@ -145,7 +146,7 @@ export async function authUserMiddleware(req: Request, res: Response, next: Func
 }
 
 export async function authAdminMiddleware(req: Request, res: Response, next: Function) {
-  let user = await getSessionUser(req);
+  const user = await getSessionUser(req);
   if (user?.role === 'ADMIN') {
     (req as RequestWithUser).user = user;
     next();

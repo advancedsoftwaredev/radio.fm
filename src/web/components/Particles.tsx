@@ -1,8 +1,7 @@
-import Particles from 'react-tsparticles';
-import { loadSlim } from 'tsparticles-slim';
-
 import { useCallback, useMemo } from 'react';
-import { Engine } from 'tsparticles-engine';
+import Particles from 'react-tsparticles';
+import type { Engine } from 'tsparticles-engine';
+import { loadSlim } from 'tsparticles-slim';
 
 const ParticlesComponent = () => {
   const options = useMemo(() => {
@@ -44,7 +43,7 @@ const ParticlesComponent = () => {
   }, []);
 
   const particlesInit = useCallback(async (engine: Engine) => {
-    loadSlim(engine);
+    void loadSlim(engine);
   }, []);
 
   return <Particles init={particlesInit} options={options} />;

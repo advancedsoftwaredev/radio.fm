@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { CurrentSongData, LiveListenerData, SongInterruptData } from '../../../server/src/socketTypes/socketDataTypes';
-import { ApiSongInfo } from '../../../server/src/apiTypes/song';
+
+import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
+import type {
+  CurrentSongData,
+  LiveListenerData,
+  SongInterruptData,
+} from '../../../server/src/socketTypes/socketDataTypes';
 
 export type SongInfo = ApiSongInfo | null;
 
@@ -39,33 +44,26 @@ export const SongContextProvider = (props: { children: any }) => {
   const [volume, setVolume] = useState<number>(0.5);
 
   useEffect(() => {
-    setVolume(JSON.parse(localStorage.getItem(volumeKey) || '0.5'));
-  }, []);
-
-  useEffect(() => {
-    if (audio) audio.volume = volume;
-    localStorage.setItem(volumeKey, JSON.stringify(volume));
-  }, [volume]);
+    if (audio) {
+      audio.volume = volume;
+    }
+  }, [audio, volume]);
 
   useEffect(() => {
     if (audio) {
       audio.currentTime = time;
-      audio.play();
+      void audio.play();
     }
 
     return () => {
       audio?.pause();
       nextAudio?.pause();
     };
-  }, [audio, time]);
+  }, [nextAudio, audio, time]);
 
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
   const setSongData = (data: CurrentSongData) => {
-    if (!data) {
-      return;
-    }
-
     audio?.pause();
     nextAudio?.pause();
 

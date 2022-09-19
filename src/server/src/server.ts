@@ -1,4 +1,4 @@
-import { httpServer } from "./app";
+import { httpServer } from './app';
 
 const port = 8080;
 
