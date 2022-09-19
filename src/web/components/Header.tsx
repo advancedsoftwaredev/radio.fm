@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+
 import { useUserData, useUserInterface } from './hooks/userContext';
 
 const Header = () => {
@@ -9,7 +10,7 @@ const Header = () => {
 
   return (
     <Box display="flex" alignItems="center" justifyContent="flex-end" padding="1rem" position="absolute" width="100%">
-      {!user || user?.role === 'GUEST' ? (
+      {!user || user.role === 'GUEST' ? (
         <>
           <Button variant="text" sx={{ marginRight: '.5rem' }} onClick={() => router.push('/login')}>
             <Typography variant="h6">Login</Typography>

@@ -1,7 +1,8 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { ApiUser } from '../apiTypes/user';
+
+import type { ApiUser } from '../apiTypes/user';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 
@@ -17,9 +18,9 @@ const Register = () => {
 
   useEffect(() => {
     if (user?.role !== 'GUEST') {
-      router.push('/');
+      void router.push('/');
     }
-  }, [user]);
+  }, [user, router]);
 
   const handleLogin = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();

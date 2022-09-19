@@ -8,4 +8,4 @@ async function seed() {
   users.forEach(async (user) => await registerUser(user.username, user.password, user.role));
 }
 
-seed();
+void seed();

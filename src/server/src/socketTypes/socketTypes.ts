@@ -1,5 +1,5 @@
-import { ApiSongInfo } from '../../../web/apiTypes/song';
-import { LiveListenerData, MessageData, SongData, CurrentSongData, SongInterruptData } from './socketDataTypes';
+import type { ApiSongInfo } from '../../../web/apiTypes/song';
+import type { CurrentSongData, LiveListenerData, MessageData, SongData, SongInterruptData } from './socketDataTypes';
 
 // Types the messages from the server to the client
 export interface ServerToClientEvents {
