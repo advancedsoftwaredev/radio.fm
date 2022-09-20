@@ -1,6 +1,7 @@
 import type { Response } from 'express';
 import type { Send } from 'express-serve-static-core';
-import { RequestWithUser } from '../utils/authentication';
+
+import type { RequestWithUser } from '../utils/authentication';
 
 export type TypedRequestBody<T> = RequestWithUser & {
   body: T;

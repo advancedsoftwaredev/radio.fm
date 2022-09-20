@@ -11,9 +11,9 @@ type NoBodyMethod = 'GET';
 export type TestClient = ReturnType<typeof makeTestClient>;
 
 export function makeTestClient() {
-  const getResolver = (path: string) => {
-    return require('../pages/api' + path).default;
-  };
+  // const getResolver = (path: string) => {
+  //   return require('../pages/api' + path).default;
+  // };
 
   const resolvers: Record<string, NextApiHandler> = {};
 
@@ -35,7 +35,7 @@ export function makeTestClient() {
   }
 
   const makeRequest = <Resp>(method: NoBodyMethod, path: string) => {
-    resolvers[path] = getResolver(path);
+    // resolvers[path] = getResolver(path);
 
     return async () => {
       const response = await agent.get(path).set('cookie', jar.getCookies(jarAccess).toValueString());
@@ -54,7 +54,7 @@ export function makeTestClient() {
   };
 
   const makeBodyRequest = <Req, Resp>(method: BodyMethod, path: string) => {
-    resolvers[path] = getResolver(path);
+    // resolvers[path] = getResolver(path);
 
     return async (body: Req) => {
       const response = await agent

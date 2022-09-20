@@ -125,7 +125,7 @@ ioAdmin.on('connection', (socket: SocketWithUser) => {
   socket.on('newSong', (data: SongData) => {});
 });
 
-const songQueueHandler = async (): Promise<any> => {
+export const songQueueHandler = async (): Promise<any> => {
   const queueLength = await getQueueLength();
   const songCount = await getSongCount();
   const minimumInQueue = 3;
@@ -177,7 +177,5 @@ const songQueueHandler = async (): Promise<any> => {
     void songQueueHandler();
   }, 1000 + currentSong.song.length * 1000 - (new Date().getTime() - currentSong.timeStarted.getTime()));
 };
-
-void songQueueHandler();
 
 export const httpServer = server;

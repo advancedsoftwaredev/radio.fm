@@ -1,7 +1,9 @@
-import { httpServer } from './app';
+import { httpServer, songQueueHandler } from './app';
 
 const port = 8080;
 
 httpServer.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+void songQueueHandler();
