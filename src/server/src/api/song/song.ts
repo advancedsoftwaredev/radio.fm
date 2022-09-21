@@ -4,7 +4,7 @@ import express from 'express';
 
 import type { ApiSongInfo, SongByIdInput } from '../../apiTypes/song';
 import { authMiddleware } from '../../utils/authentication';
-import prisma from '../../utils/prisma';
+import { prisma } from '../../utils/prisma';
 import type { TypedRequestBody, TypedResponse } from '../apiTypes';
 import { NotFoundError } from '../errors';
 

@@ -2,7 +2,7 @@ import type { Session, UnwrapPromise, User } from '@prisma/client';
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
   throw new Error('JWT_SECRET is not defined');

@@ -1,7 +1,7 @@
 import type { Queue, Song } from '@prisma/client';
 
 import type { CurrentSongData } from '../socketTypes/socketDataTypes';
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 export interface QueueWithSong extends Queue {
   song: Song;

@@ -1,4 +1,4 @@
-import { createTestClient, deleteTestClient } from './prisma';
+import { createTestClient, deleteTestClient } from '../testSetup/database';
 
 if (process.env.NODE_ENV !== 'test') {
   throw new Error('This file should only be used in test environment');

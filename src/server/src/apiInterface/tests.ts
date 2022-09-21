@@ -46,7 +46,7 @@ export function makeTestClient() {
       }
 
       if (response.status !== 200) {
-        console.error(response);
+        console.error(response.status, response.body);
         throw response;
       }
 
@@ -68,7 +68,7 @@ export function makeTestClient() {
       }
 
       if (response.status !== 200) {
-        console.error(response);
+        console.error(response.status, response.body);
         throw response;
       }
 
