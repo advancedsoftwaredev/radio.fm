@@ -1,24 +1,26 @@
 import { makeTestClient } from '../../../server/src/apiInterface/tests';
 import { resetDatabase } from '../testSetup/database';
 import { initializeDatabaseTesting } from '../utils/databaseTest';
-import { prisma, resetClient } from '../utils/prisma';
+import { resetClient } from '../utils/prisma';
 
 initializeDatabaseTesting();
 
 describe('prisma', () => {
+  // Change this test later to interact with song count or user count once implemented
   it('connects to test database', async () => {
     resetClient();
-    const credentials = { username: 'admin', password: 'test' };
+    const credentials = { username: 'user', password: 'password' };
 
     const client = makeTestClient();
     expect((await client.auth.getSelf()).role).toBe('GUEST');
 
     await client.auth.register(credentials);
 
-    expect((await client.auth.getSelf()).username).toBeTruthy();
+    expect((await client.auth.getSelf()).role).toBe('USER');
 
     await resetDatabase();
 
-    await client.auth.login(credentials);
+    // Cookie of logged in user is still attached to client, test it doesn't work
+    expect((await client.auth.getSelf()).role).toBe('GUEST');
   });
 });
