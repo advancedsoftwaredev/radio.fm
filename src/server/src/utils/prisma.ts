@@ -1,4 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import { exec as callbackExec } from 'child_process';
+import util from 'util';
+
+const exec = util.promisify(callbackExec);
+
+async function setupPrisma() {
+  await exec('yarn prisma migrate reset -f', {
+    env: { ...process.env },
+  });
+}
 
 let prisma = new PrismaClient();
 
@@ -12,16 +22,16 @@ export async function resetClient() {
 
 export async function createTestClient() {
   if (process.env.NODE_ENV === 'test') {
-    await prisma.$disconnect();
-    await dropTestDatabase();
+    await deleteTestClient();
     await prisma.$executeRawUnsafe(`CREATE DATABASE ${getDatabaseName()}`);
 
     const databaseArr = process.env.DATABASE_URL?.split('/');
     databaseArr?.pop();
     databaseArr?.push(getDatabaseName());
-    process.env.DATABASE_URL = databaseArr?.join('/');
 
     await prisma.$disconnect();
+    process.env.DATABASE_URL = databaseArr?.join('/');
+    await setupPrisma();
     await resetClient();
   }
 }

@@ -1,3 +1,4 @@
+import { fullPath } from '.';
 import { CookieAccessInfo, CookieJar } from 'cookiejar';
 import type { NextApiHandler } from 'next';
 import request from 'supertest';
@@ -38,7 +39,7 @@ export function makeTestClient() {
     // resolvers[path] = getResolver(path);
 
     return async () => {
-      const response = await agent.get(path).set('cookie', jar.getCookies(jarAccess).toValueString());
+      const response = await agent.get(fullPath(path)).set('cookie', jar.getCookies(jarAccess).toValueString());
 
       if (response.headers['set-cookie']) {
         jar.setCookies(response.headers['set-cookie']);
@@ -58,7 +59,7 @@ export function makeTestClient() {
 
     return async (body: Req) => {
       const response = await agent
-        .post(path)
+        .post(fullPath(path))
         .set('cookie', jar.getCookies(jarAccess).toValueString())
         .send(body as any);
 

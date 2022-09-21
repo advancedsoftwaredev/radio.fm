@@ -19,6 +19,7 @@ AuthRouter.post(
   '/register',
   async (req: TypedRequestBody<UserCredentials>, res: TypedResponse<ApiUser>, next: NextFunction) => {
     if (await getUserByUsername(req.body.username)) {
+      console.log('thisuser', await getUserByUsername(req.body.username));
       return next(new BadInputError('User already exists with that username'));
     }
     if (!(req.body.username && req.body.password)) {

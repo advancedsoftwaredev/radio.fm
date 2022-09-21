@@ -3,7 +3,7 @@ import { createEndpoints } from './endpoints';
 type BodyMethod = 'POST';
 type NoBodyMethod = 'GET';
 
-function fullPath(path: string) {
+export function fullPath(path: string) {
   return '/api' + path;
 }
 

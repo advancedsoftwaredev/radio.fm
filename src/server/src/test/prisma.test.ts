@@ -9,10 +9,9 @@ describe('prisma', () => {
     const credentials = { username: 'admin', password: 'test' };
 
     const client = makeTestClient();
-    expect((await client.auth.getSelf()).username).toBeFalsy();
+    expect((await client.auth.getSelf()).role).toBe('GUEST');
 
     await client.auth.register(credentials);
-    await client.auth.login(credentials);
 
     expect((await client.auth.getSelf()).username).toBeTruthy();
 
