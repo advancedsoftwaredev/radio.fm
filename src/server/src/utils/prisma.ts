@@ -5,9 +5,11 @@ import util from 'util';
 const exec = util.promisify(callbackExec);
 
 async function setupPrisma() {
-  await exec('yarn prisma migrate reset -f', {
-    env: { ...process.env },
-  });
+  if (process.env.NODE_ENV === 'test') {
+    await exec('yarn prisma migrate reset -f', {
+      env: { ...process.env },
+    });
+  }
 }
 
 let prisma = new PrismaClient();

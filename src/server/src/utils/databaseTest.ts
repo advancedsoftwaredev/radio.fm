@@ -1,5 +1,9 @@
 import { createTestClient, deleteTestClient } from './prisma';
 
+if (process.env.NODE_ENV !== 'test') {
+  throw new Error('This file should only be used in test environment');
+}
+
 export function initializeDatabaseTesting() {
   jest.setTimeout(30000);
 
