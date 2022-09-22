@@ -1,6 +1,5 @@
 import { fullPath } from '.';
 import { CookieAccessInfo, CookieJar } from 'cookiejar';
-import type { NextApiHandler } from 'next';
 import request from 'supertest';
 
 import { httpServer } from '../app';
@@ -12,12 +11,6 @@ type NoBodyMethod = 'GET';
 export type TestClient = ReturnType<typeof makeTestClient>;
 
 export function makeTestClient() {
-  // const getResolver = (path: string) => {
-  //   return require('../pages/api' + path).default;
-  // };
-
-  const resolvers: Record<string, NextApiHandler> = {};
-
   const agent = request.agent(httpServer);
 
   const jar = new CookieJar();
@@ -36,8 +29,6 @@ export function makeTestClient() {
   }
 
   const makeRequest = <Resp>(method: NoBodyMethod, path: string) => {
-    // resolvers[path] = getResolver(path);
-
     return async () => {
       const response = await agent.get(fullPath(path)).set('cookie', jar.getCookies(jarAccess).toValueString());
 
@@ -55,8 +46,6 @@ export function makeTestClient() {
   };
 
   const makeBodyRequest = <Req, Resp>(method: BodyMethod, path: string) => {
-    // resolvers[path] = getResolver(path);
-
     return async (body: Req) => {
       const response = await agent
         .post(fullPath(path))
@@ -78,3 +67,5 @@ export function makeTestClient() {
 
   return createEndpoints(makeRequest, makeBodyRequest);
 }
+
+export const testClient = makeTestClient();
