@@ -1,14 +1,12 @@
-import { makeTestClient } from '../../../server/src/apiInterface/tests';
+import { makeTestClient } from '../apiInterface/tests';
 import { resetDatabase } from '../testSetup/database';
 import { initializeDatabaseTesting } from '../utils/databaseTest';
-import { resetClient } from '../utils/prisma';
 
 initializeDatabaseTesting();
 
 describe('prisma', () => {
   // Change this test later to interact with song count or user count once implemented
   it('connects to test database', async () => {
-    resetClient();
     const credentials = { username: 'user', password: 'password' };
 
     const client = makeTestClient();

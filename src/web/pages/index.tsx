@@ -7,7 +7,7 @@ import React from 'react';
 import type { ApiSongInfo } from '../../server/src/apiTypes/song';
 import Header from '../components/Header';
 import { useSocketInterface } from '../components/hooks/socketContext';
-import { useSong } from '../components/hooks/songContext';
+import { useSong, useSongHandler } from '../components/hooks/songContext';
 import ParticlesComponent from '../components/Particles';
 import VolumeSlider from '../components/VolumeSlider';
 
@@ -16,6 +16,7 @@ import styles from '../styles/Home.module.css';
 const Home: NextPage = () => {
   const socketHandler = useSocketInterface();
   const song = useSong();
+  const songHandler = useSongHandler();
 
   const getSongCaption = (songData: ApiSongInfo) => `"${songData.title}" - ${songData.artist}`;
 
@@ -63,7 +64,14 @@ const Home: NextPage = () => {
               )}
             </Typography>
 
-            <Button onClick={() => socketHandler?.getTime()}>
+            <Button
+              onClick={() => {
+                void socketHandler?.getTime();
+                if (song.volume === 0) {
+                  songHandler?.setVolumeValue(0.5);
+                }
+              }}
+            >
               <Box display="flex" alignItems="center">
                 <Typography sx={{ fontSize: '2rem' }}>Play</Typography>
                 <PlayArrowIcon sx={{ fontSize: '4rem' }} />

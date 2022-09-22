@@ -20,7 +20,7 @@ import type {
   SocketData,
 } from './socketTypes/socketTypes';
 import { decodeToken, getSessionWithUserBySessionId } from './utils/authentication';
-import {prisma} from './utils/prisma';
+import { prisma } from './utils/prisma';
 import {
   addToQueue,
   getCurrentSong,

@@ -41,9 +41,17 @@ export const SongContextProvider = (props: { children: any }) => {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [nextAudio, setNextAudio] = useState<HTMLAudioElement | null>(null);
   const [listenerCount, setListenerCount] = useState<number>(0);
-  const [volume, setVolume] = useState<number>(0.5);
+  const [volume, setVolume] = useState<number>(0);
 
   useEffect(() => {
+    const savedVolume = Number(JSON.parse(JSON.stringify(localStorage.getItem(volumeKey))));
+    if (savedVolume) {
+      setVolume(() => savedVolume);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(volumeKey, JSON.stringify(volume));
     if (audio) {
       audio.volume = volume;
     }
