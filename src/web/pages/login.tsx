@@ -2,7 +2,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import type { ApiUser } from '../apiTypes/user';
+import type { ApiUser } from '../../server/src/apiTypes/user';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 

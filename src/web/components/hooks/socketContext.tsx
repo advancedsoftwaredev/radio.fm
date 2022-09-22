@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
 
+import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
 import type {
   CurrentSongData,
   LiveListenerData,
@@ -10,7 +11,6 @@ import type {
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
 import type { ClientToServerEvents, ServerToClientEvents } from '../../../server/src/socketTypes/socketTypes';
-import type { ApiSongInfo } from '../../apiTypes/song';
 import { useSongHandler } from './songContext';
 import { useUserData } from './userContext';
 

@@ -1,18 +1,12 @@
 import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeUp from '@mui/icons-material/VolumeUp';
 import { Box, Slider } from '@mui/material';
-import { useEffect, useState } from 'react';
 
-import { useSongHandler } from './hooks/songContext';
+import { useSong, useSongHandler } from './hooks/songContext';
 
 export default function VolumeSlider() {
-  const [value, setValue] = useState<number>(50);
-
+  const song = useSong();
   const songHandler = useSongHandler();
-
-  useEffect(() => {
-    songHandler?.setVolumeValue(value / 100);
-  }, [songHandler, value]);
 
   return (
     <Box
@@ -29,10 +23,10 @@ export default function VolumeSlider() {
       <VolumeDown />
       <Slider
         aria-label="Volume"
-        value={value}
+        value={(song?.volume ?? 0.5) * 100}
         sx={{ margin: 'auto 1rem' }}
         onChange={(event: Event, newValue: number | number[]) => {
-          setValue(newValue as number);
+          songHandler?.setVolumeValue((newValue as number) / 100);
         }}
       />
       <VolumeUp />

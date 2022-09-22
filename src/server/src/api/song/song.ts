@@ -2,9 +2,9 @@ import type { Song } from '@prisma/client';
 import type { NextFunction } from 'express';
 import express from 'express';
 
-import type { ApiSongInfo, SongByIdInput } from '../../../../web/apiTypes/song';
+import type { ApiSongInfo, SongByIdInput } from '../../apiTypes/song';
 import { authMiddleware } from '../../utils/authentication';
-import prisma from '../../utils/prisma';
+import { prisma } from '../../utils/prisma';
 import type { TypedRequestBody, TypedResponse } from '../apiTypes';
 import { NotFoundError } from '../errors';
 

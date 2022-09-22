@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 
+import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
 import type {
   CurrentSongData,
   LiveListenerData,
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
-import type { ApiSongInfo } from '../../apiTypes/song';
 
 export type SongInfo = ApiSongInfo | null;
 
@@ -14,6 +14,7 @@ interface SongContextInterface {
   song: SongInfo;
   nextSong: SongInfo;
   audio: HTMLAudioElement | null;
+  volume: number;
   listenerCount: number;
 }
 
@@ -31,6 +32,8 @@ const SongHandlerContext = React.createContext<SongHandlerContextInterface | nul
 export const useSong = () => useContext(SongContext);
 export const useSongHandler = () => useContext(SongHandlerContext);
 
+const volumeKey = 'radiofm.volume';
+
 export const SongContextProvider = (props: { children: any }) => {
   const [time, setTime] = useState<number>(0);
   const [song, setSong] = useState<SongInfo>(null);
@@ -38,9 +41,17 @@ export const SongContextProvider = (props: { children: any }) => {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [nextAudio, setNextAudio] = useState<HTMLAudioElement | null>(null);
   const [listenerCount, setListenerCount] = useState<number>(0);
-  const [volume, setVolume] = useState<number>(0.5);
+  const [volume, setVolume] = useState<number>(0);
 
   useEffect(() => {
+    const savedVolume = Number(JSON.parse(JSON.stringify(localStorage.getItem(volumeKey))));
+    if (savedVolume) {
+      setVolume(() => savedVolume);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(volumeKey, JSON.stringify(volume));
     if (audio) {
       audio.volume = volume;
     }
@@ -57,14 +68,6 @@ export const SongContextProvider = (props: { children: any }) => {
       nextAudio?.pause();
     };
   }, [nextAudio, audio, time]);
-
-  useEffect(() => {
-    console.log('song', song);
-  }, [song]);
-
-  useEffect(() => {
-    console.log('nextSong', nextSong);
-  }, [nextSong]);
 
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
@@ -99,7 +102,7 @@ export const SongContextProvider = (props: { children: any }) => {
   };
 
   return (
-    <SongContext.Provider value={{ time, song, nextSong, audio, listenerCount }}>
+    <SongContext.Provider value={{ time, song, nextSong, audio, listenerCount, volume }}>
       <SongHandlerContext.Provider
         value={{ setListenerData, setSongData, setNextSongData, setTimeData, setVolumeValue }}
       >

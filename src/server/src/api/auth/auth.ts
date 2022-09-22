@@ -2,7 +2,7 @@ import type { User } from '@prisma/client';
 import type { NextFunction, Response } from 'express';
 import express from 'express';
 
-import type { ApiUser, UserCredentials } from '../../../../web/apiTypes/user';
+import type { ApiUser, UserCredentials } from '../../apiTypes/user';
 import type { RequestWithUser } from '../../utils/authentication';
 import { authMiddleware, loginUser, logoutUser } from '../../utils/authentication';
 import { getLoginUser, registerUser } from '../../utils/loginRegister';
