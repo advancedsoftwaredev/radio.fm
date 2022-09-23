@@ -1,4 +1,3 @@
-import { fullPath } from '.';
 import { CookieAccessInfo, CookieJar } from 'cookiejar';
 import request from 'supertest';
 
@@ -30,7 +29,7 @@ export function makeTestClient() {
 
   const makeRequest = <Resp>(method: NoBodyMethod, path: string) => {
     return async () => {
-      const response = await agent.get(fullPath(path)).set('cookie', jar.getCookies(jarAccess).toValueString());
+      const response = await agent.get('/api' + path).set('cookie', jar.getCookies(jarAccess).toValueString());
 
       if (response.headers['set-cookie']) {
         jar.setCookies(response.headers['set-cookie']);
@@ -48,7 +47,7 @@ export function makeTestClient() {
   const makeBodyRequest = <Req, Resp>(method: BodyMethod, path: string) => {
     return async (body: Req) => {
       const response = await agent
-        .post(fullPath(path))
+        .post('/api' + path)
         .set('cookie', jar.getCookies(jarAccess).toValueString())
         .send(body as any);
 
