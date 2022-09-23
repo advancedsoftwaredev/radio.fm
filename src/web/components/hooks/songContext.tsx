@@ -26,13 +26,13 @@ interface SongHandlerContextInterface {
   setVolumeValue: (volumeValue: number) => void;
 }
 
-const SongContext = React.createContext<SongContextInterface | null>(null);
-const SongHandlerContext = React.createContext<SongHandlerContextInterface | null>(null);
+export const SongContext = React.createContext<SongContextInterface | null>(null);
+export const SongHandlerContext = React.createContext<SongHandlerContextInterface | null>(null);
 
 export const useSong = () => useContext(SongContext);
 export const useSongHandler = () => useContext(SongHandlerContext);
 
-const volumeKey = 'radiofm.volume';
+export const volumeKey = 'radiofm.volume';
 
 export const SongContextProvider = (props: { children: any }) => {
   const [time, setTime] = useState<number>(0);

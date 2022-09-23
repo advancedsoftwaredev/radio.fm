@@ -1,4 +1,4 @@
-const withTM = require('next-transpile-modules')(['../server']);
+const withTM = require('next-transpile-modules')(['/server']);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withTM({

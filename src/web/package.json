@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@react-mock/localstorage": "^0.1.2",
+    "@testing-library/dom": "^8.18.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
@@ -35,6 +36,8 @@
     "@types/react-dom": "18.0.6",
     "eslint": "8.22.0",
     "eslint-config-next": "12.2.5",
+    "jest-environment-jsdom": "^29.0.3",
+    "jest-localstorage-mock": "^2.4.22",
     "typescript": "4.7.4"
   }
 }

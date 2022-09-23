@@ -1,5 +1,4 @@
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
@@ -9,6 +8,7 @@ import Header from '../components/Header';
 import { useSocketInterface } from '../components/hooks/socketContext';
 import { useSong, useSongHandler } from '../components/hooks/songContext';
 import ParticlesComponent from '../components/Particles';
+import PlayButton from '../components/PlayButton';
 import VolumeSlider from '../components/VolumeSlider';
 
 import styles from '../styles/Home.module.css';
@@ -64,19 +64,7 @@ const Home: NextPage = () => {
               )}
             </Typography>
 
-            <Button
-              onClick={() => {
-                void socketHandler?.getTime();
-                if (song.volume === 0) {
-                  songHandler?.setVolumeValue(0.5);
-                }
-              }}
-            >
-              <Box display="flex" alignItems="center">
-                <Typography sx={{ fontSize: '2rem' }}>Play</Typography>
-                <PlayArrowIcon sx={{ fontSize: '4rem' }} />
-              </Box>
-            </Button>
+            <PlayButton />
           </>
         )}
 

@@ -43,5 +43,11 @@
     "eslint-plugin-unused-imports": "^1.1.2",
     "eslint-plugin-yaml": "^0.3.0",
     "prettier-eslint": "^15.0.1"
+  },
+  "jest": {
+    "projects": [
+      "src/web/jest.config.ts",
+      "src/server/jest.config.ts"
+     ]
   }
 }
