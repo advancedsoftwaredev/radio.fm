@@ -13,7 +13,7 @@
   "scripts": {
     "web": "cd src/web && yarn",
     "server": "cd src/server && yarn",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
