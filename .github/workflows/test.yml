@@ -10,16 +10,16 @@ jobs:
         timeout-minutes: 20
 
         steps:
-          - name: Start MySQL container
-            run: >
-              docker run
-              --detach
-              --env=POSTGRES_PASSWORD=psqlpass
-              --env=POSTGRES_USER=postgres
-              --name=postgres
-              --network=host
-              --rm
-              --tmpfs=/var/lib/mysql postgres
+            - name: Start MySQL container
+              run: >
+                docker run
+                --detach
+                --env=POSTGRES_PASSWORD=psqlpass
+                --env=POSTGRES_USER=postgres
+                --name=postgres
+                --network=host
+                --rm
+                --tmpfs=/var/lib/mysql postgres
 
             - uses: actions/checkout@v2
 
