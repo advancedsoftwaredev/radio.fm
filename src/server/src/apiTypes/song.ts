@@ -2,6 +2,10 @@ export interface SongByIdInput {
   id: string;
 }
 
+export interface SongByIdInput {
+  id: string;
+}
+
 export interface ApiSongInfo {
   id: string;
   title: string;

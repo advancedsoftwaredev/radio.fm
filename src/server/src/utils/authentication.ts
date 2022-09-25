@@ -1,7 +1,8 @@
 import type { Session, UnwrapPromise, User } from '@prisma/client';
-import type { Request, Response } from 'express';
+import type { Request, RequestHandler, Response, Router } from 'express';
 import jwt from 'jsonwebtoken';
 
+import type { TypedRequestBody } from '../api/apiTypes';
 import { prisma } from './prisma';
 
 if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
@@ -12,7 +13,7 @@ const jwt_secret = process.env.JWT_SECRET ?? '_dev_secret';
 const sessionAge = 1000 * 60 * 60 * 24 * 90; // 90 days
 
 export type RequestWithUser = Request & {
-  user?: User;
+  user: User;
 };
 
 /*
@@ -153,4 +154,45 @@ export async function authAdminMiddleware(req: Request, res: Response, next: Fun
   } else {
     res.status(401).send('Unauthorized');
   }
+}
+
+interface AuthenticatedRouter {
+  router: Router;
+  post: <ReqBody, ResBody>(
+    path: string,
+    handler: (req: TypedRequestBody<ReqBody>, res: Response) => Promise<ResBody>
+  ) => void;
+  get: <ResBody>(path: string, handler: (req: RequestWithUser, res: Response) => Promise<ResBody>) => void;
+}
+
+export function authenticatedRouter(router: Router): AuthenticatedRouter & RequestHandler {
+  router.use(authMiddleware);
+
+  const overrides: AuthenticatedRouter = {
+    router,
+    post: (path, handler) => {
+      router.post(path, async (req, res, next) => {
+        try {
+          const body = await handler(req as any, res);
+          return res.status(200).json(body);
+        } catch (e) {
+          return next(e);
+        }
+      });
+    },
+    get: (path, handler) => {
+      router.get(path, async (req, res, next) => {
+        try {
+          const body = await handler(req as any, res);
+          return res.status(200).json(body);
+        } catch (e) {
+          return next(e);
+        }
+      });
+    },
+  };
+
+  const call = (...args: any) => (router as any)(...args);
+
+  return Object.setPrototypeOf(call, overrides);
 }
