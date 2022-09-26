@@ -1,27 +1,20 @@
 import type { Song } from '@prisma/client';
-import type { NextFunction } from 'express';
 import express from 'express';
 
 import type { ApiSongInfo, SongByIdInput } from '../../apiTypes/song';
-import { authMiddleware } from '../../utils/authentication';
+import { authenticatedRouter } from '../../utils/authentication';
 import { prisma } from '../../utils/prisma';
-import type { TypedRequestBody, TypedResponse } from '../apiTypes';
 import { NotFoundError } from '../errors';
 
-const SongRouter = express.Router();
+const SongRouter = authenticatedRouter(express.Router());
 
-SongRouter.use(authMiddleware);
-
-SongRouter.post(
-  '/song-info',
-  async (req: TypedRequestBody<SongByIdInput>, res: TypedResponse<ApiSongInfo>, next: NextFunction) => {
-    const song: Song | null = await getSongById(req.body.id);
-    if (!song) {
-      return next(new NotFoundError('No song found with that Id'));
-    }
-    res.status(200).json(song);
+SongRouter.post<SongByIdInput, ApiSongInfo>('/song-info', async (req) => {
+  const song: Song | null = await getSongById(req.body.id);
+  if (!song) {
+    throw new NotFoundError('No song found with that Id');
   }
-);
+  return song;
+});
 
 export const getSongById = async (songId: string) => await prisma.song.findUnique({ where: { id: songId } });
 
