@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import cookie from 'cookie';
 import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
@@ -33,6 +34,9 @@ import {
 } from './utils/queue';
 import { getSongCount } from './utils/song';
 import { addSongLog } from './utils/songLog';
+
+dotenv.config({});
+dotenv.config({ path: '../../.env' });
 
 const app = express();
 

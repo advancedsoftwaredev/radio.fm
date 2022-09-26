@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/server.ts",
-    "seed": "yarn prisma migrate reset -f && ts-node -P ./tsconfig.json ./src/prisma/seed.ts"
+    "seed": "yarn prisma migrate reset -f && ts-node -P ./tsconfig.json ./src/prisma/seed.ts",
+    "test": "jest"
   },
   "dependencies": {
     "@prisma/client": "^4.3.0",
@@ -21,6 +22,7 @@
     "body-parser": "^1.20.0",
     "cookie": "^0.5.0",
     "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
     "socket.io": "^4.5.1"
