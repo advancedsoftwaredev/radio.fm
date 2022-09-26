@@ -22,6 +22,7 @@ export default function VolumeSlider() {
     >
       <VolumeDown />
       <Slider
+        data-testid="volume-slider"
         aria-label="Volume"
         value={(song?.volume ?? 0.5) * 100}
         sx={{ margin: 'auto 1rem' }}

@@ -14,7 +14,8 @@
     "web": "cd src/web && yarn",
     "server": "cd src/server && yarn",
     "lint": "eslint . --max-warnings 0",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "yarn server jest && yarn web jest"
   },
   "dependencies": {
     "ts-node": "^10.9.1",
