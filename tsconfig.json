@@ -10,18 +10,12 @@
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "jsx": "preserve",
     "target": "es6",
     "baseUrl": "./"
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js"
-  ],
-  "exclude": [
-    "node_modules",
-    "test/**/*.test.tsx",
-    "test/**/*.test.ts",
-    "./.eslintrc.js"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js"],
+  "exclude": ["node_modules", "test/**/*.test.tsx", "test/**/*.test.ts", "./.eslintrc.js"]
 }
