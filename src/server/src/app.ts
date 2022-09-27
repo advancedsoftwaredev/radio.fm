@@ -1,4 +1,3 @@
-import bodyParser from 'body-parser';
 import cookie from 'cookie';
 import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
@@ -48,7 +47,6 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 app.use(express.static(__dirname + '/../../web/out'));
 app.use('/audio', express.static(__dirname + '/audio/'));
 app.use('/images', express.static(__dirname + '/images/'));
-app.use(bodyParser.json());
 app.use(cookieParser());
 app.use('/api', ApiRouter);
 
