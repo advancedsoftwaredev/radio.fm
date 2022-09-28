@@ -1,17 +1,41 @@
 import type { User } from '.prisma/client';
-import express from 'express';
 
+import type { ApiSongInfo } from '../../apiTypes/song';
 import type { ApiUser } from '../../apiTypes/user';
-import { authUserMiddleware } from '../../utils/authentication';
+import { setUserPassword } from '../../utils/loginRegister';
+import { prisma } from '../../utils/prisma';
+import { authenticatedRouter } from '../../utils/routers';
+import { getUserByUsername } from '../../utils/user';
+import { BadInputError } from '../errors';
+import { mapSongToApiSong } from '../song/song';
 
-const UserRouter = express.Router();
+const UserRouter = authenticatedRouter('user');
 
-UserRouter.use(authUserMiddleware);
+UserRouter.get('/delete-account', async (req, res) => {
+  await prisma.$transaction([
+    prisma.likedSong.deleteMany({ where: { userId: req.user.id } }),
+    prisma.songManagementLog.deleteMany({ where: { userId: req.user.id } }),
+    prisma.session.deleteMany({ where: { userId: req.user.id } }),
+    prisma.user.delete({ where: { id: req.user.id } }),
+  ]);
+});
 
-UserRouter.get('/delete-account', async () => {});
-UserRouter.post('/change-password', async () => {});
-UserRouter.post('/change-username', async () => {});
-UserRouter.get('/liked-songs', async () => {});
+UserRouter.post<{ password: string }, void>('/change-password', async (req, res) => {
+  await setUserPassword(req.user.id, req.body.password);
+});
+
+UserRouter.post<{ username: string }, void>('/change-username', async (req, res) => {
+  const user = await getUserByUsername(req.body.username);
+  if (user) {
+    throw new BadInputError('Username already taken');
+  }
+  await prisma.user.update({ where: { id: req.user.id }, data: { username: req.body.username } });
+});
+
+UserRouter.get<ApiSongInfo[]>('/liked-songs', async (req, res) => {
+  const likedSongs = await prisma.likedSong.findMany({ where: { userId: req.user.id }, include: { song: true } });
+  return likedSongs.map((likedSong) => mapSongToApiSong(likedSong.song));
+});
 
 export const mapUserToApiUser = (user: User): ApiUser => {
   return {
