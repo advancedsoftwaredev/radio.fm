@@ -23,6 +23,11 @@ export function createEndpoints(
     song: {
       getById: makeBodyRequest<SongByIdInput, ApiSongInfo>('/song/song-info'),
     },
-    user: {},
+    user: {
+      deleteAccount: makeRequest<{}>('/user/delete-account'),
+      getLikedSongs: makeRequest<ApiSongInfo[]>('/user/liked-songs'),
+      changePassword: makeBodyRequest<{ password: string }, {}>('/user/change-password'),
+      changeUsername: makeBodyRequest<{ username: string }, {}>('/user/change-username'),
+    },
   };
 }
