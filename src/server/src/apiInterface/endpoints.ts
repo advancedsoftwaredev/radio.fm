@@ -1,22 +1,27 @@
 import type { ApiSongInfo, SongByIdInput } from '../apiTypes/song';
 import type { ApiUser, UserCredentials } from '../apiTypes/user';
 
-type BodyMethod = 'POST';
-type NoBodyMethod = 'GET';
+type MakeBodyRequest = <Req, Resp>(path: string) => (body: Req) => Promise<Resp>;
+type MakeRequest = <Resp>(path: string) => () => Promise<Resp>;
+type MakeUploadRequest = <Req, Resp>(
+  path: string,
+  progressCallback?: (progress: number) => void
+) => (body: Req, file: File) => Promise<Resp>;
 
-type MakeBodyRequest = <Req, Resp>(method: BodyMethod, path: string) => (body: Req) => Promise<Resp>;
-type MakeRequest = <Resp>(method: NoBodyMethod, path: string) => () => Promise<Resp>;
-
-export function createEndpoints(makeRequest: MakeRequest, makeBodyRequest: MakeBodyRequest) {
+export function createEndpoints(
+  makeRequest: MakeRequest,
+  makeBodyRequest: MakeBodyRequest,
+  makeUploadRequest: MakeUploadRequest
+) {
   return {
     auth: {
-      login: makeBodyRequest<UserCredentials, ApiUser>('POST', '/auth/login'),
-      register: makeBodyRequest<UserCredentials, ApiUser>('POST', '/auth/register'),
-      logout: makeRequest<{}>('GET', '/auth/logout'),
-      getSelf: makeRequest<ApiUser>('GET', '/auth/get-self'),
+      login: makeBodyRequest<UserCredentials, ApiUser>('/auth/login'),
+      register: makeBodyRequest<UserCredentials, ApiUser>('/auth/register'),
+      logout: makeRequest<{}>('/auth/logout'),
+      getSelf: makeRequest<ApiUser>('/auth/get-self'),
     },
     song: {
-      getById: makeBodyRequest<SongByIdInput, ApiSongInfo>('POST', '/song/song-info'),
+      getById: makeBodyRequest<SongByIdInput, ApiSongInfo>('/song/song-info'),
     },
     user: {},
   };

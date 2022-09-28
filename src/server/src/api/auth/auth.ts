@@ -1,15 +1,14 @@
 import type { User } from '@prisma/client';
-import express from 'express';
 
 import type { ApiUser, UserCredentials } from '../../apiTypes/user';
-import { authenticatedRouter } from '../../utils/authentication';
 import { loginUser, logoutUser } from '../../utils/authentication';
 import { getLoginUser, registerUser } from '../../utils/loginRegister';
+import { authenticatedRouter } from '../../utils/routers';
 import { deleteGuestUser, deleteUser, deleteUserSessions, getUserByUsername } from '../../utils/user';
 import { BadInputError } from '../errors';
 import { mapUserToApiUser } from '../user/user';
 
-const AuthRouter = authenticatedRouter(express.Router());
+const AuthRouter = authenticatedRouter('guest');
 
 AuthRouter.post<UserCredentials, ApiUser>('/register', async (req, res) => {
   if (await getUserByUsername(req.body.username)) {
