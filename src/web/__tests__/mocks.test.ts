@@ -1,5 +1,5 @@
-import { api } from '../../server/src/apiInterface/index';
 import type { MockedApi } from '../testSetup/mocks';
+import { api } from '../util/api';
 
 jest.mock('../../server/src/apiInterface');
 

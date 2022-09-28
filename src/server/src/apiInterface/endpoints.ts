@@ -1,4 +1,10 @@
-import type { ApiSongInfo, SongByIdInput } from '../apiTypes/song';
+import type {
+  ApiCreateAlbumArtInfo,
+  ApiCreateAlbumArtReturn,
+  ApiCreateSongInfo,
+  ApiSongInfo,
+  SongByIdInput,
+} from '../apiTypes/song';
 import type { ApiUser, UserCredentials } from '../apiTypes/user';
 
 type MakeBodyRequest = <Req, Resp>(path: string) => (body: Req) => Promise<Resp>;
@@ -22,6 +28,11 @@ export function createEndpoints(
     },
     song: {
       getById: makeBodyRequest<SongByIdInput, ApiSongInfo>('/song/song-info'),
+    },
+    songAdmin: {
+      deleteSong: makeBodyRequest<SongByIdInput, {}>('/song-admin/delete-song'),
+      uploadArt: makeUploadRequest<ApiCreateAlbumArtInfo, ApiCreateAlbumArtReturn>('/song-admin/upload-art'),
+      uploadSong: makeUploadRequest<ApiCreateSongInfo, ApiSongInfo>('/song-admin/upload-song'),
     },
     user: {
       deleteAccount: makeRequest<{}>('/user/delete-account'),

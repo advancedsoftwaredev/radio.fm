@@ -1,10 +1,19 @@
 import type { Song } from '@prisma/client';
+import fs from 'fs';
 import getAudioDurationInSeconds from 'get-audio-duration';
-import { Readable } from 'stream';
 
-import type { ApiSongInfo, SongByIdInput } from '../../apiTypes/song';
+import type {
+  ApiCreateAlbumArtInfo,
+  ApiCreateAlbumArtReturn,
+  ApiCreateSongInfo,
+  ApiSongInfo,
+  SongByIdInput,
+} from '../../apiTypes/song';
+import { env } from '../../env';
 import { prisma } from '../../utils/prisma';
 import { authenticatedRouter } from '../../utils/routers';
+import { audioStorage, imageStorage } from '../../utils/storage_interface';
+import { makeTempFileFromStream } from '../../utils/tempfile';
 import { NotFoundError } from '../errors';
 
 export const PublicSongRouter = authenticatedRouter('guest');
@@ -37,30 +46,40 @@ AdminSongRouter.post<SongByIdInput, {}>('/delete-song', async (req) => {
   return {};
 });
 
-AdminSongRouter.upload<{}, ApiSongInfo>('/upload-song', async (req, file) => {
-  // Convert file stream into a buffer
-  const buffer = await new Promise<Buffer>((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    file.on('data', (chunk) => chunks.push(chunk));
-    file.on('end', () => resolve(Buffer.concat(chunks)));
-    file.on('error', reject);
-  });
+// Purely for upload a file and giving back the filename
+AdminSongRouter.upload<ApiCreateAlbumArtInfo, ApiCreateAlbumArtReturn>('/upload-art', async (req, file) => {
+  const partial = await imageStorage.uploadFile(file, req.body.title);
 
-  // Yes, this means the song is stored in ram during processing, so large songs might use a lot of ram.
+  return {
+    albumImageUrl: partial,
+  };
+});
+
+AdminSongRouter.upload<ApiCreateSongInfo, ApiSongInfo>('/upload-song', async (req, file) => {
+  // Write the song to a temp file
+  const tempfile = await makeTempFileFromStream(file, '.mp3');
 
   // Use ffprobe to get the song duration
-  const duration = await getAudioDurationInSeconds(Readable.from(buffer));
+  const duration = await getAudioDurationInSeconds(tempfile);
 
-  // TODO: complete this function
-  throw new Error('Not implemented');
+  const partial = await audioStorage.uploadFile(fs.createReadStream(tempfile), req.body.title);
+
+  // Clean up the temporary file
+  await fs.promises.rm(tempfile);
 
   // Save the song to the database
-  // const song = await prisma.song.create({
-  //   data: {
-  //     duration,
-  //   },
-  // });
-  // return mapSongToApiSong(song);
+  const song = await prisma.song.create({
+    data: {
+      albumImageUrl: req.body.albumImageUrl,
+      artist: req.body.artist,
+      description: req.body.description,
+      length: Math.round(duration),
+      title: req.body.title,
+      songMediaUrl: partial,
+    },
+  });
+
+  return mapSongToApiSong(song);
 });
 
 export const getSongById = async (songId: string) => await prisma.song.findUnique({ where: { id: songId } });
@@ -71,8 +90,9 @@ export function mapSongToApiSong(song: Song): ApiSongInfo {
     title: song.title,
     description: song.description,
     artist: song.artist,
-    albumImageUrl: song.albumImageUrl,
-    songMediaUrl: song.songMediaUrl,
     length: song.length,
+
+    albumImageUrl: `${env.serverUrl}/images/${song.albumImageUrl}`,
+    songMediaUrl: `${env.serverUrl}/audio/${song.songMediaUrl}`,
   };
 }
