@@ -8,6 +8,11 @@ const UserRouter = express.Router();
 
 UserRouter.use(authUserMiddleware);
 
+UserRouter.get('/delete-account', async () => {});
+UserRouter.post('/change-password', async () => {});
+UserRouter.post('/change-username', async () => {});
+UserRouter.get('/liked-songs', async () => {});
+
 export const mapUserToApiUser = (user: User): ApiUser => {
   return {
     id: user.id,
