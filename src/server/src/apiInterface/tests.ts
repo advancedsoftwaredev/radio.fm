@@ -1,3 +1,4 @@
+import { makeUploadRequest } from '.';
 import { CookieAccessInfo, CookieJar } from 'cookiejar';
 import request from 'supertest';
 
@@ -27,7 +28,7 @@ export function makeTestClient() {
     }
   }
 
-  const makeRequest = <Resp>(method: NoBodyMethod, path: string) => {
+  const makeRequest = <Resp>(path: string) => {
     return async () => {
       const response = await agent.get('/api' + path).set('cookie', jar.getCookies(jarAccess).toValueString());
 
@@ -44,7 +45,7 @@ export function makeTestClient() {
     };
   };
 
-  const makeBodyRequest = <Req, Resp>(method: BodyMethod, path: string) => {
+  const makeBodyRequest = <Req, Resp>(path: string) => {
     return async (body: Req) => {
       const response = await agent
         .post('/api' + path)
@@ -64,7 +65,7 @@ export function makeTestClient() {
     };
   };
 
-  return createEndpoints(makeRequest, makeBodyRequest);
+  return createEndpoints(makeRequest, makeBodyRequest, makeUploadRequest);
 }
 
 export const testClient = makeTestClient();

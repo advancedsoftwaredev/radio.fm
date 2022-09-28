@@ -46,7 +46,7 @@ function makeBodyRequest<Req, Resp>(path: string) {
   };
 }
 
-function makeUploadRequest<Req, Resp>(path: string, progressCallback?: (progress: number) => void) {
+export function makeUploadRequest<Req, Resp>(path: string, progressCallback?: (progress: number) => void) {
   return async (body: Req, file: Blob) => {
     const formData = new FormData();
     formData.append('body', JSON.stringify(body));
