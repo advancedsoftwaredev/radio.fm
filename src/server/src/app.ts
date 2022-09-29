@@ -12,6 +12,7 @@ import ApiRouter from './api/api';
 import { ApiError, AuthorizationError } from './api/errors';
 import { mapUserToApiUser } from './api/user/user';
 import type { ApiUser } from './apiTypes/user';
+import { env } from './env';
 import type { MessageData, SongData } from './socketTypes/socketDataTypes';
 import type {
   ClientToServerEvents,
@@ -39,7 +40,7 @@ const app = express();
 
 // CORS Config to change
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: env.corsUrl,
   include: '*',
   credentials: true,
   methods: ['GET', 'POST'],
@@ -66,24 +67,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.get('/audio/:partial', async (req, res) => {
-  try {
-    const partial = req.params.partial;
-    const stream = await audioStorage.getFileStream(partial);
-    stream.pipe(res);
-  } catch (e) {
-    res.status(404).send('Not found');
-  }
-});
-app.get('/images/:partial', async (req, res) => {
-  try {
-    const partial = req.params.partial;
-    const stream = await imageStorage.getFileStream(partial);
-    stream.pipe(res);
-  } catch (e) {
-    res.status(404).send('Not found');
-  }
-});
+app.use('/audio', audioStorage.getRequestHandler());
+app.use('/images', imageStorage.getRequestHandler());
 
 const getListenerCount = (namespace = '/') => io.of(namespace).sockets.size;
 
