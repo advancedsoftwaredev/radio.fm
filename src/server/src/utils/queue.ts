@@ -1,14 +1,20 @@
-import type { Queue, Song } from '@prisma/client';
-
+import { mapSongToApiSong } from '../api/song/song';
+import type { ApiSongInfo } from '../apiTypes/song';
 import type { CurrentSongData } from '../socketTypes/socketDataTypes';
 import { prisma } from './prisma';
 
-export interface QueueWithSong extends Queue {
-  song: Song;
+export interface QueueWithSong {
+  id: string;
+  timeAdded: Date;
+  timeStarted: Date | null;
+  songId: string;
+  song: ApiSongInfo;
 }
 
+function mapQueueWithSongToApi() {}
+
 export const getInQueue = async (position = 0): Promise<QueueWithSong | null> => {
-  return await prisma.queue.findFirst({
+  const song = await prisma.queue.findFirst({
     skip: position,
     take: 1,
     orderBy: [
@@ -20,6 +26,18 @@ export const getInQueue = async (position = 0): Promise<QueueWithSong | null> =>
       song: true,
     },
   });
+
+  if (!song) {
+    return null;
+  }
+
+  return {
+    id: song.id,
+    timeAdded: song.timeAdded,
+    timeStarted: song.timeStarted,
+    song: mapSongToApiSong(song.song),
+    songId: song.songId,
+  };
 };
 
 export const getCurrentSong = async (): Promise<CurrentSongData | null> => {
@@ -54,8 +72,9 @@ export const getQueueLength = async (): Promise<number> => {
 };
 
 export const removeFromQueue = async (id: string) => await prisma.queue.delete({ where: { id } });
-export const addToQueue = async (songId: string) =>
+export const addToQueue = async (songId: string) => {
   await prisma.queue.create({ data: { songId, timeAdded: new Date() } });
+};
 
 export const resetFirstSong = async () => {
   const firstInQueue = await getInQueue();

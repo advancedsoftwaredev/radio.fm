@@ -84,11 +84,15 @@ export function authenticatedRouter(role: 'guest' | 'user' | 'admin'): Authentic
             resolve();
           });
           bb.on('error', reject);
+
+          req.pipe(bb);
         });
 
         if (!body || !file) {
           return res.status(400).send('Invalid request');
         }
+
+        req.body = body;
 
         try {
           const body = await handler(req as any, file, res);

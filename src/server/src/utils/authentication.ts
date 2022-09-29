@@ -2,12 +2,8 @@ import type { Session, UnwrapPromise, User } from '@prisma/client';
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
+import { env } from '../env';
 import { prisma } from './prisma';
-
-if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
-  throw new Error('JWT_SECRET is not defined');
-}
-const jwt_secret = process.env.JWT_SECRET ?? '_dev_secret';
 
 const sessionAge = 1000 * 60 * 60 * 24 * 90; // 90 days
 
@@ -26,11 +22,11 @@ interface TokenData {
 
 async function encodeToken(sessionId: string): Promise<string> {
   const data: TokenData = { sid: sessionId };
-  return jwt.sign(data, jwt_secret);
+  return jwt.sign(data, env.jwtSecret);
 }
 
 export async function decodeToken(token: string): Promise<string> {
-  return (jwt.verify(token, jwt_secret) as TokenData).sid;
+  return (jwt.verify(token, env.jwtSecret) as TokenData).sid;
 }
 
 /*

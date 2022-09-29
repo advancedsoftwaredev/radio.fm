@@ -1,4 +1,3 @@
-import songs from '../../modelData/song';
 import { prisma } from '../../utils/prisma';
 
 interface SongData {
@@ -22,8 +21,4 @@ export async function insertTestSong(data: SongData) {
       length: data.length,
     },
   });
-}
-
-export async function insertAllTestSeedSongs() {
-  return await Promise.all(songs.map(insertTestSong));
 }

@@ -11,6 +11,7 @@ import type {
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
 import type { ClientToServerEvents, ServerToClientEvents } from '../../../server/src/socketTypes/socketTypes';
+import { getPublicConfig } from '../../config';
 import { useSongHandler } from './songContext';
 import { useUserData } from './userContext';
 
@@ -31,7 +32,9 @@ interface SocketInterfaceContext {
 const SocketContext = React.createContext<SocketContextData | null>(null);
 const SocketInterfaceContext = React.createContext<SocketInterfaceContext | null>(null);
 
-const connectToSocket = (namespace = '/') => io(namespace, { withCredentials: true, path: '/socket.io/socket.io' });
+const connectToSocket = (namespace = '/') => {
+  return io(getPublicConfig().serverUrl + namespace, { withCredentials: true });
+};
 
 export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
@@ -61,7 +64,8 @@ export function SocketContextProvider(props: { children: any }) {
       newAdminSocket?.close();
       newSocket.close();
     };
-  }, [adminSocket, setSocket, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setSocket, user]);
 
   useEffect(() => {
     if (socket) {
@@ -104,7 +108,8 @@ export function SocketContextProvider(props: { children: any }) {
         socket.off('nextSong');
       }
     };
-  }, [songHandler, requestNextSong, socket, adminSocket]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, adminSocket]);
 
   const socketInterface: SocketInterfaceContext = {
     socket,

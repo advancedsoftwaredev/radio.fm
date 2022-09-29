@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
+import cors from 'cors';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
@@ -33,32 +33,52 @@ import {
 } from './utils/queue';
 import { getSongCount } from './utils/song';
 import { addSongLog } from './utils/songLog';
-
-dotenv.config({});
-dotenv.config({ path: '../../.env' });
+import { audioStorage, imageStorage } from './utils/storage_interface';
 
 const app = express();
 
+// CORS Config to change
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+};
+
+// Allow CORS and Cookies
+app.use(cors(corsOptions));
+
 const server = http.createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
-app.use(express.static(__dirname + '/../../web/out'));
-app.use('/audio', express.static(__dirname + '/audio/'));
-app.use('/images', express.static(__dirname + '/images/'));
 app.use(cookieParser());
 app.use('/api', ApiRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err);
   if (err instanceof ApiError) {
     res.status(err.code).json(err.message);
   } else {
     res.status(500).send('Internal server error');
+  }
+});
+
+app.get('/audio/:partial', async (req, res) => {
+  try {
+    const partial = req.params.partial;
+    const stream = await audioStorage.getFileStream(partial);
+    stream.pipe(res);
+  } catch (e) {
+    res.status(404).send('Not found');
+  }
+});
+app.get('/images/:partial', async (req, res) => {
+  try {
+    const partial = req.params.partial;
+    const stream = await imageStorage.getFileStream(partial);
+    stream.pipe(res);
+  } catch (e) {
+    res.status(404).send('Not found');
   }
 });
 

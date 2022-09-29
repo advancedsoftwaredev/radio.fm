@@ -1,7 +1,7 @@
-import { makeUploadRequest } from '.';
 import { CookieAccessInfo, CookieJar } from 'cookiejar';
 import request from 'supertest';
 
+import { makeUploadRequest } from '../../../web/util/api';
 import { httpServer } from '../app';
 import { createEndpoints } from './endpoints';
 

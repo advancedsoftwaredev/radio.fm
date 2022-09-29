@@ -1,10 +1,11 @@
-import { createEndpoints } from './endpoints';
+import { createEndpoints } from '../../server/src/apiInterface/endpoints';
+import { getPublicConfig } from '../config';
 
 type BodyMethod = 'POST';
 type NoBodyMethod = 'GET';
 
 export function fullPath(path: string) {
-  return '/api' + path;
+  return `${getPublicConfig().serverUrl}/api${path}`;
 }
 
 function makeRequest<Resp>(path: string) {
@@ -14,6 +15,7 @@ function makeRequest<Resp>(path: string) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
     });
 
     if (response.status !== 200) {
@@ -34,6 +36,7 @@ function makeBodyRequest<Req, Resp>(path: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      credentials: 'include',
     });
 
     if (response.status !== 200) {
@@ -53,7 +56,9 @@ export function makeUploadRequest<Req, Resp>(path: string, progressCallback?: (p
     formData.append('file', file);
 
     const request = new XMLHttpRequest();
+    request.withCredentials = true;
     request.open('POST', fullPath(path));
+
     request.send(formData);
 
     return new Promise<Resp>((resolve, reject) => {
