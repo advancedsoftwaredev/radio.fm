@@ -40,11 +40,14 @@ const app = express();
 // CORS Config to change
 const corsOptions = {
   origin: 'http://localhost:3000',
+  include: '*',
   credentials: true,
+  methods: ['GET', 'POST'],
 };
 
 // Allow CORS and Cookies
 app.use(cors(corsOptions));
+app.use(express.static(__dirname + '/../../web/out'));
 
 const server = http.createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(server, {
