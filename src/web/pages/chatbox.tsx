@@ -1,7 +1,7 @@
 import { Box, TextField, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { ApiUser } from '../apiTypes/user';
+import { ApiUser } from "../../server/src/apiTypes/user"
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import {useSocketInterface, useSocketData} from '../components/hooks/socketContext'; 
 import ParticlesComponent from '../components/Particles';
@@ -9,7 +9,7 @@ import {MessageData} from '../../server/src/socketTypes/socketDataTypes';
 
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css"
+import "primeicons/primeicons.css";
 
 import {InputText} from "primereact/inputtext";
 import {Button} from "primereact/button";
@@ -75,7 +75,19 @@ const ChatBox = () => {
                 <div className='card'>
                 <h3>Conversation</h3>
                 <Timeline position="alternate">
-                    
+                {data?.messages.map((mssg) => (<TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot color="secondary" />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <TimelineContent>
+        <div>
+            {/*<h4>{(mssg.time.getHours()) + ":" +  (mssg.time.getHours()) + ":" + (mssg.time.getSeconds())}</h4> */}
+            <h2 style={{color: "white"}}>{mssg.msg}</h2>
+        </div>
+        </TimelineContent>
+      </TimelineItem>))}
+
                 </Timeline>
                 
             </div>
