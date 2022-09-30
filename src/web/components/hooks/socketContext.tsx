@@ -81,12 +81,13 @@ export function SocketContextProvider(props: { children: any }) {
       socket.on('message', async (data: MessageData) => {
         setMessages((current) => {
           const newMessages = JSON.parse(JSON.stringify(current));
+
           newMessages.push({
             ...data,
             id: uuidv4(),
-            time: new Date(data.time),
           });
-          return newMessages;
+
+          return newMessages.map((msg: IMessage) => ({ ...msg, time: new Date(msg.time) }));
         });
       });
 
