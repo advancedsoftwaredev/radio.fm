@@ -15,6 +15,7 @@ import { useUserData } from '../components/hooks/userContext';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import MessageTimeline from '../components/MessageTimeline';
 
 const ChatBox = () => {
   const [author, setAuthor] = useState<string>('');
@@ -40,41 +41,7 @@ const ChatBox = () => {
         <InputText placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
         <Button onClick={() => addMessage()} label="send" />
       </div>
-
-      {/* <div className='card'>
-                <h3>Conversation</h3>
-                <Timeline 
-                value = {data?.messages} 
-                opposite = {(item) => item.username}
-                content = {(item) => (<small className = "p-text-secondary">
-                    { data?.messages.map((mssg) => {
-                        return <div>
-                            <h4>{mssg.time}</h4>
-                            <h2 style={{color: "white"}}>{mssg.msg}</h2>
-                            </div>;
-                    }) }
-                    </small>)}
-                />  */}
-
-      <div className="card">
-        <h3>Conversation</h3>
-        <Timeline position="alternate">
-          {data?.messages.map((mssg) => (
-            <TimelineItem>
-              <TimelineSeparator>
-                <TimelineDot color="secondary" />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>
-                <div>
-                  {/*<h4>{(mssg.time.getHours()) + ":" +  (mssg.time.getHours()) + ":" + (mssg.time.getSeconds())}</h4> */}
-                  <h2 style={{ color: 'white' }}>{mssg.msg}</h2>
-                </div>
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Timeline>
-      </div>
+          <MessageTimeline messages={data?.messages ??[]}/>
     </div>
   );
 };

@@ -30,7 +30,7 @@ interface SocketInterfaceContext {
   getTime: () => void;
 }
 
-type IMessage = MessageData & {
+export type IMessage = MessageData & {
   id: string;
 };
 
