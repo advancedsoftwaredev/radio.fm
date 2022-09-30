@@ -17,6 +17,7 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/lab": "^5.0.0-alpha.97",
     "@mui/material": "^5.10.3",
+    "@types/uuid": "^8.3.4",
     "babel-plugin-styled-components": "^2.0.7",
     "next": "12.2.5",
     "next-transpile-modules": "^9.0.0",
@@ -24,7 +25,8 @@
     "react-dom": "18.2.0",
     "react-tsparticles": "^2.2.4",
     "socket.io-client": "^4.5.1",
-    "tsparticles": "^2.2.4"
+    "tsparticles": "^2.2.4",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@react-mock/localstorage": "^0.1.2",

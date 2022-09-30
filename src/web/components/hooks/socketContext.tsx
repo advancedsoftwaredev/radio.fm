@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
 
 import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
 import type {
@@ -18,7 +19,7 @@ import { useUserData } from './userContext';
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents> | null;
 
 interface SocketContextData {
-  messages: MessageData[];
+  messages: IMessage[];
 }
 
 interface SocketInterfaceContext {
@@ -28,6 +29,10 @@ interface SocketInterfaceContext {
   newSong: (data: SongData) => void;
   getTime: () => void;
 }
+
+type IMessage = MessageData & {
+  id: string;
+};
 
 const SocketContext = React.createContext<SocketContextData | null>(null);
 const SocketInterfaceContext = React.createContext<SocketInterfaceContext | null>(null);
@@ -40,7 +45,7 @@ export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
   const [adminSocket, setAdminSocket] = useState<SocketType>(null);
 
-  const [messages, setMessages] = useState<MessageData[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
 
   const user = useUserData();
   const songHandler = useSongHandler();
@@ -76,7 +81,11 @@ export function SocketContextProvider(props: { children: any }) {
       socket.on('message', async (data: MessageData) => {
         setMessages((current) => {
           const newMessages = JSON.parse(JSON.stringify(current));
-          newMessages.push(data);
+          newMessages.push({
+            ...data,
+            id: uuidv4(),
+            time: new Date(data.time),
+          });
           return newMessages;
         });
       });
