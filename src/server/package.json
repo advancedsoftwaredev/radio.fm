@@ -6,26 +6,36 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/server.ts",
-    "seed": "yarn prisma migrate reset -f && ts-node -P ./tsconfig.json ./src/prisma/seed.ts"
+    "seed": "dotenv -e ../../.env -- yarn prisma migrate reset -f && ts-node -P ./tsconfig.json ./src/seed.ts",
+    "test": "jest"
   },
   "dependencies": {
     "@prisma/client": "^4.3.0",
     "@types/bcrypt": "^5.0.0",
+    "@types/busboy": "^1.5.0",
     "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/express-serve-static-core": "^4.17.30",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.7.3",
     "@types/socket.io": "^3.0.2",
+    "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
+    "busboy": "^1.6.0",
     "cookie": "^0.5.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
     "express": "^4.18.1",
+    "get-audio-duration": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
+    "nanoid": "^3.3.4",
     "socket.io": "^4.5.1"
   },
   "devDependencies": {
+    "dotenv-cli": "^6.0.0",
     "prisma": "^4.3.0"
   },
   "prisma": {

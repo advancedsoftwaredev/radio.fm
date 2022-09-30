@@ -1,25 +1,86 @@
-import express, { NextFunction } from 'express';
 import type { Song } from '@prisma/client';
-import prisma from '../../utils/prisma';
-import { ApiSongInfo, SongByIdInput } from '../../../../web/apiTypes/song';
+import fs from 'fs';
+import getAudioDurationInSeconds from 'get-audio-duration';
+
+import type {
+  ApiCreateAlbumArtInfo,
+  ApiCreateAlbumArtReturn,
+  ApiCreateSongInfo,
+  ApiSongInfo,
+  SongByIdInput,
+} from '../../apiTypes/song';
+import { env } from '../../env';
+import { prisma } from '../../utils/prisma';
+import { authenticatedRouter } from '../../utils/routers';
+import { audioStorage, imageStorage } from '../../utils/storage_interface';
+import { makeTempFileFromStream } from '../../utils/tempfile';
 import { NotFoundError } from '../errors';
-import { TypedRequestBody, TypedResponse } from '../apiTypes';
-import { authMiddleware } from '../../utils/authentication';
 
-const SongRouter = express.Router();
+export const PublicSongRouter = authenticatedRouter('guest');
 
-SongRouter.use(authMiddleware);
-
-SongRouter.post(
-  '/song-info',
-  async (req: TypedRequestBody<SongByIdInput>, res: TypedResponse<ApiSongInfo>, next: NextFunction) => {
-    const song: Song | null = await getSongById(req.body?.id);
-    if (!song) {
-      return next(new NotFoundError('No song found with that Id'));
-    }
-    res.status(200).json(song);
+PublicSongRouter.post<SongByIdInput, ApiSongInfo>('/song-info', async (req) => {
+  const song: Song | null = await getSongById(req.body.id);
+  if (!song) {
+    throw new NotFoundError('No song found with that Id');
   }
-);
+  return mapSongToApiSong(song);
+});
+
+PublicSongRouter.get<ApiSongInfo[]>('/all-songs', async (req) => {
+  const songs = await prisma.song.findMany();
+  return songs.map(mapSongToApiSong);
+});
+
+export const AdminSongRouter = authenticatedRouter('admin');
+
+AdminSongRouter.post<SongByIdInput, {}>('/delete-song', async (req) => {
+  const song: Song | null = await getSongById(req.body.id);
+  if (!song) {
+    throw new NotFoundError('No song found with that Id');
+  }
+  await prisma.song.delete({
+    where: {
+      id: req.body.id,
+    },
+  });
+  return {};
+});
+
+// Purely for upload a file and giving back the filename
+AdminSongRouter.upload<ApiCreateAlbumArtInfo, ApiCreateAlbumArtReturn>('/upload-art', async (req, file) => {
+  const partial = await imageStorage.uploadFile(file, req.body.title);
+
+  return {
+    albumImageUrl: partial,
+  };
+});
+
+AdminSongRouter.upload<ApiCreateSongInfo, ApiSongInfo>('/upload-song', async (req, file) => {
+  // Write the song to a temp file
+  const tempfile = await makeTempFileFromStream(file, '.mp3');
+
+  // Use ffprobe to get the song duration
+  const duration = await getAudioDurationInSeconds(tempfile);
+
+  const partial = await audioStorage.uploadFile(fs.createReadStream(tempfile), req.body.title);
+
+  // Clean up the temporary file
+  await fs.promises.rm(tempfile);
+
+  // Save the song to the database
+  const song = await prisma.song.create({
+    data: {
+      albumImageUrl: req.body.albumImageUrl,
+      artist: req.body.artist,
+      description: req.body.description,
+      length: Math.round(duration),
+      title: req.body.title,
+      songMediaUrl: partial,
+    },
+  });
+
+  return mapSongToApiSong(song);
+});
 
 export const getSongById = async (songId: string) => await prisma.song.findUnique({ where: { id: songId } });
 
@@ -29,11 +90,9 @@ export function mapSongToApiSong(song: Song): ApiSongInfo {
     title: song.title,
     description: song.description,
     artist: song.artist,
-    albumImageUrl: song.albumImageUrl,
-    songMediaUrl: song.songMediaUrl,
     length: song.length,
-    removed: song.removed,
+
+    albumImageUrl: `${env.serverUrl}/images/${song.albumImageUrl}`,
+    songMediaUrl: `${env.serverUrl}/audio/${song.songMediaUrl}`,
   };
 }
-
-export default SongRouter;

@@ -1,0 +1,56 @@
+name: Dev CI
+
+on:
+    pull_request:
+        branches: [master]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+
+        steps:
+            - name: Start MySQL container
+              run: >
+                docker run
+                --detach
+                --env=POSTGRES_PASSWORD=psqlpass
+                --env=POSTGRES_USER=postgres
+                --name=postgres
+                --network=host
+                --rm
+                --tmpfs=/var/lib/mysql postgres
+
+            - uses: actions/checkout@v2
+
+            - name: Get yarn cache directory path
+              id: yarn-cache-dir-path
+              run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+            - uses: actions/cache@v2
+              id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+              with:
+                  path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
+
+            - name: Setup Node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '16.16.0'
+
+            - name: write env
+              run: echo "DATABASE_URL=postgres://postgres:psqlpass@localhost:5432/postgres" > .env
+
+            - name: install
+              run: yarn install
+
+            - name: check linting
+              run: yarn lint
+
+            - name: check types
+              run: yarn tsc
+
+            - name: run tests
+              run: yarn test

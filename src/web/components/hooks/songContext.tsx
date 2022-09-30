@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { CurrentSongData, LiveListenerData, SongInterruptData } from '../../../server/src/socketTypes/socketDataTypes';
-import { ApiSongInfo } from '../../apiTypes/song';
+
+import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
+import type {
+  CurrentSongData,
+  LiveListenerData,
+  SongInterruptData,
+} from '../../../server/src/socketTypes/socketDataTypes';
 
 export type SongInfo = ApiSongInfo | null;
 
@@ -9,6 +14,7 @@ interface SongContextInterface {
   song: SongInfo;
   nextSong: SongInfo;
   audio: HTMLAudioElement | null;
+  volume: number;
   listenerCount: number;
 }
 
@@ -20,11 +26,13 @@ interface SongHandlerContextInterface {
   setVolumeValue: (volumeValue: number) => void;
 }
 
-const SongContext = React.createContext<SongContextInterface | null>(null);
-const SongHandlerContext = React.createContext<SongHandlerContextInterface | null>(null);
+export const SongContext = React.createContext<SongContextInterface | null>(null);
+export const SongHandlerContext = React.createContext<SongHandlerContextInterface | null>(null);
 
 export const useSong = () => useContext(SongContext);
 export const useSongHandler = () => useContext(SongHandlerContext);
+
+export const volumeKey = 'radiofm.volume';
 
 export const SongContextProvider = (props: { children: any }) => {
   const [time, setTime] = useState<number>(0);
@@ -33,39 +41,37 @@ export const SongContextProvider = (props: { children: any }) => {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [nextAudio, setNextAudio] = useState<HTMLAudioElement | null>(null);
   const [listenerCount, setListenerCount] = useState<number>(0);
-  const [volume, setVolume] = useState<number>(0.5);
+  const [volume, setVolume] = useState<number>(0);
 
   useEffect(() => {
-    if (audio) audio.volume = volume;
-  }, [volume]);
+    const savedVolume = Number(JSON.parse(JSON.stringify(localStorage.getItem(volumeKey))));
+    if (savedVolume) {
+      setVolume(() => savedVolume);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(volumeKey, JSON.stringify(volume));
+    if (audio) {
+      audio.volume = volume;
+    }
+  }, [audio, volume]);
 
   useEffect(() => {
     if (audio) {
       audio.currentTime = time;
-      audio.play();
+      void audio.play();
     }
 
     return () => {
       audio?.pause();
       nextAudio?.pause();
     };
-  }, [audio, time]);
-
-  useEffect(() => {
-    console.log('song', song);
-  }, [song]);
-
-  useEffect(() => {
-    console.log('nextSong', nextSong);
-  }, [nextSong]);
+  }, [nextAudio, audio, time]);
 
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
   const setSongData = (data: CurrentSongData) => {
-    if (!data) {
-      return;
-    }
-
     audio?.pause();
     nextAudio?.pause();
 
@@ -96,7 +102,7 @@ export const SongContextProvider = (props: { children: any }) => {
   };
 
   return (
-    <SongContext.Provider value={{ time, song, nextSong, audio, listenerCount }}>
+    <SongContext.Provider value={{ time, song, nextSong, audio, listenerCount, volume }}>
       <SongHandlerContext.Provider
         value={{ setListenerData, setSongData, setNextSongData, setTimeData, setVolumeValue }}
       >

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { api } from '../../apiInterface';
-import { ApiUser } from '../../apiTypes/user';
+
+import type { ApiUser } from '../../../server/src/apiTypes/user';
+import { api } from '../../util/api';
 
 interface UserContextInterface {
   register: (username: string, password: string) => Promise<ApiUser | undefined>;
@@ -54,7 +55,7 @@ export function UserContextProvider(props: { children: any }) {
     const getUser = async () => {
       await getSelf();
     };
-    getUser();
+    void getUser();
   }, []);
 
   return (

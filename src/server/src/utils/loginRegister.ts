@@ -1,6 +1,7 @@
-import prisma from './prisma';
-import bcrypt from 'bcrypt';
 import { Role } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
+import { prisma } from './prisma';
 
 export async function getLoginUser(username: string, password: string) {
   const user = await prisma.user.findUnique({ where: { username } });
@@ -21,9 +22,14 @@ export async function getLoginUser(username: string, password: string) {
   return user;
 }
 
-export async function registerUser(username: string, password: string, role: Role = Role.USER) {
+export async function encryptPassword(password: string) {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
+  return [salt, hash];
+}
+
+export async function registerUser(username: string, password: string, role: Role = Role.USER) {
+  const [salt, hash] = await encryptPassword(password);
 
   return prisma.user.create({
     data: {
@@ -36,8 +42,7 @@ export async function registerUser(username: string, password: string, role: Rol
 }
 
 export async function setUserPassword(userId: string, password: string) {
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
+  const [salt, hash] = await encryptPassword(password);
 
   return prisma.user.update({
     where: { id: userId },

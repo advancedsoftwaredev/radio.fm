@@ -1,21 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import {
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
+
+import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
+import type {
+  CurrentSongData,
   LiveListenerData,
   MessageData,
   SongData,
-  CurrentSongData,
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
-import { ServerToClientEvents, ClientToServerEvents } from '../../../server/src/socketTypes/socketTypes';
-import { ApiSongInfo } from '../../apiTypes/song';
+import type { ClientToServerEvents, ServerToClientEvents } from '../../../server/src/socketTypes/socketTypes';
+import { getPublicConfig } from '../../config';
 import { useSongHandler } from './songContext';
 import { useUserData } from './userContext';
 
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents> | null;
 
 interface SocketContextData {
-  messages: MessageData[];
+  messages: IMessage[];
 }
 
 interface SocketInterfaceContext {
@@ -26,20 +30,28 @@ interface SocketInterfaceContext {
   getTime: () => void;
 }
 
+type IMessage = MessageData & {
+  id: string;
+};
+
 const SocketContext = React.createContext<SocketContextData | null>(null);
 const SocketInterfaceContext = React.createContext<SocketInterfaceContext | null>(null);
 
-const connectToSocket = (namespace: string = '/') =>
-  io(namespace, { withCredentials: true, path: '/socket.io/socket.io' });
+const connectToSocket = (namespace = '/') => {
+  return io(getPublicConfig().serverUrl + namespace, { withCredentials: true });
+};
 
 export function SocketContextProvider(props: { children: any }) {
   const [socket, setSocket] = useState<SocketType>(null);
   const [adminSocket, setAdminSocket] = useState<SocketType>(null);
 
-  const [messages, setMessages] = useState<MessageData[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
 
   const user = useUserData();
   const songHandler = useSongHandler();
+
+  const requestNextSong = useCallback(() => socket?.emit('requestNextSong'), [socket]);
+  const getTime = () => socket?.emit('getTime');
 
   useEffect(() => {
     const newSocket = connectToSocket();
@@ -57,6 +69,7 @@ export function SocketContextProvider(props: { children: any }) {
       newAdminSocket?.close();
       newSocket.close();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setSocket, user]);
 
   useEffect(() => {
@@ -68,7 +81,11 @@ export function SocketContextProvider(props: { children: any }) {
       socket.on('message', async (data: MessageData) => {
         setMessages((current) => {
           const newMessages = JSON.parse(JSON.stringify(current));
-          newMessages.push(data);
+          newMessages.push({
+            ...data,
+            id: uuidv4(),
+            time: new Date(data.time),
+          });
           return newMessages;
         });
       });
@@ -100,10 +117,8 @@ export function SocketContextProvider(props: { children: any }) {
         socket.off('nextSong');
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, adminSocket]);
-
-  const requestNextSong = () => socket?.emit('requestNextSong');
-  const getTime = () => socket?.emit('getTime');
 
   const socketInterface: SocketInterfaceContext = {
     socket,

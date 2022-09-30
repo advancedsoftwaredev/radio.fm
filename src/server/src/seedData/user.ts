@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+import type { Role } from '@prisma/client';
 
 export interface UserSeed {
   username: string;
@@ -6,7 +6,7 @@ export interface UserSeed {
   role: Role;
 }
 
-const users: UserSeed[] = [
+export const seedUsers: UserSeed[] = [
   {
     username: 'John Fortnite',
     password: 'password',
@@ -23,5 +23,3 @@ const users: UserSeed[] = [
     role: 'USER',
   },
 ];
-
-export default users;
