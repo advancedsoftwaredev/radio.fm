@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
+import cors from 'cors';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
@@ -12,6 +12,7 @@ import ApiRouter from './api/api';
 import { ApiError, AuthorizationError } from './api/errors';
 import { mapUserToApiUser } from './api/user/user';
 import type { ApiUser } from './apiTypes/user';
+import { env } from './env';
 import type { MessageData, SongData } from './socketTypes/socketDataTypes';
 import type {
   ClientToServerEvents,
@@ -33,34 +34,41 @@ import {
 } from './utils/queue';
 import { getSongCount } from './utils/song';
 import { addSongLog } from './utils/songLog';
-
-dotenv.config({});
-dotenv.config({ path: '../../.env' });
+import { audioStorage, imageStorage } from './utils/storage_interface';
 
 const app = express();
 
+// CORS Config to change
+const corsOptions = {
+  origin: env.corsUrl,
+  include: '*',
+  credentials: true,
+  methods: ['GET', 'POST'],
+};
+
+// Allow CORS and Cookies
+app.use(cors(corsOptions));
+app.use(express.static(__dirname + '/../../web/out'));
+
 const server = http.createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
-app.use(express.static(__dirname + '/../../web/out'));
-app.use('/audio', express.static(__dirname + '/audio/'));
-app.use('/images', express.static(__dirname + '/images/'));
 app.use(cookieParser());
 app.use('/api', ApiRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err);
   if (err instanceof ApiError) {
     res.status(err.code).json(err.message);
   } else {
     res.status(500).send('Internal server error');
   }
 });
+
+app.use('/audio', audioStorage.getRequestHandler());
+app.use('/images', imageStorage.getRequestHandler());
 
 const getListenerCount = (namespace = '/') => io.of(namespace).sockets.size;
 

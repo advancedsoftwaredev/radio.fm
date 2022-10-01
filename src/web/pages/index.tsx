@@ -5,8 +5,7 @@ import React from 'react';
 
 import type { ApiSongInfo } from '../../server/src/apiTypes/song';
 import Header from '../components/Header';
-import { useSocketInterface } from '../components/hooks/socketContext';
-import { useSong, useSongHandler } from '../components/hooks/songContext';
+import { useSong } from '../components/hooks/songContext';
 import ParticlesComponent from '../components/Particles';
 import PlayButton from '../components/PlayButton';
 import VolumeSlider from '../components/VolumeSlider';
@@ -14,9 +13,7 @@ import VolumeSlider from '../components/VolumeSlider';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-  const socketHandler = useSocketInterface();
   const song = useSong();
-  const songHandler = useSongHandler();
 
   const getSongCaption = (songData: ApiSongInfo) => `"${songData.title}" - ${songData.artist}`;
 

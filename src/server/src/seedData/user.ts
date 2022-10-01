@@ -6,7 +6,7 @@ export interface UserSeed {
   role: Role;
 }
 
-const users: UserSeed[] = [
+export const seedUsers: UserSeed[] = [
   {
     username: 'John Fortnite',
     password: 'password',
@@ -23,5 +23,3 @@ const users: UserSeed[] = [
     role: 'USER',
   },
 ];
-
-export default users;

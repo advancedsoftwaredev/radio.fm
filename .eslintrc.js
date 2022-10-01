@@ -114,7 +114,7 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/ban-types': 'off',
-        '@typescript-eslint/consistent-type-imports': 'error',
+        '@typescript-eslint/consistent-type-imports': 'warn',
         'import/newline-after-import': 'warn',
         'unused-imports/no-unused-imports': 'warn',
         'simple-import-sort/imports': [
@@ -169,4 +169,4 @@ module.exports = {
   ],
   rules: {},
   extends: ["plugin:storybook/recommended"],
-};  
+};
