@@ -38,11 +38,15 @@ AdminSongRouter.post<SongByIdInput, {}>('/delete-song', async (req) => {
   if (!song) {
     throw new NotFoundError('No song found with that Id');
   }
-  await prisma.song.delete({
-    where: {
-      id: req.body.id,
-    },
-  });
+
+  await prisma.$transaction([
+    prisma.songLog.deleteMany({ where: { songId: req.body.id } }),
+    prisma.likedSong.deleteMany({ where: { songId: req.body.id } }),
+    prisma.songManagementLog.deleteMany({ where: { songId: req.body.id } }),
+    prisma.queue.deleteMany({ where: { songId: req.body.id } }),
+    prisma.song.delete({ where: { id: req.body.id } }),
+  ]);
+
   return {};
 });
 
