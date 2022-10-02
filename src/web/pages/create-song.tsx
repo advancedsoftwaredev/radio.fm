@@ -63,6 +63,8 @@ const CreateSong = () => {
       } catch (e) {
         setError("Couldn't upload image, please try again");
       }
+    } else {
+      setError('Please fill out the form and upload files');
     }
     setLoading(false);
   };
@@ -118,7 +120,6 @@ const CreateSong = () => {
                 hidden={true}
                 accept="image/*"
                 type="file"
-                required={true}
                 onChange={(e) => {
                   if (e.target.files) {
                     setImageFile(e.target.files[0]);
@@ -140,7 +141,6 @@ const CreateSong = () => {
                 hidden={true}
                 accept="audio/*"
                 type="file"
-                required={true}
                 onChange={(e) => {
                   if (e.target.files) {
                     setAudioFile(e.target.files[0]);
