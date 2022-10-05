@@ -10,7 +10,9 @@ import type {
   SongByIdInput,
 } from '../../apiTypes/song';
 import { env } from '../../env';
+import songQueueHandler from '../../songQueueHandler';
 import { prisma } from '../../utils/prisma';
+import { getQueueLength } from '../../utils/queue';
 import { authenticatedRouter } from '../../utils/routers';
 import { audioStorage, imageStorage } from '../../utils/storage_interface';
 import { makeTempFileFromStream } from '../../utils/tempfile';
@@ -38,11 +40,21 @@ AdminSongRouter.post<SongByIdInput, {}>('/delete-song', async (req) => {
   if (!song) {
     throw new NotFoundError('No song found with that Id');
   }
-  await prisma.song.delete({
-    where: {
-      id: req.body.id,
-    },
-  });
+
+  const queueRequiresReset = await songQueueHandler.checkInQueue(song.id);
+
+  await prisma.$transaction([
+    prisma.songLog.deleteMany({ where: { songId: req.body.id } }),
+    prisma.likedSong.deleteMany({ where: { songId: req.body.id } }),
+    prisma.songManagementLog.deleteMany({ where: { songId: req.body.id } }),
+    prisma.queue.deleteMany({ where: { songId: req.body.id } }),
+    prisma.song.delete({ where: { id: req.body.id } }),
+  ]);
+
+  if (queueRequiresReset) {
+    void songQueueHandler.restartQueue();
+  }
+
   return {};
 });
 
@@ -78,6 +90,10 @@ AdminSongRouter.upload<ApiCreateSongInfo, ApiSongInfo>('/upload-song', async (re
       songMediaUrl: partial,
     },
   });
+
+  if ((await getQueueLength()) === 0) {
+    void songQueueHandler.restartQueue();
+  }
 
   return mapSongToApiSong(song);
 });

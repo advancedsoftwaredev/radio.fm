@@ -28,6 +28,7 @@ export function createEndpoints(
     },
     song: {
       getById: makeBodyRequest<SongByIdInput, ApiSongInfo>('/song/song-info'),
+      getAllSongs: makeRequest<ApiSongInfo[]>('/song/all-songs'),
     },
     songAdmin: {
       deleteSong: makeBodyRequest<SongByIdInput, {}>('/song-admin/delete-song'),

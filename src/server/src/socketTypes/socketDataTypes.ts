@@ -23,4 +23,5 @@ export interface CurrentSongData {
   song: ApiSongInfo;
   time?: number;
   finished: boolean;
+  newQueue?: boolean;
 }

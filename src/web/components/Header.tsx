@@ -24,6 +24,13 @@ const Header = () => {
           <Typography variant="h6" sx={{ marginRight: 'auto', marginLeft: '1rem' }}>
             {`Welcome, ${user.username}!`}
           </Typography>
+
+          {user.role === 'ADMIN' && (
+            <Button onClick={() => router.push('/song-management')}>
+              <Typography variant="h6">Song Management</Typography>
+            </Button>
+          )}
+
           <Button onClick={() => userHandler?.logout()}>
             <Typography variant="h6">Logout</Typography>
           </Button>
