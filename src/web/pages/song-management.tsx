@@ -1,4 +1,4 @@
-import { Box, styled, TableCell, tableCellClasses, TableRow } from '@mui/material';
+import { Box, Button, styled, TableCell, tableCellClasses, TableRow, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -54,6 +54,9 @@ const SongManagement = () => {
 
   return (
     <Box sx={{ padding: '2rem' }}>
+      <Button onClick={() => router.back()}>
+        <Typography>{'<<'} Back</Typography>
+      </Button>
       <h1>Song Management</h1>
       <SongTable songs={songs} deleteSong={deleteSong} />
     </Box>

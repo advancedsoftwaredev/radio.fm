@@ -1,4 +1,5 @@
-import { httpServer, songQueueHandler } from './app';
+import { httpServer } from './app';
+import { songQueueHandler } from './songQueueHandler';
 
 const port = 8080;
 
