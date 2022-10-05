@@ -1,29 +1,30 @@
-import { Box, Typography, Button } from '@mui/material';
-import { useRouter } from 'next/router'
+import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React from 'react';
 
+import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
 import { useUserData } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 import VolumeSlider from '../components/VolumeSlider';
-import { ApiUser } from '../../server/src/apiTypes/user';
-import styles from '../styles/Home.module.css';
 import { api } from '../util/api';
+
+import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   const user = useUserData();
   const router = useRouter();
- 
+
   const deleteAccount = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
 
     let deleteAccount: ApiUser | undefined = undefined;
-  
-    deleteAccount =  await api.user?.deleteAccount();
+
+    deleteAccount = await api.user.deleteAccount();
   };
-  
+
   return (
     <Box display="flex" flexDirection="column" sx={{ height: '100vh' }}>
       <ParticlesComponent />
@@ -36,25 +37,25 @@ const Home: NextPage = () => {
       <Header />
 
       <Box display="flex" flex="1" sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <h1 className={styles.title}>Account Details</h1>   
+        <h1 className={styles.title}>Account Details</h1>
         <Typography variant="h6" fontWeight="bold">
-        {`Username: ${user?.username}`}
+          {`Username: ${user?.username}`}
         </Typography>
 
         <Typography>
-            <button className="passbutton"  onClick={() => router.push('/change-username')}>
-                Change Username
-            </button>
+          <button className="passbutton" onClick={() => router.push('/change-username')}>
+            Change Username
+          </button>
         </Typography>
         <Typography>
-            <button className="passbutton"  onClick={() => router.push('/change-password')}>
-                Change Password
-            </button>
+          <button className="passbutton" onClick={() => router.push('/change-password')}>
+            Change Password
+          </button>
         </Typography>
         <Typography>
-            <button className="passbutton"  onClick={deleteAccount}>
-                Delete Account
-            </button>
+          <button className="passbutton" onClick={deleteAccount}>
+            Delete Account
+          </button>
         </Typography>
       </Box>
       <VolumeSlider />

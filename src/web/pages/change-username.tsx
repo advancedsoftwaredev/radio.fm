@@ -1,15 +1,14 @@
-import { Box, Typography, Button, TextField } from '@mui/material';
-import { useRouter } from 'next/router'
-import type { NextPage } from 'next';
+/* eslint-disable @typescript-eslint/no-floating-promises */
+import { Box, Button, TextField, Typography } from '@mui/material';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-
+import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 import VolumeSlider from '../components/VolumeSlider';
-import { ApiUser } from '../../server/src/apiTypes/user';
 import { api } from '../util/api';
 
 const ChangeUsername = () => {
@@ -34,7 +33,7 @@ const ChangeUsername = () => {
     let newUsername: ApiUser | undefined = undefined;
 
     if (username) {
-      newUsername = await api.user?.changeUsername({username})
+      newUsername = await api.user.changeUsername({ username });
     }
 
     if (!newUsername) {
@@ -56,42 +55,42 @@ const ChangeUsername = () => {
       </Head>
       <Header />
       <Box height="100vh" display="flex" alignItems="center" justifyContent="center">
-      <form>
-      <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
-          <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
-            Update Username
-          </Typography>
-          <TextField
-            variant="filled"
-            placeholder="New Username"
-            autoComplete="new-username"
-            type="username"
-            value={username}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setNewUsername(event.target.value)}
-            sx={{
-              '& .MuiInputBase-input': {
-                backgroundColor: '#111',
-                color: '#fff',
-                padding: '1rem',
-                borderRadius: '.3rem',
-              },
-            }}
-          />
-          {error && (
-            <Typography sx={{ marginTop: '1rem' }} color="#FF0000">
-              A user with that username already exists...
+        <form>
+          <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
+            <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
+              Update Username
             </Typography>
-          )}
-          <Box display="flex" sx={{ marginTop: '1rem' }}>
-            <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
-              Cancel
-            </Button>
-            <Button variant="contained" onClick={updateUsername}>
-              {loading ? 'Update' : 'Update' }
-            </Button>
+            <TextField
+              variant="filled"
+              placeholder="New Username"
+              autoComplete="new-username"
+              type="username"
+              value={username}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setNewUsername(event.target.value)}
+              sx={{
+                '& .MuiInputBase-input': {
+                  backgroundColor: '#111',
+                  color: '#fff',
+                  padding: '1rem',
+                  borderRadius: '.3rem',
+                },
+              }}
+            />
+            {error && (
+              <Typography sx={{ marginTop: '1rem' }} color="#FF0000">
+                A user with that username already exists...
+              </Typography>
+            )}
+            <Box display="flex" sx={{ marginTop: '1rem' }}>
+              <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
+                Cancel
+              </Button>
+              <Button variant="contained" onClick={updateUsername}>
+                {loading ? 'Update' : 'Update'}
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </form>
+        </form>
       </Box>
       <VolumeSlider />
     </Box>

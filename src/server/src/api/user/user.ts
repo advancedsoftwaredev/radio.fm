@@ -22,7 +22,7 @@ UserRouter.get('/delete-account', async (req, res) => {
 
 UserRouter.post<{ password: string }, {}>('/change-password', async (req, res) => {
   await setUserPassword(req.user.id, req.body.password);
-  return {}
+  return {};
 });
 
 UserRouter.post<{ username: string }, {}>('/change-username', async (req, res) => {
@@ -31,8 +31,8 @@ UserRouter.post<{ username: string }, {}>('/change-username', async (req, res) =
     throw new BadInputError('Username already taken');
   }
   await prisma.user.update({ where: { id: req.user.id }, data: { username: req.body.username } });
-    return {} 
-  });
+  return {};
+});
 
 UserRouter.get<ApiSongInfo[]>('/liked-songs', async (req, res) => {
   const likedSongs = await prisma.likedSong.findMany({ where: { userId: req.user.id }, include: { song: true } });
