@@ -1,10 +1,10 @@
 export interface UserCredentials {
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
 }
 
 export interface ApiUser {
-  id: string;
-  username: string;
-  role: string;
+  id?: string;
+  username?: string;
+  role?: string;
 }

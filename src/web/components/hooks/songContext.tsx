@@ -71,11 +71,15 @@ export const SongContextProvider = (props: { children: any }) => {
 
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
-  const setSongData = (data: CurrentSongData) => {
+  const setSongData = (data: CurrentSongData | null) => {
+    if (!data) {
+      return;
+    }
+
     audio?.pause();
     nextAudio?.pause();
 
-    if (!song || !nextSong) {
+    if (!song || !nextSong || data.newQueue) {
       setSong(data.song);
       setAudio(new Audio(data.song.songMediaUrl));
     } else {
@@ -88,7 +92,10 @@ export const SongContextProvider = (props: { children: any }) => {
     setTime(data.time ?? 0);
   };
 
-  const setNextSongData = (data: ApiSongInfo) => {
+  const setNextSongData = (data: ApiSongInfo | null) => {
+    if (!data) {
+      return;
+    }
     setNextSong(data);
     setNextAudio(new Audio(data.songMediaUrl));
   };
