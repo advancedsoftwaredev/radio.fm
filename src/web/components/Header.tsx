@@ -24,6 +24,12 @@ const Header = () => {
           <Typography variant="h6" sx={{ marginRight: 'auto', marginLeft: '1rem' }}>
             {`Welcome, ${user.username}!`}
           </Typography>
+          <Button variant="text" sx={{ marginRight: '.5rem' }} onClick={() => router.push('/')}>
+            <Typography variant="h6">Home</Typography>
+          </Button>
+          <Button variant="text" sx={{ marginRight: '.5rem' }} onClick={() => router.push('/account')}>
+            <Typography variant="h6">View Account</Typography>
+          </Button>
           <Button onClick={() => userHandler?.logout()}>
             <Typography variant="h6">Logout</Typography>
           </Button>
