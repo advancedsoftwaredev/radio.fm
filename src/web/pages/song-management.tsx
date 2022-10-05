@@ -54,7 +54,7 @@ const SongManagement = () => {
 
   return (
     <Box sx={{ padding: '2rem' }}>
-      <Button onClick={() => router.back()}>
+      <Button onClick={() => router.push('/')}>
         <Typography>{'<<'} Back</Typography>
       </Button>
       <h1>Song Management</h1>
