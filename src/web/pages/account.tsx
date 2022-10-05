@@ -8,13 +8,22 @@ import Header from '../components/Header';
 import { useUserData } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 import VolumeSlider from '../components/VolumeSlider';
+import { ApiUser } from '../../server/src/apiTypes/user';
 import styles from '../styles/Home.module.css';
-
+import { api } from '../util/api';
 
 const Home: NextPage = () => {
   const user = useUserData();
   const router = useRouter();
+ 
+  const deleteAccount = async (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
 
+    let deleteAccount: ApiUser | undefined = undefined;
+  
+    deleteAccount =  await api.user?.deleteAccount();
+  };
+  
   return (
     <Box display="flex" flexDirection="column" sx={{ height: '100vh' }}>
       <ParticlesComponent />
@@ -31,9 +40,7 @@ const Home: NextPage = () => {
         <Typography variant="h6" fontWeight="bold">
         {`Username: ${user?.username}`}
         </Typography>
-        <Typography variant="h6" fontWeight="bold">
-        {`User ID: ${user?.id}`}
-        </Typography>
+
         <Typography>
             <button className="passbutton"  onClick={() => router.push('/change-username')}>
                 Change Username
@@ -42,6 +49,11 @@ const Home: NextPage = () => {
         <Typography>
             <button className="passbutton"  onClick={() => router.push('/change-password')}>
                 Change Password
+            </button>
+        </Typography>
+        <Typography>
+            <button className="passbutton"  onClick={deleteAccount}>
+                Delete Account
             </button>
         </Typography>
       </Box>

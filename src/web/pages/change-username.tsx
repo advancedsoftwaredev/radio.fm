@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 
 import Header from '../components/Header';
-import { useUserData } from '../components/hooks/userContext';
+import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 import VolumeSlider from '../components/VolumeSlider';
 import { ApiUser } from '../../server/src/apiTypes/user';
@@ -18,6 +18,7 @@ const ChangeUsername = () => {
   const [error, setError] = useState<boolean>(false);
 
   const user = useUserData();
+  const userhandler = useUserInterface();
   const router = useRouter();
 
   useEffect(() => {
@@ -34,13 +35,13 @@ const ChangeUsername = () => {
 
     if (username) {
       newUsername = await api.user?.changeUsername({username})
-      
     }
 
     if (!newUsername) {
       setError(true);
     } else {
-      setError(false);
+      userhandler?.getSelf();
+      router.push('/account');
     }
     setLoading(false);
   };
@@ -86,7 +87,7 @@ const ChangeUsername = () => {
               Cancel
             </Button>
             <Button variant="contained" onClick={updateUsername}>
-              {!loading ? 'Update' : 'Username Changed!' }
+              {loading ? 'Update' : 'Update' }
             </Button>
           </Box>
         </Box>
