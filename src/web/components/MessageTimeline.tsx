@@ -1,15 +1,16 @@
-import { IMessage } from './hooks/socketContext';
 import Timeline from '@mui/lab/Timeline';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+
+import type { IMessage } from './hooks/socketContext';
+
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import { fontFamily } from '@mui/system';
 
 const MessageTimeline = (props: { messages: IMessage[] }) => {
   return (
@@ -17,7 +18,7 @@ const MessageTimeline = (props: { messages: IMessage[] }) => {
       <h3>Conversation</h3>
 
       <Timeline position="alternate">
-        {props?.messages
+        {props.messages
           .slice()
           .reverse()
           .map((mssg) => (

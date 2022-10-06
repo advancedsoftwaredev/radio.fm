@@ -1,20 +1,14 @@
-import Timeline from '@mui/lab/Timeline';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import React, { useState } from 'react';
 
 import { useSocketData, useSocketInterface } from '../components/hooks/socketContext';
 import { useUserData } from '../components/hooks/userContext';
+import MessageTimeline from '../components/MessageTimeline';
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import MessageTimeline from '../components/MessageTimeline';
 
 const ChatBox = () => {
   const [author, setAuthor] = useState<string>('');
@@ -40,7 +34,7 @@ const ChatBox = () => {
         <InputText placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
         <Button onClick={() => addMessage()} label="send" />
       </div>
-          <MessageTimeline messages={data?.messages ??[]}/>
+      <MessageTimeline messages={data?.messages ?? []} />
     </div>
   );
 };

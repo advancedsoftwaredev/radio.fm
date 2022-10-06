@@ -1,7 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import react from 'react';
-import ReactDOM from 'react-dom';
-import { IMessage } from '../components/hooks/socketContext';
+import { render, screen } from '@testing-library/react';
+
+import type { IMessage } from '../components/hooks/socketContext';
 import MessageTimeline from '../components/MessageTimeline';
 
 const message: IMessage[] = [
