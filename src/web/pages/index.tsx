@@ -1,3 +1,5 @@
+import { FavoriteBorderOutlined } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -5,17 +7,36 @@ import React from 'react';
 
 import type { ApiSongInfo } from '../../server/src/apiTypes/song';
 import Header from '../components/Header';
-import { useSong } from '../components/hooks/songContext';
+import { useSong, useSongHandler } from '../components/hooks/songContext';
+import { useUserData } from '../components/hooks/userContext';
+import ListenerCount from '../components/ListenerCount';
 import ParticlesComponent from '../components/Particles';
 import PlayButton from '../components/PlayButton';
 import VolumeSlider from '../components/VolumeSlider';
+import { api } from '../util/api';
 
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   const song = useSong();
+  const user = useUserData();
+  const songHandler = useSongHandler();
 
   const getSongCaption = (songData: ApiSongInfo) => `"${songData.title}" - ${songData.artist}`;
+
+  const likeHandler = async (songId: string | null, liked: boolean) => {
+    if (!songId) {
+      return;
+    }
+
+    if (liked) {
+      await api.user.unlikeSong({ songId });
+    } else {
+      await api.user.likeSong({ songId });
+    }
+
+    void songHandler?.getSongLiked(songId);
+  };
 
   return (
     <Box display="flex" flexDirection="column" sx={{ height: '100vh' }}>
@@ -41,25 +62,26 @@ const Home: NextPage = () => {
               />
             )}
 
-            <Typography variant="h5" fontWeight="bold">
-              {getSongCaption(song.song)}
-            </Typography>
+            {user && user.role !== 'GUEST' && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="h5" fontWeight="bold">
+                  {getSongCaption(song.song)}
+                </Typography>
+
+                <Box
+                  sx={{ marginLeft: '.75rem', cursor: 'pointer' }}
+                  onClick={() => likeHandler(song.song?.id ?? null, song.liked)}
+                >
+                  {song.liked ? <FavoriteIcon /> : <FavoriteBorderOutlined />}
+                </Box>
+              </Box>
+            )}
 
             <Box sx={{ border: '0px solid white', maxWidth: '30rem', marginTop: '1rem', textAlign: 'center' }}>
               <Typography variant="subtitle1">{song.song.description}</Typography>
             </Box>
 
-            <Typography sx={{ marginTop: '1rem' }}>
-              {song.listenerCount > 1 ? (
-                <>
-                  There are <strong>{song.listenerCount}</strong> people listening!
-                </>
-              ) : (
-                <>
-                  There is <strong>{song.listenerCount}</strong> person listening!
-                </>
-              )}
-            </Typography>
+            <ListenerCount count={song.listenerCount} />
 
             <PlayButton />
           </>

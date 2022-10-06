@@ -39,6 +39,28 @@ UserRouter.get<ApiSongInfo[]>('/liked-songs', async (req, res) => {
   return likedSongs.map((likedSong) => mapSongToApiSong(likedSong.song));
 });
 
+UserRouter.post<{ songId: string }, { liked: boolean }>('/likes-song', async (req, res) => {
+  return { liked: !!(await prisma.likedSong.findFirst({ where: { userId: req.user.id, songId: req.body.songId } })) };
+});
+
+UserRouter.post<{ songId: string }, {}>('/like-song', async (req, res) => {
+  const likedSong = await prisma.likedSong.findFirst({ where: { userId: req.user.id, songId: req.body.songId } });
+  if (likedSong) {
+    throw new BadInputError('User already likes this song');
+  }
+  await prisma.likedSong.create({ data: { userId: req.user.id, songId: req.body.songId } });
+  return {};
+});
+
+UserRouter.post<{ songId: string }, {}>('/unlike-song', async (req, res) => {
+  const likedSong = await prisma.likedSong.findFirst({ where: { userId: req.user.id, songId: req.body.songId } });
+  if (!likedSong) {
+    throw new BadInputError('User does not like this song');
+  }
+  await prisma.likedSong.delete({ where: { id: likedSong.id } });
+  return {};
+});
+
 export const mapUserToApiUser = (user: User): ApiUser => {
   return {
     id: user.id,

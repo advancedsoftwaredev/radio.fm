@@ -40,6 +40,9 @@ export function createEndpoints(
       getLikedSongs: makeRequest<ApiSongInfo[]>('/user/liked-songs'),
       changePassword: makeBodyRequest<{ password: string }, {}>('/user/change-password'),
       changeUsername: makeBodyRequest<{ username: string }, {}>('/user/change-username'),
+      likeSong: makeBodyRequest<{ songId: string }, {}>('/user/like-song'),
+      unlikeSong: makeBodyRequest<{ songId: string }, {}>('/user/unlike-song'),
+      likesSong: makeBodyRequest<{ songId: string }, { liked: boolean }>('/user/likes-song'),
     },
   };
 }

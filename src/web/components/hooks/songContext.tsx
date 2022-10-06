@@ -6,6 +6,8 @@ import type {
   LiveListenerData,
   SongInterruptData,
 } from '../../../server/src/socketTypes/socketDataTypes';
+import { api } from '../../util/api';
+import { useUserData } from './userContext';
 
 export type SongInfo = ApiSongInfo | null;
 
@@ -16,6 +18,7 @@ interface SongContextInterface {
   audio: HTMLAudioElement | null;
   volume: number;
   listenerCount: number;
+  liked: boolean;
 }
 
 interface SongHandlerContextInterface {
@@ -24,6 +27,7 @@ interface SongHandlerContextInterface {
   setNextSongData: (data: ApiSongInfo) => void;
   setTimeData: (data: SongInterruptData) => void;
   setVolumeValue: (volumeValue: number) => void;
+  getSongLiked: (songId: string) => Promise<void>;
 }
 
 export const SongContext = React.createContext<SongContextInterface | null>(null);
@@ -42,6 +46,10 @@ export const SongContextProvider = (props: { children: any }) => {
   const [nextAudio, setNextAudio] = useState<HTMLAudioElement | null>(null);
   const [listenerCount, setListenerCount] = useState<number>(0);
   const [volume, setVolume] = useState<number>(0);
+
+  const [liked, setLiked] = useState<boolean>(false);
+
+  const user = useUserData();
 
   useEffect(() => {
     const savedVolume = Number(JSON.parse(JSON.stringify(localStorage.getItem(volumeKey))));
@@ -68,6 +76,12 @@ export const SongContextProvider = (props: { children: any }) => {
       nextAudio?.pause();
     };
   }, [nextAudio, audio, time]);
+
+  useEffect(() => {
+    if (song && user?.role !== 'GUEST') {
+      void getSongLiked(song.id);
+    }
+  }, [song, user]);
 
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
@@ -108,10 +122,19 @@ export const SongContextProvider = (props: { children: any }) => {
     setVolume(volumeValue);
   };
 
+  const getSongLiked = async (songId: string) => {
+    try {
+      const liked = await api.user.likesSong({ songId });
+      setLiked(liked.liked);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
-    <SongContext.Provider value={{ time, song, nextSong, audio, listenerCount, volume }}>
+    <SongContext.Provider value={{ time, song, nextSong, audio, listenerCount, volume, liked }}>
       <SongHandlerContext.Provider
-        value={{ setListenerData, setSongData, setNextSongData, setTimeData, setVolumeValue }}
+        value={{ setListenerData, setSongData, setNextSongData, setTimeData, setVolumeValue, getSongLiked }}
       >
         {props.children}
       </SongHandlerContext.Provider>
