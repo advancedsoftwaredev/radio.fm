@@ -1,4 +1,5 @@
 import { makeTestClient } from '../apiInterface/tests';
+import { insertSongs } from '../testSetup/data/songs';
 import { initializeDatabaseTesting } from '../utils/databaseTest';
 import { prisma } from '../utils/prisma';
 
@@ -9,8 +10,7 @@ describe('user', () => {
   const credentials = { username: 'user', password: 'password' };
 
   beforeAll(async () => {
-    // FIXME: Make tests compatible with songs
-    // await insertAllTestSeedSongs();
+    await insertSongs();
   });
 
   beforeEach(async () => {
@@ -58,13 +58,55 @@ describe('user', () => {
     expect(error?.status).toBe(400);
   });
 
-  // it('liked-songs successfully returns all liked songs', async () => {
-  //   const songs = await prisma.song.findMany({});
-  //   const user = await client.auth.getSelf();
+  it('liked-songs successfully returns all liked songs', async () => {
+    const songs = await prisma.song.findMany({});
+    const user = await client.auth.getSelf();
 
-  //   await Promise.all(songs.map((song) => prisma.likedSong.create({ data: { userId: user.id, songId: song.id } })));
+    await Promise.all(
+      songs.map((song) => prisma.likedSong.create({ data: { userId: user.id ?? '', songId: song.id } }))
+    );
 
-  //   const likedSongs = await client.user.getLikedSongs();
-  //   expect(likedSongs).toHaveLength(songs.length);
-  // });
+    const likedSongs = await client.user.getLikedSongs();
+    expect(likedSongs).toHaveLength(songs.length);
+  });
+
+  it("like-song successfully adds song to user's liked songs", async () => {
+    const song = await prisma.song.findFirst();
+    await client.user.likeSong({ songId: song?.id ?? '' });
+
+    const likesSong = await client.user.likesSong({ songId: song?.id ?? '' });
+
+    expect(likesSong.liked).toBeTruthy();
+
+    let error: any = null;
+    try {
+      await client.user.likeSong({ songId: song?.id ?? '' });
+    } catch (e: any) {
+      error = e;
+    }
+
+    expect(error?.status).toBe(400);
+  });
+
+  it("unlike-song successfully removes song from user's liked songs", async () => {
+    const song = await prisma.song.findFirst();
+    await client.user.likeSong({ songId: song?.id ?? '' });
+    let likesSong = await client.user.likesSong({ songId: song?.id ?? '' });
+
+    expect(likesSong.liked).toBeTruthy();
+
+    await client.user.unlikeSong({ songId: song?.id ?? '' });
+    likesSong = await client.user.likesSong({ songId: song?.id ?? '' });
+
+    expect(likesSong.liked).toBeFalsy();
+
+    let error: any = null;
+    try {
+      await client.user.unlikeSong({ songId: song?.id ?? '' });
+    } catch (e: any) {
+      error = e;
+    }
+
+    expect(error?.status).toBe(400);
+  });
 });
