@@ -16,9 +16,17 @@ import { addSongLog } from './utils/songLog';
 
 class SongQueue {
   minimumInQueue: number;
+  favoriteSongFrequency: number;
+  favoriteSongChoice: number;
+  favoriteCount: number;
+  songRepeatCount: number;
 
-  constructor(minimumInQueue: number) {
+  constructor(minimumInQueue = 3, favoriteSongFrequency = 3, favoriteSongChoice = 10, songRepeatCount = 2) {
     this.minimumInQueue = minimumInQueue;
+    this.favoriteSongFrequency = favoriteSongFrequency;
+    this.favoriteSongChoice = favoriteSongChoice;
+    this.songRepeatCount = songRepeatCount;
+    this.favoriteCount = 0;
   }
 
   async restartQueue() {
@@ -79,12 +87,85 @@ class SongQueue {
   }
 
   async queueNewSong() {
-    const skip = Math.floor(Math.random() * (await getSongCount()));
-    const songId = (await prisma.song.findFirst({ skip, take: 1 }))?.id;
-    if (!songId) {
-      void this.queueHandler();
+    const songCount = await getSongCount();
+    if (songCount === 0) {
       return;
     }
+
+    const ignoreSongRepeat = (await getSongCount()) <= this.songRepeatCount;
+
+    const previousSongs = [];
+
+    if (!ignoreSongRepeat) {
+      previousSongs.push(
+        ...(
+          await prisma.queue.findMany({
+            take: this.songRepeatCount,
+            orderBy: [
+              {
+                timeAdded: 'desc',
+              },
+            ],
+          })
+        ).map((queueSong) => queueSong.songId)
+      );
+
+      if (this.songRepeatCount - previousSongs.length !== 0) {
+        previousSongs.push(
+          ...(
+            await prisma.songLog.findMany({
+              take: this.songRepeatCount - previousSongs.length,
+              orderBy: [
+                {
+                  startTime: 'desc',
+                },
+              ],
+            })
+          ).map((songLog) => songLog.songId)
+        );
+      }
+    }
+
+    this.favoriteCount++;
+
+    let songId = null;
+
+    const favoriteSongs = await prisma.likedSong.groupBy({
+      by: ['songId'],
+      _count: { userId: true },
+      having: { userId: { _count: { gte: 1 } } },
+      orderBy: { _count: { userId: 'desc' } },
+      take: this.favoriteSongChoice,
+    });
+
+    let fromFavorites = false;
+
+    while (!songId) {
+      if (this.favoriteCount < this.favoriteSongFrequency || favoriteSongs.length === 0) {
+        const skip = Math.floor(Math.random() * songCount);
+        songId = (await prisma.song.findFirst({ skip, take: 1 }))?.id;
+        fromFavorites = false;
+      } else {
+        const random = Math.floor(Math.random() * favoriteSongs.length);
+        songId = favoriteSongs[random].songId;
+        favoriteSongs.splice(random, 1);
+        fromFavorites = true;
+      }
+
+      if (!ignoreSongRepeat) {
+        for (let i = 0; i < previousSongs.length; i++) {
+          if (songId === previousSongs[i]) {
+            songId = null;
+            break;
+          }
+        }
+      }
+    }
+
+    if (fromFavorites) {
+      this.favoriteCount = 0;
+    }
+
     await addToQueue(songId);
   }
 
