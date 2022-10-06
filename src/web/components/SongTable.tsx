@@ -26,14 +26,19 @@ const SongTable = (props: { songs: ApiSongInfo[]; deleteSong: (id: string) => Pr
         <TableBody>
           {props.songs.map((song) => (
             <StyledTableRow key={song.id}>
-              <StyledTableCell>{song.id}</StyledTableCell>
+              <StyledTableCell data-testid="song-element">{song.id}</StyledTableCell>
               <StyledTableCell>{song.artist}</StyledTableCell>
               <StyledTableCell>{song.title}</StyledTableCell>
               <StyledTableCell>{`${Math.floor(song.length / 60)}:${
                 song.length - Math.floor(song.length / 60) * 60
               }`}</StyledTableCell>
               <StyledTableCell sx={{ width: 0 }}>
-                <Button variant="contained" color="error" onClick={() => props.deleteSong(song.id)}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => props.deleteSong(song.id)}
+                  data-testid="delete-button"
+                >
                   Delete
                 </Button>
               </StyledTableCell>
