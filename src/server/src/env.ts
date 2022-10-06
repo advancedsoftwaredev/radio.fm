@@ -28,7 +28,12 @@ interface RemoteStorage {
 
 type StorageConfig = LocalStorage | RemoteStorage;
 
-const local_data_path = path.join(__dirname, '../../../local_storage');
+let local_data_path = path.join(__dirname, '../../../local_storage');
+
+const local_path_addon = envVar('LOCAL_PATH_EXTENSION');
+if (local_path_addon) {
+  local_data_path = path.join(local_data_path, local_path_addon);
+}
 
 function getStorageConfig(): StorageConfig {
   return {

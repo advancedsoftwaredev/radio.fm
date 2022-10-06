@@ -91,7 +91,7 @@ AdminSongRouter.upload<ApiCreateSongInfo, ApiSongInfo>('/upload-song', async (re
     },
   });
 
-  if ((await getQueueLength()) === 0) {
+  if ((await getQueueLength()) === 0 && process.env.NODE_ENV !== 'test') {
     void songQueueHandler.restartQueue();
   }
 
