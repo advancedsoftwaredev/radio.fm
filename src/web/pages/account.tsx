@@ -8,7 +8,6 @@ import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
 import { useUserData } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
-import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
 
 import styles from '../styles/Home.module.css';
@@ -58,7 +57,6 @@ const Home: NextPage = () => {
           </button>
         </Typography>
       </Box>
-      <VolumeSlider />
     </Box>
   );
 };
