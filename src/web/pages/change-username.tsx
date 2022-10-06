@@ -8,7 +8,6 @@ import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
-import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
 
 const ChangeUsername = () => {
@@ -92,7 +91,6 @@ const ChangeUsername = () => {
           </Box>
         </form>
       </Box>
-      <VolumeSlider />
     </Box>
   );
 };

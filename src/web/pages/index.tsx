@@ -12,7 +12,6 @@ import { useUserData } from '../components/hooks/userContext';
 import ListenerCount from '../components/ListenerCount';
 import ParticlesComponent from '../components/Particles';
 import PlayButton from '../components/PlayButton';
-import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
 
 import styles from '../styles/Home.module.css';
@@ -62,20 +61,19 @@ const Home: NextPage = () => {
               />
             )}
 
-            {user && user.role !== 'GUEST' && (
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h5" fontWeight="bold">
-                  {getSongCaption(song.song)}
-                </Typography>
-
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="h5" fontWeight="bold">
+                {getSongCaption(song.song)}
+              </Typography>
+              {user && user.role !== 'GUEST' && (
                 <Box
                   sx={{ marginLeft: '.75rem', cursor: 'pointer' }}
                   onClick={() => likeHandler(song.song?.id ?? null, song.liked)}
                 >
                   {song.liked ? <FavoriteIcon /> : <FavoriteBorderOutlined />}
                 </Box>
-              </Box>
-            )}
+              )}
+            </Box>
 
             <Box sx={{ border: '0px solid white', maxWidth: '30rem', marginTop: '1rem', textAlign: 'center' }}>
               <Typography variant="subtitle1">{song.song.description}</Typography>
@@ -94,8 +92,6 @@ const Home: NextPage = () => {
           </>
         )}
       </Box>
-
-      <VolumeSlider />
     </Box>
   );
 };

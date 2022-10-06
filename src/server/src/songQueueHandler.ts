@@ -65,12 +65,7 @@ class SongQueue {
 
     setTimeout(async () => {
       if ((await getInQueue())?.id === currentSong.id && (await getNextSong())?.id === nextSong.id) {
-        await addSongLog(
-          currentSong.timeStarted || new Date(new Date().getTime() - currentSong.song.length * 1000),
-          currentSong.songId
-        );
-
-        await removeFromQueue(currentSong.id);
+        await this.skipSong();
 
         io.emit('newSong', {
           song: nextSong.song,
@@ -95,6 +90,29 @@ class SongQueue {
 
   async checkInQueue(id: string) {
     return (await getInQueue())?.song.id === id || (await getNextSong())?.song.id === id;
+  }
+
+  async skipSong(manualSkip = false) {
+    const currentSong = await getInQueue();
+
+    if (!currentSong) {
+      return;
+    }
+
+    await this.addSongToLog(
+      currentSong.timeStarted || new Date(new Date().getTime() - currentSong.song.length * 1000),
+      currentSong.songId
+    );
+
+    await removeFromQueue(currentSong.id);
+
+    if (manualSkip) {
+      void this.queueHandler(true);
+    }
+  }
+
+  async addSongToLog(startTime: Date, songId: string) {
+    await addSongLog(startTime, songId);
   }
 
   async printQueue() {
