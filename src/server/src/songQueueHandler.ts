@@ -164,6 +164,7 @@ class SongQueue {
 
     if (fromFavorites) {
       this.favoriteCount = 0;
+      console.log('This is a favourite');
     }
 
     await addToQueue(songId);
