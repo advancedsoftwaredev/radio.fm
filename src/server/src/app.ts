@@ -47,7 +47,9 @@ app.use(cookieParser());
 app.use('/api', ApiRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err);
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(err);
+  }
   if (err instanceof ApiError) {
     res.status(err.code).json(err.message);
   } else {
