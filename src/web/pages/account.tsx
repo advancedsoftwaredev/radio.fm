@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 
 import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
@@ -16,12 +16,11 @@ import styles from '../styles/Home.module.css';
 const Home: NextPage = () => {
   const user = useUserData();
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const deleteAccount = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-
     let deleteAccount: ApiUser | undefined = undefined;
-
     deleteAccount = await api.user.deleteAccount();
   };
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -8,11 +8,11 @@ import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
+import PasswordUpdate from '../components/PasswordUpdate';
 import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
 
 const ChangePassword = () => {
-  const [password, setNewPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
@@ -26,14 +26,13 @@ const ChangePassword = () => {
     }
   }, [user, router]);
 
-  const updatePassword = async (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
+  const updatePassword = async (PasswordInput: string) => {
     setLoading(true);
 
     let newPass: ApiUser | undefined = undefined;
 
-    if (password) {
-      newPass = await api.user.changePassword({ password });
+    if (PasswordInput) {
+      newPass = await api.user.changePassword({ password: PasswordInput });
     }
 
     if (!newPass) {
@@ -54,39 +53,7 @@ const ChangePassword = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <Box height="100vh" display="flex" alignItems="center" justifyContent="center">
-        <form>
-          <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
-            <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
-              Update Password
-            </Typography>
-            <TextField
-              variant="filled"
-              placeholder="New Password"
-              autoComplete="new-password"
-              type="password"
-              value={password}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setNewPassword(event.target.value)}
-              sx={{
-                '& .MuiInputBase-input': {
-                  backgroundColor: '#111',
-                  color: '#fff',
-                  padding: '1rem',
-                  borderRadius: '.3rem',
-                },
-              }}
-            />
-            <Box display="flex" sx={{ marginTop: '1rem' }}>
-              <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
-                Cancel
-              </Button>
-              <Button variant="contained" onClick={updatePassword}>
-                {!loading ? 'Update' : 'Password Changed!'}
-              </Button>
-            </Box>
-          </Box>
-        </form>
-      </Box>
+      <PasswordUpdate updatePass={updatePassword} error={error} loading={loading} />
       <VolumeSlider />
     </Box>
   );
