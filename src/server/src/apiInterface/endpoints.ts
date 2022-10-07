@@ -44,5 +44,8 @@ export function createEndpoints(
       unlikeSong: makeBodyRequest<{ songId: string }, {}>('/user/unlike-song'),
       likesSong: makeBodyRequest<{ songId: string }, { liked: boolean }>('/user/likes-song'),
     },
+    queue: {
+      skipSong: makeRequest<{}>('/queue/skip-song'),
+    },
   };
 }
