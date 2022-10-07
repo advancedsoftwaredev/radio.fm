@@ -4,7 +4,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
