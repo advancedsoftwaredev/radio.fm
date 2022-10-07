@@ -1,12 +1,11 @@
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React from 'react';
 
-import type { ApiSongInfo } from '../../server/src/apiTypes/song';
 import Header from '../components/Header';
-import { useSong, useSongHandler } from '../components/hooks/songContext';
-import { useUserData } from '../components/hooks/userContext';
+import { useSongHandler } from '../components/hooks/songContext';
 import ParticlesComponent from '../components/Particles';
 import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
@@ -14,11 +13,8 @@ import { api } from '../util/api';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-  const song = useSong();
-  const user = useUserData();
   const songHandler = useSongHandler();
-
-  const getSongCaption = (songData: ApiSongInfo) => `"${songData.title}" - ${songData.artist}`;
+  const router = useRouter();
 
   const likeHandler = async (songId: string | null, liked: boolean) => {
     if (!songId) {
@@ -45,6 +41,11 @@ const Home: NextPage = () => {
       <Header />
       <Box display="flex" flex="1" sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <h1 className={styles.title}>Account has been deleted!</h1>
+        <Typography>
+          <button className="passbutton" onClick={() => router.push('/')}>
+            Return to Home Page
+          </button>
+        </Typography>
       </Box>
       <VolumeSlider />
     </Box>
