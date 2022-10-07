@@ -1,6 +1,7 @@
 import express from 'express';
 
 import AuthRouter from './auth/auth';
+import { QueueRouter } from './queue/queue';
 import { AdminSongRouter, PublicSongRouter } from './song/song';
 import UserRouter from './user/user';
 
@@ -10,5 +11,6 @@ ApiRouter.use('/song', PublicSongRouter);
 ApiRouter.use('/song-admin', AdminSongRouter);
 ApiRouter.use('/auth', AuthRouter);
 ApiRouter.use('/user', UserRouter);
+ApiRouter.use('/queue', QueueRouter);
 
 export default ApiRouter;

@@ -10,6 +10,8 @@ const config: Config = {
   },
   verbose: true,
   testPathIgnorePatterns: ['/node_modules/'],
+  setupFiles: ['<rootDir>/src/testSetup/jestSetup.ts'],
+  globalTeardown: '<rootDir>/src/testSetup/jestTeardown.ts',
 };
 
 export default config;
