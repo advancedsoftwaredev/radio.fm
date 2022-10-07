@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { Box } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -9,7 +8,6 @@ import Header from '../components/Header';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 import UserUpdate from '../components/UserUpdate';
-import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
 
 const ChangeUsername = () => {
@@ -38,8 +36,8 @@ const ChangeUsername = () => {
     if (!newUsername) {
       setError(true);
     } else {
-      userhandler?.getSelf();
-      router.push('/account');
+      void userhandler?.getSelf();
+      void router.push('/account');
     }
     setLoading(false);
   };
@@ -54,7 +52,6 @@ const ChangeUsername = () => {
       </Head>
       <Header />
       <UserUpdate updateUser={updateUsername} error={error} loading={loading} />
-      <VolumeSlider />
     </Box>
   );
 };

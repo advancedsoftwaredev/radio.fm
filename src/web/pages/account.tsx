@@ -2,26 +2,41 @@ import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import type { ApiUser } from '../../server/src/apiTypes/user';
 import Header from '../components/Header';
-import { useUserData } from '../components/hooks/userContext';
+import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
-import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
 
 import styles from '../styles/Home.module.css';
 
-const Home: NextPage = () => {
+const Account: NextPage = () => {
   const user = useUserData();
   const router = useRouter();
+  const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const userhandler = useUserInterface();
+
+  useEffect(() => {
+    if (user?.role == 'GUEST') {
+      void router.push('/');
+    }
+  }, [user, router]);
 
   const deleteAccount = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    let deleteAccount: ApiUser | undefined = undefined;
-    deleteAccount = await api.user.deleteAccount();
+    setLoading(true);
+
+    try {
+      await api.user.deleteAccount();
+      await userhandler?.getSelf();
+      void router.push('/delete-account');
+    } catch (e) {
+      setError(true);
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,9 +72,8 @@ const Home: NextPage = () => {
           </button>
         </Typography>
       </Box>
-      <VolumeSlider />
     </Box>
   );
 };
 
-export default Home;
+export default Account;

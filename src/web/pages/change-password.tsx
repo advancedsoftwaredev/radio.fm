@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { Box } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -9,7 +8,6 @@ import Header from '../components/Header';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
 import ParticlesComponent from '../components/Particles';
 import PasswordUpdate from '../components/PasswordUpdate';
-import VolumeSlider from '../components/VolumeSlider';
 import { api } from '../util/api';
 
 const ChangePassword = () => {
@@ -38,8 +36,8 @@ const ChangePassword = () => {
     if (!newPass) {
       setError(true);
     } else {
-      userhandler?.getSelf();
-      router.push('/account');
+      void userhandler?.getSelf();
+      void router.push('/account');
     }
     setLoading(false);
   };
@@ -54,7 +52,6 @@ const ChangePassword = () => {
       </Head>
       <Header />
       <PasswordUpdate updatePass={updatePassword} error={error} loading={loading} />
-      <VolumeSlider />
     </Box>
   );
 };
