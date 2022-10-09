@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
 import type {
@@ -52,6 +52,15 @@ export const SongContextProvider = (props: { children: any }) => {
   const user = useUserData();
 
   useEffect(() => {
+    void audio?.play();
+    audio?.addEventListener('canplaythrough', () => audio.play());
+  }, [song, audio]);
+
+  useEffect(() => {
+    console.log('nextSong', nextSong);
+  }, [nextSong]);
+
+  useEffect(() => {
     const savedVolume = Number(JSON.parse(JSON.stringify(localStorage.getItem(volumeKey))));
     if (savedVolume) {
       setVolume(() => savedVolume);
@@ -85,37 +94,49 @@ export const SongContextProvider = (props: { children: any }) => {
 
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
-  const setSongData = (data: CurrentSongData | null) => {
-    if (!data) {
-      return;
-    }
-
-    audio?.pause();
-    nextAudio?.pause();
-
-    if (!song || !nextSong || data.newQueue) {
-      setSong(data.song);
-      setAudio(new Audio(data.song.songMediaUrl));
-    } else {
-      if (data.finished) {
-        setSong(nextSong);
-        setAudio(nextAudio);
+  const setSongData = useCallback(
+    (data: CurrentSongData | null) => {
+      if (!data) {
+        return;
       }
-    }
 
-    setTime(data.time ?? 0);
-  };
+      audio?.pause();
+      nextAudio?.pause();
+
+      if (!song || !nextSong || data.newQueue) {
+        setSong(data.song);
+        setAudio(new Audio(data.song.songMediaUrl));
+      } else {
+        if (data.finished) {
+          const notUpdatedCorrectly = data.song.id !== nextSong.id;
+
+          if (notUpdatedCorrectly) {
+            setSong(data.song);
+            setAudio(new Audio(data.song.songMediaUrl));
+          } else {
+            setSong(nextSong);
+            setAudio(nextAudio);
+          }
+        }
+      }
+
+      setTime(data.time ?? 0);
+    },
+    [audio, nextAudio, song, nextSong]
+  );
 
   const setNextSongData = (data: ApiSongInfo | null) => {
     if (!data) {
       return;
     }
-    setNextSong(data);
+    setNextSong(() => data);
     setNextAudio(new Audio(data.songMediaUrl));
   };
 
   const setTimeData = (data: SongInterruptData) => {
-    setTime(data.time);
+    if (!isNaN(data.time)) {
+      setTime(data.time);
+    }
   };
 
   const setVolumeValue = (volumeValue: number) => {

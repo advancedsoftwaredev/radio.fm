@@ -1,5 +1,7 @@
-import { Box, Button, Typography } from '@mui/material';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { Box, Button, Divider, Menu, MenuItem, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 import { useUserData, useUserInterface } from './hooks/userContext';
 
@@ -7,6 +9,17 @@ const Header = () => {
   const user = useUserData();
   const userHandler = useUserInterface();
   const router = useRouter();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <Box display="flex" alignItems="center" justifyContent="flex-end" padding="1rem" position="absolute" width="100%">
@@ -25,22 +38,67 @@ const Header = () => {
             {`Welcome, ${user.username}!`}
           </Typography>
 
-          <Button variant="text" sx={{ marginRight: '.5rem' }} onClick={() => router.push('/')}>
+          <Button variant="text" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
             <Typography variant="h6">Home</Typography>
           </Button>
-          <Button variant="text" sx={{ marginRight: '.5rem' }} onClick={() => router.push('/account')}>
-            <Typography variant="h6">View Account</Typography>
-          </Button>
 
-          {user.role === 'ADMIN' && (
-            <Button onClick={() => router.push('/song-management')}>
-              <Typography variant="h6">Song Management</Typography>
-            </Button>
-          )}
-
-          <Button onClick={() => userHandler?.logout()}>
-            <Typography variant="h6">Logout</Typography>
+          <Button
+            id="basic-button"
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}
+            variant="contained"
+          >
+            <Typography variant="h6">
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {' '}
+                Settings{' '}
+                <ArrowForwardIosIcon
+                  fontSize="small"
+                  sx={{ marginLeft: '.5rem', transform: open ? 'rotateZ(90deg)' : '' }}
+                />
+              </Box>
+            </Typography>
           </Button>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                void router.push('/account');
+                handleClose();
+              }}
+            >
+              View Account
+            </MenuItem>
+            {user.role === 'ADMIN' && <Divider />}
+            {user.role === 'ADMIN' && (
+              <MenuItem
+                onClick={() => {
+                  void router.push('/song-management');
+                  handleClose();
+                }}
+              >
+                Song Management
+              </MenuItem>
+            )}
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                userHandler?.logout();
+                handleClose();
+              }}
+            >
+              Logout
+            </MenuItem>
+          </Menu>
         </>
       )}
     </Box>
@@ -48,51 +106,3 @@ const Header = () => {
 };
 
 export default Header;
-
-// const headerData = [
-//   {
-//     label: 'Create Account',
-//     href: '',
-//   },
-//   {
-//     label: 'Login',
-//     href: '',
-//   },
-// ];
-
-// export default function Header() {
-//   const FMLogo = (
-//     <Typography variant="h6" component="h1">
-//       Radio.FM - Music Anytime, Anywhere
-//     </Typography>
-//   );
-
-//   const getMenuButtons = () => {
-//     return headerData.map(({ label, href }) => {
-//       return (
-//         <Box m={1} display="flex" justifyContent="flex-end" alignItems="flex-end">
-//           <Button
-//             variant="contained"
-//             {...{
-//               key: label,
-//               color: 'secondary',
-//             }}
-//           >
-//             {label}
-//           </Button>
-//         </Box>
-//       );
-//     });
-//   };
-
-//   return (
-//     <header>
-//       <AppBar style={{ backgroundColor: 'none' }}>
-//         <Toolbar>
-//           {FMLogo}
-//           {getMenuButtons()}
-//         </Toolbar>
-//       </AppBar>
-//     </header>
-//   );
-// }

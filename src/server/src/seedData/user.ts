@@ -8,12 +8,12 @@ export interface UserSeed {
 
 export const seedUsers: UserSeed[] = [
   {
-    username: 'John Fortnite',
+    username: 'admin',
     password: 'password',
     role: 'ADMIN',
   },
   {
-    username: 'Rain Holloway',
+    username: 'user',
     password: 'password',
     role: 'USER',
   },
