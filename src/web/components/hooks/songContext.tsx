@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import type { ApiSongInfo } from '../../../server/src/apiTypes/song';
 import type {
@@ -93,26 +93,29 @@ export const SongContextProvider = (props: { children: any }) => {
 
   const setListenerData = (data: LiveListenerData) => setListenerCount(data.liveListenerCount);
 
-  const setSongData = (data: CurrentSongData | null) => {
-    if (!data) {
-      return;
-    }
-
-    audio?.pause();
-    nextAudio?.pause();
-
-    if (!song || !nextSong || data.newQueue) {
-      setSong(data.song);
-      setAudio(new Audio(data.song.songMediaUrl));
-    } else {
-      if (data.finished) {
-        setSong(() => nextSong);
-        setAudio(nextAudio);
+  const setSongData = useCallback(
+    (data: CurrentSongData | null) => {
+      if (!data) {
+        return;
       }
-    }
 
-    setTime(data.time ?? 0);
-  };
+      audio?.pause();
+      nextAudio?.pause();
+
+      if (!song || !nextSong || data.newQueue) {
+        setSong(data.song);
+        setAudio(new Audio(data.song.songMediaUrl));
+      } else {
+        if (data.finished) {
+          setSong(() => nextSong);
+          setAudio(nextAudio);
+        }
+      }
+
+      setTime(data.time ?? 0);
+    },
+    [audio, nextAudio, song, nextSong]
+  );
 
   const setNextSongData = (data: ApiSongInfo | null) => {
     if (!data) {
