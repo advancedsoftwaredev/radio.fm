@@ -11,13 +11,14 @@ import { mapSongToApiSong } from '../song/song';
 
 const UserRouter = authenticatedRouter('user');
 
-UserRouter.get('/delete-account', async (req, res) => {
+UserRouter.get<{}>('/delete-account', async (req, res) => {
   await prisma.$transaction([
     prisma.likedSong.deleteMany({ where: { userId: req.user.id } }),
     prisma.songManagementLog.deleteMany({ where: { userId: req.user.id } }),
     prisma.session.deleteMany({ where: { userId: req.user.id } }),
     prisma.user.delete({ where: { id: req.user.id } }),
   ]);
+  return {};
 });
 
 UserRouter.post<{ password: string }, {}>('/change-password', async (req, res) => {
