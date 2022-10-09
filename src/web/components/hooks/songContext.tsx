@@ -52,8 +52,9 @@ export const SongContextProvider = (props: { children: any }) => {
   const user = useUserData();
 
   useEffect(() => {
-    console.log('song', song);
-  }, [song]);
+    void audio?.play();
+    audio?.addEventListener('canplaythrough', () => audio.play());
+  }, [song, audio]);
 
   useEffect(() => {
     console.log('nextSong', nextSong);
@@ -107,8 +108,15 @@ export const SongContextProvider = (props: { children: any }) => {
         setAudio(new Audio(data.song.songMediaUrl));
       } else {
         if (data.finished) {
-          setSong(() => nextSong);
-          setAudio(nextAudio);
+          const notUpdatedCorrectly = data.song.id !== nextSong.id;
+
+          if (notUpdatedCorrectly) {
+            setSong(data.song);
+            setAudio(new Audio(data.song.songMediaUrl));
+          } else {
+            setSong(nextSong);
+            setAudio(nextAudio);
+          }
         }
       }
 
