@@ -1,8 +1,11 @@
+import { Box } from '@mui/material';
 import type { AppProps } from 'next/app';
 
+import Header from '../components/Header';
 import { SocketContextProvider } from '../components/hooks/socketContext';
 import { SongContextProvider } from '../components/hooks/songContext';
 import { UserContextProvider } from '../components/hooks/userContext';
+import ParticlesComponent from '../components/Particles';
 import VolumeSlider from '../components/VolumeSlider';
 
 import '../styles/globals.css';
@@ -12,8 +15,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <UserContextProvider>
       <SongContextProvider>
         <SocketContextProvider>
-          <Component {...pageProps} />
-          <VolumeSlider />
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <Header />
+            <ParticlesComponent />
+            <Component {...pageProps} />
+            <VolumeSlider />
+          </Box>
         </SocketContextProvider>
       </SongContextProvider>
     </UserContextProvider>

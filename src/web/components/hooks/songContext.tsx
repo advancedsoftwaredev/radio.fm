@@ -52,6 +52,14 @@ export const SongContextProvider = (props: { children: any }) => {
   const user = useUserData();
 
   useEffect(() => {
+    console.log('song', song);
+  }, [song]);
+
+  useEffect(() => {
+    console.log('nextSong', nextSong);
+  }, [nextSong]);
+
+  useEffect(() => {
     const savedVolume = Number(JSON.parse(JSON.stringify(localStorage.getItem(volumeKey))));
     if (savedVolume) {
       setVolume(() => savedVolume);
@@ -98,7 +106,7 @@ export const SongContextProvider = (props: { children: any }) => {
       setAudio(new Audio(data.song.songMediaUrl));
     } else {
       if (data.finished) {
-        setSong(nextSong);
+        setSong(() => nextSong);
         setAudio(nextAudio);
       }
     }
@@ -110,12 +118,14 @@ export const SongContextProvider = (props: { children: any }) => {
     if (!data) {
       return;
     }
-    setNextSong(data);
+    setNextSong(() => data);
     setNextAudio(new Audio(data.songMediaUrl));
   };
 
   const setTimeData = (data: SongInterruptData) => {
-    setTime(data.time);
+    if (!isNaN(data.time)) {
+      setTime(data.time);
+    }
   };
 
   const setVolumeValue = (volumeValue: number) => {

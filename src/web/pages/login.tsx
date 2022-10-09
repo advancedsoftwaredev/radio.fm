@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 
 import type { ApiUser } from '../../server/src/apiTypes/user';
 import { useUserData, useUserInterface } from '../components/hooks/userContext';
-import ParticlesComponent from '../components/Particles';
 
 const Register = () => {
   const [username, setUsername] = useState<string>('');
@@ -43,7 +42,6 @@ const Register = () => {
 
   return (
     <Box height="100vh" display="flex" alignItems="center" justifyContent="center">
-      <ParticlesComponent />
       <form>
         <Box display="flex" flexDirection="column" sx={{ width: '25rem' }}>
           <Typography variant="h4" sx={{ marginBottom: '.5rem' }}>
