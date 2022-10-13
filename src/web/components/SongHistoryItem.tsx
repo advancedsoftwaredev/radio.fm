@@ -45,6 +45,7 @@ const SongHistoryItem = (props: { songLog: SongLogWithLike; refresh: () => Promi
         padding: '1.5rem',
         marginBottom: '1rem',
         borderRadius: '.5rem',
+        boxShadow: '0 .75rem 1.5rem #070707',
       }}
     >
       <Box sx={{ display: 'flex', marginBottom: '.5rem', alignItems: 'center' }}>

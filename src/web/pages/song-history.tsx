@@ -24,7 +24,14 @@ const SongHistory = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Header />
       <Box
-        sx={{ maxWidth: '40rem', alignSelf: 'center', display: 'flex', flexDirection: 'column', position: 'relative' }}
+        sx={{
+          maxWidth: '40rem',
+          minWidth: '20rem',
+          alignSelf: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+        }}
       >
         <Box
           sx={{
