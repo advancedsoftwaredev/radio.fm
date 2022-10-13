@@ -18,13 +18,7 @@ const Account: NextPage = () => {
   const userhandler = useUserInterface();
 
   useEffect(() => {
-    if (user?.role == 'GUEST') {
-      void router.push('/');
-    }
-  }, [user, router]);
-
-  useEffect(() => {
-    if (user?.role == 'GUEST') {
+    if (user?.role === 'GUEST') {
       void router.push('/');
     }
   }, [user, router]);

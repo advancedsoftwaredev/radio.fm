@@ -43,7 +43,7 @@ const UserUpdate = (props: UserUpdateProps) => {
             </Typography>
           )}
           <Box display="flex" sx={{ marginTop: '1rem' }}>
-            <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
+            <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/account')}>
               Cancel
             </Button>
             <Button variant="contained" onClick={() => props.updateUser(username)} data-testid="updateButton">

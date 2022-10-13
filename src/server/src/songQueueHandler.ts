@@ -181,10 +181,7 @@ class SongQueue {
       return;
     }
 
-    await this.addSongToLog(
-      currentSong.timeStarted || new Date(new Date().getTime() - currentSong.song.length * 1000),
-      currentSong.songId
-    );
+    await this.addSongToLog(currentSong.timeStarted || new Date(), currentSong.songId);
 
     await removeFromQueue(currentSong.id);
 

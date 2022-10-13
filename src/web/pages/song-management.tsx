@@ -54,10 +54,10 @@ const SongManagement = () => {
   }, [router, user]);
 
   return (
-    <Box sx={{ paddingTop: '1rem' }}>
+    <Box>
       <Header />
 
-      <Box sx={{ marginTop: '4rem', padding: '1rem', paddingTop: '.25rem' }}>
+      <Box sx={{ padding: '1rem', paddingTop: '.25rem' }}>
         <h1>Song Management</h1>
         <SongTable songs={songs} deleteSong={deleteSong} />
       </Box>

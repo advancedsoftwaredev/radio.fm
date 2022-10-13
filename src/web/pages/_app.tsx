@@ -14,8 +14,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     <UserContextProvider>
       <SongContextProvider>
         <SocketContextProvider>
+          <ParticlesComponent />
           <Box sx={{ position: 'relative', zIndex: 1 }}>
-            <ParticlesComponent />
             <Component {...pageProps} />
             <VolumeSlider />
           </Box>

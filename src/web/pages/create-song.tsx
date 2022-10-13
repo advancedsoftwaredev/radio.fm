@@ -75,11 +75,11 @@ const CreateSong = () => {
       <Header />
       <Box
         sx={{
-          height: '100vh',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          marginTop: '5rem',
         }}
       >
         <form onSubmit={(e) => e.preventDefault()}>
