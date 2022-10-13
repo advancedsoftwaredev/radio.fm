@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import type { ApiSongInfo } from '../../server/src/apiTypes/song';
+import Header from '../components/Header';
 import { useUserData } from '../components/hooks/userContext';
 import SongTable from '../components/SongTable';
 import { api } from '../util/api';
@@ -53,9 +54,13 @@ const SongManagement = () => {
   }, [router, user]);
 
   return (
-    <Box sx={{ padding: '2rem' }}>
-      <h1>Song Management</h1>
-      <SongTable songs={songs} deleteSong={deleteSong} />
+    <Box sx={{ paddingTop: '1rem' }}>
+      <Header />
+
+      <Box sx={{ marginTop: '4rem', padding: '1rem', paddingTop: '.25rem' }}>
+        <h1>Song Management</h1>
+        <SongTable songs={songs} deleteSong={deleteSong} />
+      </Box>
     </Box>
   );
 };

@@ -1,3 +1,5 @@
+import { Box, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import React, { useState } from 'react';
@@ -13,6 +15,8 @@ import 'primeicons/primeicons.css';
 const ChatBox = () => {
   const [author, setAuthor] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+
+  const router = useRouter();
 
   const addMessage = () => {
     const send = socketHandler?.sendMessage({ time: new Date(), username: author, msg: message });
@@ -35,6 +39,11 @@ const ChatBox = () => {
         <Button onClick={() => addMessage()} label="send" />
       </div>
       <MessageTimeline messages={data?.messages ?? []} />
+      <Box sx={{ position: 'fixed', right: '1rem', bottom: '1rem' }}>
+        <Button onClick={() => router.push('/')}>
+          <Typography variant="h6">Home</Typography>
+        </Button>
+      </Box>
     </div>
   );
 };
