@@ -21,6 +21,14 @@ export interface ApiCreateSongInfo {
   albumImageUrl: string;
 }
 
+export interface ApiEditSongInfo {
+  id: string;
+  title: string;
+  description: string;
+  artist: string;
+  albumImageUrl: string;
+}
+
 export interface ApiSongInfo {
   id: string;
   title: string;
