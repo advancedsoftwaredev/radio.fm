@@ -5,6 +5,7 @@ import type {
   ApiEditSongInfo,
   ApiSongInfo,
   SongByIdInput,
+  SongLogWithLike,
 } from '../apiTypes/song';
 import type { ApiUser, UserCredentials } from '../apiTypes/user';
 
@@ -48,6 +49,9 @@ export function createEndpoints(
     },
     queue: {
       skipSong: makeRequest<{}>('/queue/skip-song'),
+    },
+    songLog: {
+      songLogs: makeRequest<SongLogWithLike[]>('/song-log/song-logs'),
     },
   };
 }

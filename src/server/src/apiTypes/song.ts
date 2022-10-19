@@ -1,3 +1,5 @@
+import type { SongLog } from '@prisma/client';
+
 export interface SongByIdInput {
   id: string;
 }
@@ -38,3 +40,11 @@ export interface ApiSongInfo {
   songMediaUrl: string;
   length: number;
 }
+
+export type SongLogWithSong = SongLog & {
+  song: ApiSongInfo;
+};
+
+export type SongLogWithLike = SongLogWithSong & {
+  liked: boolean;
+};

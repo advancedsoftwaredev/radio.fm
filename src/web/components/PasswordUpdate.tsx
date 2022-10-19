@@ -38,7 +38,7 @@ const PasswordUpdate = (props: PasswordUpdateProps) => {
             }}
           />
           <Box display="flex" sx={{ marginTop: '1rem' }}>
-            <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
+            <Button variant="outlined" sx={{ marginRight: '1rem' }} onClick={() => router.push('/account')}>
               Cancel
             </Button>
             <Button variant="contained" onClick={() => props.updatePass(password)} data-testid="updateButton">

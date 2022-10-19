@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="flex-end" padding="1rem" position="absolute" width="100%">
+    <Box display="flex" alignItems="center" justifyContent="flex-end" padding="1rem" width="100%">
       {!user || user.role === 'GUEST' ? (
         <>
           <Button variant="text" sx={{ marginRight: '.5rem' }} onClick={() => router.push('/login')}>
@@ -40,6 +40,10 @@ const Header = () => {
 
           <Button variant="text" sx={{ marginRight: '1rem' }} onClick={() => router.push('/')}>
             <Typography variant="h6">Home</Typography>
+          </Button>
+
+          <Button variant="text" sx={{ marginRight: '1rem' }} onClick={() => router.push('/song-history')}>
+            <Typography variant="h6">Previously Played</Typography>
           </Button>
 
           <Button
