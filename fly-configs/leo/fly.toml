@@ -10,8 +10,8 @@ PORT = "8080"
 DATABASE_URL = "postgres://postgres:WK9Uvtbnzn4oQ9O@radio-fm-db.internal:5432"
 LOCAL_DATA_PATH = "/app/data"
 JWT_SECRET = "secret"
-CLIENT_URL = "https://radio-fm.fly.dev/"
-SERVER_URL = "https://radio-fm.fly.dev/"
+CLIENT_URL = "https://radio-fm.fly.dev"
+SERVER_URL = "https://radio-fm.fly.dev"
 
 [build]
 image = "arduano/radio.fm"

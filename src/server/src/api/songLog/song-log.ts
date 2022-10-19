@@ -1,5 +1,5 @@
 import type { SongLogWithLike } from '../../apiTypes/song';
-import { prisma } from '../../utils/prisma';
+import { prisma } from '../../prisma';
 import { authenticatedRouter } from '../../utils/routers';
 import { mapSongToApiSong } from '../song/song';
 
