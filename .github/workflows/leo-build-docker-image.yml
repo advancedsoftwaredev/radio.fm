@@ -14,7 +14,7 @@ jobs:
         env:
           DOCKER_USER: ${{secrets.LEO_DOCKER_USER}}
           DOCKER_PASSWORD: ${{secrets.LEO_DOCKER_PASSWORD}}
-        run: docker login -u $DOCKER_USER -p $LEO_DOCKER_PASSWORD
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build the Docker image
         run: docker build . --tag ${{secrets.LEO_DOCKER_USER}}/radio.fm:$(date +%s) --tag ${{secrets.LEO_DOCKER_USER}}/radio.fm:latest
