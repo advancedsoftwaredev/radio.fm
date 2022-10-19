@@ -2,8 +2,8 @@ import axios from 'axios';
 import fs from 'fs';
 import getAudioDurationInSeconds from 'get-audio-duration';
 
+import { prisma } from '../../prisma';
 import { seedSongs } from '../../seedData/song';
-import { prisma } from '../../utils/prisma';
 import { audioStorage, imageStorage } from '../../utils/storage_interface';
 import { makeTempFileFromBuffer } from '../../utils/tempfile';
 

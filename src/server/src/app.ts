@@ -36,7 +36,10 @@ const corsOptions = {
 
 // Allow CORS and Cookies
 app.use(cors(corsOptions));
-app.use(express.static(__dirname + '/../../web/out'));
+
+if (env.publicDir) {
+  app.use(express.static(env.publicDir));
+}
 
 const server = http.createServer(app);
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(server, {

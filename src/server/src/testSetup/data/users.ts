@@ -1,5 +1,5 @@
 import { makeTestClient } from '../../apiInterface/tests';
-import { prisma } from '../../utils/prisma';
+import { prisma } from '../../prisma';
 
 const defaultAdminUsername = 'default_test_admin';
 const defaultUserUsername = 'default_test_admin';

@@ -10,8 +10,8 @@ import type {
   SongByIdInput,
 } from '../../apiTypes/song';
 import { env } from '../../env';
+import { prisma } from '../../prisma';
 import songQueueHandler from '../../songQueueHandler';
-import { prisma } from '../../utils/prisma';
 import { getQueueLength } from '../../utils/queue';
 import { authenticatedRouter } from '../../utils/routers';
 import { audioStorage, imageStorage } from '../../utils/storage_interface';

@@ -5,13 +5,15 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "outDir": "dist",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "target": "es6"
   },
   "include": ["**/*.ts", "**/*.js"],
-  "exclude": ["node_modules", "test/**/*.test.tsx", "test/**/*.test.ts", "./.eslintrc.js"]
+  "exclude": ["node_modules", "jest.config.ts", "test/**/*.test.tsx", "test/**/*.test.ts", "./.eslintrc.js"]
 }

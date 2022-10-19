@@ -1,7 +1,7 @@
 import { mapSongToApiSong } from '../api/song/song';
 import type { ApiSongInfo } from '../apiTypes/song';
+import { prisma } from '../prisma';
 import type { CurrentSongData } from '../socketTypes/socketDataTypes';
-import { prisma } from './prisma';
 
 export interface QueueWithSong {
   id: string;
