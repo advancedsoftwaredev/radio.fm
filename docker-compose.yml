@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  voting:
+  radiofm:
     build: .
     restart: unless-stopped
     ports:
@@ -10,6 +10,9 @@ services:
         PORT: 8080
         DATABASE_URL: postgres://postgres:psqlpass@postgre:5432/radiofm
         LOCAL_DATA_PATH: /app/data
+        JWT_SECRET: secret
+        CLIENT_URL: http://localhost:8080
+        SERVER_URL: http://localhost:8080
     # volumes:
     #   - ./data:/app/data
 
