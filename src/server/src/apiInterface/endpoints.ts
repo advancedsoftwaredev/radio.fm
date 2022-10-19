@@ -2,6 +2,7 @@ import type {
   ApiCreateAlbumArtInfo,
   ApiCreateAlbumArtReturn,
   ApiCreateSongInfo,
+  ApiEditSongInfo,
   ApiSongInfo,
   SongByIdInput,
 } from '../apiTypes/song';
@@ -34,6 +35,7 @@ export function createEndpoints(
       deleteSong: makeBodyRequest<SongByIdInput, {}>('/song-admin/delete-song'),
       uploadArt: makeUploadRequest<ApiCreateAlbumArtInfo, ApiCreateAlbumArtReturn>('/song-admin/upload-art'),
       uploadSong: makeUploadRequest<ApiCreateSongInfo, ApiSongInfo>('/song-admin/upload-song'),
+      editSong: makeUploadRequest<ApiEditSongInfo, ApiSongInfo>('/song-admin/edit-song'),
     },
     user: {
       deleteAccount: makeRequest<{}>('/user/delete-account'),

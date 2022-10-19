@@ -6,6 +6,7 @@ import type {
   ApiCreateAlbumArtInfo,
   ApiCreateAlbumArtReturn,
   ApiCreateSongInfo,
+  ApiEditSongInfo,
   ApiSongInfo,
   SongByIdInput,
 } from '../../apiTypes/song';
@@ -94,6 +95,20 @@ AdminSongRouter.upload<ApiCreateSongInfo, ApiSongInfo>('/upload-song', async (re
   if ((await getQueueLength()) === 0 && process.env.NODE_ENV !== 'test') {
     void songQueueHandler.restartQueue();
   }
+
+  return mapSongToApiSong(song);
+});
+
+AdminSongRouter.post<ApiEditSongInfo, ApiSongInfo>('/edit-song', async (req, file) => {
+  const song = await prisma.song.update({
+    where: { id: req.body.id },
+    data: {
+      albumImageUrl: req.body.albumImageUrl,
+      artist: req.body.artist,
+      description: req.body.description,
+      title: req.body.title,
+    },
+  });
 
   return mapSongToApiSong(song);
 });
