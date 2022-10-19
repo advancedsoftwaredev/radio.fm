@@ -23,7 +23,7 @@ jobs:
         run: docker push ${{secrets.LEO_DOCKER_USER}}/radio.fm:latest
 
       - name: Install flyctl
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+        uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Fly Deploy
         run: cd ./fly-configs/leo && flyctl deploy
