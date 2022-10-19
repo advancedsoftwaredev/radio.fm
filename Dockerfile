@@ -10,6 +10,8 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+ENV SERVER_URL=""
+
 RUN yarn server build && yarn web build && yarn web export && mv node_modules/.prisma ./
 
 # Cleanup all dev dependencies

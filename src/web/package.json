@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
     "start": "next start",
+    "build": "SERVER_URL=\"\" next build",
     "export": "SERVER_URL=\"\" next export",
     "lint": "next lint",
     "test": "jest"
