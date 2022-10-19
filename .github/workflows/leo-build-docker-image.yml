@@ -17,7 +17,15 @@ jobs:
         run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build the Docker image
-        run: docker build . --tag ${{secrets.LEO_DOCKER_USER}}/radio.fm:$(date +%s) --tag ${{secrets.LEO_DOCKER_USER}}/radio.fm:latest
+        run: docker build . --no-cache --tag ${{secrets.LEO_DOCKER_USER}}/radio.fm:$(date +%s) --tag ${{secrets.LEO_DOCKER_USER}}/radio.fm:latest
 
       - name: Docker Push
         run: docker push ${{secrets.LEO_DOCKER_USER}}/radio.fm:latest
+
+      - name: Install flyctl
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly Deploy
+        run: cd ./fly-configs/leo && flyctl deploy
+        env:
+          FLY_API_TOKEN: ${{ secrets.LEO_FLY_TOKEN }}
