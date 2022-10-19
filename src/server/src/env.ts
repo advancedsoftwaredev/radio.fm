@@ -28,7 +28,7 @@ interface RemoteStorage {
 
 type StorageConfig = LocalStorage | RemoteStorage;
 
-let local_data_path = path.join(__dirname, '../../../local_storage');
+let local_data_path = envVarProdForce('LOCAL_DATA_PATH') ?? path.join(__dirname, '../../../local_storage');
 
 const local_path_addon = envVar('LOCAL_PATH_EXTENSION');
 if (local_path_addon) {
