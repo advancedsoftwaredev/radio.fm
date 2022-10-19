@@ -1,5 +1,5 @@
 import { io } from './app';
-import { prisma } from './utils/prisma';
+import { prisma } from './prisma';
 import {
   addToQueue,
   emptyQueue,

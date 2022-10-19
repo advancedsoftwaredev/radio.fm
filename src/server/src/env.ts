@@ -48,4 +48,5 @@ export const env = {
   tempPath: path.join(local_data_path, 'tmp'),
   corsUrl: envVarProdForce('CLIENT_URL') ?? 'http://localhost:3000',
   serverUrl: envVarProdForce('SERVER_URL') ?? 'http://localhost:8080',
+  publicDir: envVarProdForce('PUBLIC_DIR'),
 };

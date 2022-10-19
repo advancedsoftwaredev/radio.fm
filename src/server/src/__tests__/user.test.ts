@@ -1,7 +1,7 @@
 import { makeTestClient } from '../apiInterface/tests';
+import { prisma } from '../prisma';
 import { insertSongs } from '../testSetup/data/songs';
 import { initializeDatabaseTesting } from '../utils/databaseTest';
-import { prisma } from '../utils/prisma';
 
 initializeDatabaseTesting();
 

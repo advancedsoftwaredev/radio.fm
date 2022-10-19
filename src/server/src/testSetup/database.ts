@@ -1,7 +1,7 @@
 import { exec as callbackExec } from 'child_process';
 import util from 'util';
 
-import { prisma, resetClient } from '../utils/prisma';
+import { prisma, resetClient } from '../prisma';
 
 const exec = util.promisify(callbackExec);
 

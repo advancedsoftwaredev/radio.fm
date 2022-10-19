@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 import { env } from '../env';
-import { prisma } from './prisma';
+import { prisma } from '../prisma';
 
 const sessionAge = 1000 * 60 * 60 * 24 * 90; // 90 days
 

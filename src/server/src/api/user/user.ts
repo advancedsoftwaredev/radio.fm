@@ -2,8 +2,8 @@ import type { User } from '.prisma/client';
 
 import type { ApiSongInfo } from '../../apiTypes/song';
 import type { ApiUser } from '../../apiTypes/user';
+import { prisma } from '../../prisma';
 import { setUserPassword } from '../../utils/loginRegister';
-import { prisma } from '../../utils/prisma';
 import { authenticatedRouter } from '../../utils/routers';
 import { getUserByUsername } from '../../utils/user';
 import { BadInputError } from '../errors';
