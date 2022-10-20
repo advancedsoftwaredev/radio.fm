@@ -7,7 +7,7 @@ processes = []
 
 [env]
   CLIENT_URL = "https://radio-fm-dev.fly.dev"
-  DATABASE_URL = "postgres://postgres:kt89cQHZF3ehevf@radio-fm-dev-db.internal:5432"
+  DATABASE_URL = "postgres://postgres:NkNYas8PYGjZs42@radio-fm-dev-db.internal:5432"
   JWT_SECRET = "this_is_a_very_secret_secret"
   LOCAL_DATA_PATH = "/app/data"
   PORT = "8080"
