@@ -21,3 +21,11 @@ jobs:
 
       - name: Docker Push
         run: docker push ${{secrets.RAIN_DOCKER_USER}}/radio.fm:latest
+
+      - name: Install flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly Deploy
+        run: cd ./fly-configs/rain && flyctl deploy
+        env:
+          FLY_API_TOKEN: ${{ secrets.RAIN_FLY_TOKEN }}
