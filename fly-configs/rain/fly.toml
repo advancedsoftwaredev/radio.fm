@@ -1,0 +1,47 @@
+# fly.toml file generated for radio-fm-dev on 2022-10-20T14:23:54+11:00
+
+app = "radio-fm-dev"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+  CLIENT_URL = "https://radio-fm-dev.fly.dev"
+  DATABASE_URL = "postgres://postgres:kt89cQHZF3ehevf@radio-fm-dev-db.internal:5432"
+  JWT_SECRET = "this_is_a_very_secret_secret"
+  LOCAL_DATA_PATH = "/app/data"
+  PORT = "8080"
+  SERVER_URL = "https://radio-fm-dev.fly.dev"
+
+[build]
+  image="rainholloway/radio.fm"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
