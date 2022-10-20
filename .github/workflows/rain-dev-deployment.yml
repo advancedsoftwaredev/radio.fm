@@ -1,0 +1,31 @@
+name: Dev Deployment
+
+on:
+  push:
+    branches: ['dev']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker Login
+        env:
+          DOCKER_USER: ${{secrets.RAIN_DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.RAIN_DOCKER_PASSWORD}}
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build the Docker image
+        run: docker build . --no-cache --tag ${{secrets.RAIN_DOCKER_USER}}/radio.fm:$(date +%s) --tag ${{secrets.RAIN_DOCKER_USER}}/radio.fm:latest
+
+      - name: Docker Push
+        run: docker push ${{secrets.RAIN_DOCKER_USER}}/radio.fm:latest
+
+      - name: Install flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly Deploy
+        run: cd ./fly-configs/rain && flyctl deploy
+        env:
+          FLY_API_TOKEN: ${{ secrets.RAIN_FLY_TOKEN }}
