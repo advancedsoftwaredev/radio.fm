@@ -2,72 +2,49 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import Header from '../components/Header';
-import { useUserData } from '../components/hooks/userContext';
-import { api } from '../util/api';
+import Header from '../../components/Header';
+import { api } from '../../util/api';
+import { inputStyle } from '../create-song';
 
-export const inputStyle = {
-  '& .MuiInputBase-input': {
-    backgroundColor: '#111',
-    color: '#fff',
-    borderRadius: '.3rem',
-  },
-  '.MuiFormLabel-root': {
-    color: '#fff',
-  },
-};
-
-const CreateSong = () => {
+const Editsong = () => {
+  const [albumImageUrl, setUrl] = useState<string>('');
   const [artist, setArtist] = useState<string>('');
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
   const router = useRouter();
-  const user = useUserData();
-
+  const { id } = router.query;
   useEffect(() => {
-    if (user && user.role !== 'ADMIN') {
-      void router.push('/');
-    }
-  }, [router, user]);
-
-  const createSong = async () => {
-    setLoading(true);
-    if (imageFile && audioFile) {
-      try {
-        const imageResponse = await api.songAdmin.uploadArt({ title }, imageFile);
-        try {
-          if (imageResponse.albumImageUrl) {
-            const audioResponse = await api.songAdmin.uploadSong(
-              {
-                title,
-                artist,
-                description,
-                albumImageUrl: imageResponse.albumImageUrl,
-              },
-              audioFile
-            );
-
-            if (audioResponse.id) {
-              void router.push('/song-management');
-            }
-          }
-        } catch (e) {
-          setError("Couldn't upload song, please try again");
-        }
-      } catch (e) {
-        setError("Couldn't upload image, please try again");
+    const getSong = async () => {
+      console.log(id);
+      if (!id) {
+        return;
       }
-    } else {
-      setError('Please fill out the form and upload files');
+      const response = await api.song.getById({ id: Array.isArray(id) ? id[0] : id });
+      console.log(response);
+      if (response.artist) {
+        setArtist(response.artist);
+        setTitle(response.title);
+        setDescription(response.description);
+        setUrl(response.albumImageUrl);
+      }
+    };
+    void getSong();
+  }, [id]);
+
+  const editSongHandler = async () => {
+    let newUrl: string | null = null;
+    if (imageFile) {
+      newUrl = (await api.songAdmin.uploadArt({ title }, imageFile)).albumImageUrl;
     }
-    setLoading(false);
+    await api.songAdmin.editSong({
+      title,
+      description,
+      artist,
+      id: (Array.isArray(id) ? id[0] : id) || '',
+      albumImageUrl: !newUrl ? albumImageUrl : newUrl,
+    });
+    void router.push('/song-management');
   };
 
   return (
@@ -138,38 +115,12 @@ const CreateSong = () => {
               </Button>
               {imageFile?.name && <Typography sx={{ marginLeft: '1rem' }}>{imageFile.name}</Typography>}
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Button
-                variant="contained"
-                component="label"
-                sx={{ marginTop: '1rem', marginBottom: '1rem', alignSelf: 'start' }}
-              >
-                Upload Song MP3
-                <input
-                  id="album-cover-upload"
-                  hidden={true}
-                  accept="audio/*"
-                  type="file"
-                  onChange={(e) => {
-                    if (e.target.files) {
-                      setAudioFile(e.target.files[0]);
-                    }
-                  }}
-                />
-              </Button>
-              {audioFile?.name && <Typography sx={{ marginLeft: '1rem' }}>{audioFile.name}</Typography>}
-            </Box>
-            {error && (
-              <Box sx={{ marginBottom: '1rem' }}>
-                <Typography color="error">{error}</Typography>
-              </Box>
-            )}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '30rem' }}>
               <Button variant="outlined" onClick={() => router.push('/song-management')}>
                 Cancel
               </Button>
-              <Button variant="contained" type="submit" onClick={() => createSong()}>
-                {loading ? 'Loading...' : 'Create Song'}
+              <Button variant="contained" type="submit" onClick={() => editSongHandler()}>
+                Edit Song
               </Button>
             </Box>
           </Box>
@@ -179,4 +130,4 @@ const CreateSong = () => {
   );
 };
 
-export default CreateSong;
+export default Editsong;

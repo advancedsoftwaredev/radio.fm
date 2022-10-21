@@ -99,7 +99,7 @@ AdminSongRouter.upload<ApiCreateSongInfo, ApiSongInfo>('/upload-song', async (re
   return mapSongToApiSong(song);
 });
 
-AdminSongRouter.post<ApiEditSongInfo, ApiSongInfo>('/edit-song', async (req, file) => {
+AdminSongRouter.post<ApiEditSongInfo, ApiSongInfo>('/edit-song', async (req) => {
   const song = await prisma.song.update({
     where: { id: req.body.id },
     data: {

@@ -21,6 +21,7 @@ const SongTable = (props: { songs: ApiSongInfo[]; deleteSong: (id: string) => Pr
                 Create
               </Button>
             </StyledTableCell>
+            <StyledTableCell></StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -32,6 +33,11 @@ const SongTable = (props: { songs: ApiSongInfo[]; deleteSong: (id: string) => Pr
               <StyledTableCell>{`${Math.floor(song.length / 60)}:${
                 song.length - Math.floor(song.length / 60) * 60
               }`}</StyledTableCell>
+              <StyledTableCell sx={{ width: 0 }}>
+                <Button variant="contained" onClick={() => router.push(`/edit-song/${song.id}`)}>
+                  Edit
+                </Button>
+              </StyledTableCell>
               <StyledTableCell sx={{ width: 0 }}>
                 <Button
                   variant="contained"
