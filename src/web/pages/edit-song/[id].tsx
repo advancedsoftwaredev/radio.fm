@@ -1,49 +1,54 @@
-import { Box, Button, TextField, Typography } from "@mui/material"
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
-import { ApiSongInfo } from "../../../server/src/apiTypes/song"
-import Header from "../../components/Header"
-import { api } from "../../util/api"
-import { inputStyle } from "../create-song"
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
+import Header from '../../components/Header';
+import { api } from '../../util/api';
+import { inputStyle } from '../create-song';
 
-const editsong = ()=> {
-    const [albumImageUrl, setUrl] = useState<string>('');
-    const [artist, setArtist] = useState<string>('');
-    const [title, setTitle] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const router=useRouter()
-    const {id}=router.query
-    useEffect(()=> {
-        const getSong = async () => {
-            console.log(id)
-            if (!id) {return}
-            const response = await api.song.getById({id: Array.isArray(id) ? id[0] : id})
-            console.log(response)
-            if (response){
-                setArtist(response.artist)
-                setTitle(response.title)
-                setDescription(response.description)
-                setUrl(response.albumImageUrl)
-            }
-        }
-        void getSong()
+const Editsong = () => {
+  const [albumImageUrl, setUrl] = useState<string>('');
+  const [artist, setArtist] = useState<string>('');
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const router = useRouter();
+  const { id } = router.query;
+  useEffect(() => {
+    const getSong = async () => {
+      console.log(id);
+      if (!id) {
+        return;
+      }
+      const response = await api.song.getById({ id: Array.isArray(id) ? id[0] : id });
+      console.log(response);
+      if (response.artist) {
+        setArtist(response.artist);
+        setTitle(response.title);
+        setDescription(response.description);
+        setUrl(response.albumImageUrl);
+      }
+    };
+    void getSong();
+  }, [id]);
 
-    },[id])
-
-    const editSongHandler = async ()=> {
-        let newUrl: string | null = null
-        if (imageFile) {
-            newUrl= (await api.songAdmin.uploadArt({title},imageFile)).albumImageUrl
-        }
-        await api.songAdmin.editSong({title,description,artist,id: (Array.isArray(id) ? id[0] : id)||"", albumImageUrl:!newUrl?albumImageUrl:newUrl})
-        void router.push('/song-management')
+  const editSongHandler = async () => {
+    let newUrl: string | null = null;
+    if (imageFile) {
+      newUrl = (await api.songAdmin.uploadArt({ title }, imageFile)).albumImageUrl;
     }
+    await api.songAdmin.editSong({
+      title,
+      description,
+      artist,
+      id: (Array.isArray(id) ? id[0] : id) || '',
+      albumImageUrl: !newUrl ? albumImageUrl : newUrl,
+    });
+    void router.push('/song-management');
+  };
 
-   
-    return(
-        <>
+  return (
+    <>
       <Header />
       <Box
         sx={{
@@ -109,20 +114,20 @@ const editsong = ()=> {
                 />
               </Button>
               {imageFile?.name && <Typography sx={{ marginLeft: '1rem' }}>{imageFile.name}</Typography>}
-            </Box>            
+            </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '30rem' }}>
               <Button variant="outlined" onClick={() => router.push('/song-management')}>
                 Cancel
               </Button>
-              <Button variant="contained" type="submit" onClick={()=>editSongHandler()}>
-                {"Edit Song"}
+              <Button variant="contained" type="submit" onClick={() => editSongHandler()}>
+                Edit Song
               </Button>
             </Box>
           </Box>
         </form>
       </Box>
     </>
-    ) 
-}
+  );
+};
 
-export default editsong
+export default Editsong;
