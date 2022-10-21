@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import { useUserData } from '../components/hooks/userContext';
 import { api } from '../util/api';
 
-const inputStyle = {
+export const inputStyle = {
   '& .MuiInputBase-input': {
     backgroundColor: '#111',
     color: '#fff',
