@@ -32,7 +32,6 @@ export interface ApiEditSongInfo {
 }
 
 export interface ApiSongInfo {
-  song: JSX.Element;
   id: string;
   title: string;
   description: string;
