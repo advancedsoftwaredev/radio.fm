@@ -1,4 +1,4 @@
-# fly.toml file generated for radio-fm-dev on 2022-10-20T14:23:54+11:00
+# fly.toml file generated for radio-fm-dev on 2022-10-23T17:25:09+11:00
 
 app = "radio-fm-dev"
 kill_signal = "SIGINT"
@@ -7,7 +7,7 @@ processes = []
 
 [env]
   CLIENT_URL = "https://radio-fm-dev.fly.dev"
-  DATABASE_URL = "postgres://postgres:NkNYas8PYGjZs42@radio-fm-dev-db.internal:5432"
+  DATABASE_URL = "postgres://postgres:31EBK3VSHHnXySg@radio-fm-dev-db.internal:5432"
   JWT_SECRET = "this_is_a_very_secret_secret"
   LOCAL_DATA_PATH = "/app/data"
   PORT = "8080"
@@ -16,13 +16,13 @@ processes = []
 [build]
   image="rainholloway/radio.fm"
 
-[mounts]
-  source="radio_fm_dev_data"
-  destination="/app/data"
-
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
+
+[mounts]
+  destination = "/app/data"
+  source = "radio_fm_dev_data"
 
 [[services]]
   http_checks = []
