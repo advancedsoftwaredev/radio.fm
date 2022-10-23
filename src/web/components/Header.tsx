@@ -45,6 +45,9 @@ const Header = () => {
           <Button variant="text" sx={{ marginRight: '1rem' }} onClick={() => router.push('/song-history')}>
             <Typography variant="h6">Previously Played</Typography>
           </Button>
+          <Button variant="text" sx={{ marginRight: '1rem' }} onClick={() => router.push('/liked-songs')}>
+            <Typography variant="h6">Favourites</Typography>
+          </Button>
 
           <Button
             id="basic-button"

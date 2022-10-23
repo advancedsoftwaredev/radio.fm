@@ -1,3 +1,4 @@
+import { AddBusinessOutlined } from '@mui/icons-material';
 import { useCallback, useMemo } from 'react';
 import Particles from 'react-tsparticles';
 import type { Engine } from 'tsparticles-engine';
