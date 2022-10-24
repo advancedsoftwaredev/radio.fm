@@ -1,1 +1,51 @@
+# fly.toml file generated for anthony-fly-deployment on 2022-10-24T10:43:43+11:00
 
+app = "anthony-fly-deployment"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+  CLIENT_URL = "https://anthony-fly-deployment.fly.dev"
+  DATABASE_URL = "postgres://anthony_fly_deployment:RnJOA9r9akB3OHU@top2.nearest.of.anthony-fly-deployment-db.internal:5432/anthony_fly_deployment"
+  JWT_SECRET = "this_is_a_very_secret_secret"
+  LOCAL_DATA_PATH = "/app/data"
+  PORT = "8080"
+  SERVER_URL = "https://anthony-fly-deployment.fly.dev"
+
+[build]
+  image="afeng1122/radio.fm"
+
+[mounts]
+  source="anthony_volume"
+  destination="/app/data"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
