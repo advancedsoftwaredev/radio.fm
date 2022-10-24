@@ -17,8 +17,11 @@ const SongTable = (props: {
   const songData = useSong();
 
   useEffect(() => {
-    return () => props.stopSong();
-  }, [props]);
+    return () => {
+      props.stopSong();
+      void songData?.audio?.play();
+    };
+  }, [props, songData?.audio]);
 
   useEffect(() => {
     props.audio?.forEach((audioElem) => (audioElem.volume = songData?.volume ?? 0.5));
