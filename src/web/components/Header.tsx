@@ -49,7 +49,7 @@ const Header = () => {
       ) : (
         <>
           <Typography variant="h6" sx={{ marginRight: 'auto', marginLeft: '1rem', order: '0' }}>
-            {`Welcome, ${user.username}!`}
+            {`Lovely Welcome, ${user.username}!`}
           </Typography>
 
           <Button variant="text" sx={{ marginRight: '1rem', order: '3' }} onClick={() => router.push('/liked-songs')}>
