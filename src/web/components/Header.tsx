@@ -26,6 +26,13 @@ const Header = () => {
       <Button
         variant="text"
         sx={{ marginRight: '1rem', order: user && user.role === 'GUEST' ? '0' : '1' }}
+        onClick={() => router.push('/')}
+      >
+        <Typography variant="h6">Home</Typography>
+      </Button>
+      <Button
+        variant="text"
+        sx={{ marginRight: '1rem', order: user && user.role === 'GUEST' ? '0' : '1' }}
         onClick={() => router.push('/song-history')}
       >
         <Typography variant="h6">Previously Played</Typography>
@@ -44,10 +51,6 @@ const Header = () => {
           <Typography variant="h6" sx={{ marginRight: 'auto', marginLeft: '1rem', order: '0' }}>
             {`Welcome, ${user.username}!`}
           </Typography>
-
-          <Button variant="text" sx={{ marginRight: '1rem', order: '2' }} onClick={() => router.push('/')}>
-            <Typography variant="h6">Home</Typography>
-          </Button>
 
           <Button variant="text" sx={{ marginRight: '1rem', order: '3' }} onClick={() => router.push('/liked-songs')}>
             <Typography variant="h6">Favourites</Typography>
