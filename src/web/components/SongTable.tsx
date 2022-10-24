@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 import type { ApiSongInfo } from '../../server/src/apiTypes/song';
 import { StyledTableCell, StyledTableRow } from '../pages/song-management';
+import { useSong } from './hooks/songContext';
 
 const SongTable = (props: {
   songs: ApiSongInfo[];
@@ -13,9 +14,15 @@ const SongTable = (props: {
   audio: HTMLAudioElement[] | null;
 }) => {
   const router = useRouter();
+  const songData = useSong();
+
   useEffect(() => {
     return () => props.stopSong();
-  });
+  }, [props]);
+
+  useEffect(() => {
+    props.audio?.forEach((audioElem) => (audioElem.volume = songData?.volume ?? 0.5));
+  }, [songData?.volume, props.audio]);
 
   return (
     <TableContainer component={Paper}>
