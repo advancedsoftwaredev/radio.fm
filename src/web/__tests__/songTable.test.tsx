@@ -36,7 +36,7 @@ const deleteMock = jest.fn().mockImplementation(async (id: string) => {});
 
 describe('Song Table', () => {
   it('Renders Correctly', () => {
-    render(<SongTable songs={songs} deleteSong={deleteMock} />);
+    render(<SongTable songs={songs} deleteSong={deleteMock} stopSong={() => {}} audio={[]} />);
     const songArray = screen.getAllByTestId('song-element');
 
     expect(songArray).toHaveLength(songs.length);
@@ -46,7 +46,7 @@ describe('Song Table', () => {
   });
 
   it('Deletes Song Correctly', () => {
-    render(<SongTable songs={songs} deleteSong={deleteMock} />);
+    render(<SongTable songs={songs} deleteSong={deleteMock} stopSong={() => {}} audio={[]} />);
     const deleteButtons = screen.getAllByTestId('delete-button');
     fireEvent.click(deleteButtons[0]);
     expect(deleteMock).toBeCalledTimes(1);

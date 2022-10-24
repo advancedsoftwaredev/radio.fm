@@ -1,11 +1,21 @@
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { Button, Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 import type { ApiSongInfo } from '../../server/src/apiTypes/song';
 import { StyledTableCell, StyledTableRow } from '../pages/song-management';
 
-const SongTable = (props: { songs: ApiSongInfo[]; deleteSong: (id: string) => Promise<void> }) => {
+const SongTable = (props: {
+  songs: ApiSongInfo[];
+  deleteSong: (id: string) => Promise<void>;
+  stopSong: () => any;
+  audio: HTMLAudioElement[] | null;
+}) => {
   const router = useRouter();
+  useEffect(() => {
+    return () => props.stopSong();
+  });
 
   return (
     <TableContainer component={Paper}>
@@ -16,16 +26,17 @@ const SongTable = (props: { songs: ApiSongInfo[]; deleteSong: (id: string) => Pr
             <StyledTableCell>Artist</StyledTableCell>
             <StyledTableCell>Title</StyledTableCell>
             <StyledTableCell>Duration</StyledTableCell>
-            <StyledTableCell sx={{ width: 0 }}>
+            <StyledTableCell sx={{ width: 0 }}></StyledTableCell>
+            <StyledTableCell></StyledTableCell>
+            <StyledTableCell>
               <Button variant="contained" color="success" onClick={() => router.push('/create-song')}>
                 Create
               </Button>
             </StyledTableCell>
-            <StyledTableCell></StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.songs.map((song) => (
+          {props.songs.map((song, i) => (
             <StyledTableRow key={song.id}>
               <StyledTableCell data-testid="song-element">{song.id}</StyledTableCell>
               <StyledTableCell>{song.artist}</StyledTableCell>
@@ -33,6 +44,17 @@ const SongTable = (props: { songs: ApiSongInfo[]; deleteSong: (id: string) => Pr
               <StyledTableCell>{`${Math.floor(song.length / 60)}:${
                 song.length - Math.floor(song.length / 60) * 60
               }`}</StyledTableCell>
+              <StyledTableCell sx={{ width: 0 }}>
+                <PlayArrowIcon
+                  sx={{ fontSize: '2rem', cursor: 'pointer' }}
+                  onClick={async () => {
+                    await props.stopSong();
+                    if (props.audio) {
+                      await props.audio[i].play();
+                    }
+                  }}
+                />
+              </StyledTableCell>
               <StyledTableCell sx={{ width: 0 }}>
                 <Button variant="contained" onClick={() => router.push(`/edit-song/${song.id}`)}>
                   Edit
